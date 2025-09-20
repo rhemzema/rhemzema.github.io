@@ -53,8 +53,8 @@
 			<header class="topbar">
 				<div style="display:flex;align-items:center;flex:1;gap:12px">
 					<nav class="nav" role="navigation" aria-label="Main">
-						<a href="#home" id="link-home">About Me</a>
-						<a href="#projects" id="link-projects">Projects</a>
+						<a href="home" id="link-home">About Me</a>
+						<a href="projects" id="link-projects">Projects</a>
 					</nav>
 				</div>
 
@@ -151,20 +151,37 @@
 						});
 					}
 
-					function routeFromHash(){
-						const h = (location.hash || '').replace('#','');
-						return h in pages ? h : 'home';
+					// Route from current pathname (e.g., /home -> 'home')
+					function routeFromPath(){
+						// Trim leading/trailing slashes and take first segment
+						const p = (location.pathname || '/').replace(/^\/+|\/+$/g, '');
+						const first = p.split('/')[0] || 'home';
+						return first in pages ? first : 'home';
 					}
 
-					// Update on hash change
-					window.addEventListener('hashchange', ()=> setActive(routeFromHash()));
+					// Intercept click on nav links to use history API
+					Object.values(links).forEach(a => {
+						if(!a) return;
+						a.addEventListener('click', (e) => {
+							// Use the link's href (which is like 'home' or 'projects')
+							const href = a.getAttribute('href');
+							if(!href) return;
+							e.preventDefault();
+							// Update the URL without reloading
+							const newPath = '/' + href.replace(/^\/+|\/+$/g, '');
+							if(location.pathname !== newPath) history.pushState({page: href}, '', newPath);
+							setActive(routeFromPath());
+						});
+					});
 
-					// For robustness, ensure clicks also set active state immediately
-					Object.values(links).forEach(a=> a && a.addEventListener('click', ()=> setActive(routeFromHash())));
+					// Handle back/forward navigation
+					window.addEventListener('popstate', ()=> setActive(routeFromPath()));
 
-					// Initial activation
-					if(!location.hash) location.hash = '#home';
-					setActive(routeFromHash());
+					// Initial activation: ensure path is set to /home if root
+					if(location.pathname === '/' || location.pathname === ''){
+						history.replaceState({page: 'home'}, '', '/home');
+					}
+					setActive(routeFromPath());
 		</script>
 	</body>
 </html>
