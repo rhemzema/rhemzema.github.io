@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>Simple Two-Page Demo</title>
+		<!-- Roboto: 400 (Regular) and 600 (SemiBold) -->
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600&display=swap" rel="stylesheet">
+		<style>
+			:root{
+				--bg:#f7f8fb;
+				--bar:#ffffff;
+				--accent:#0b5fff;
+				--muted:#6b7280;
+			}
+			html,body{height:100%;margin:0;font-family:Roboto,Inter,system-ui,Segoe UI,'Helvetica Neue',Arial}
+			body{background:var(--bg);color:#111;font-weight:400}
+
+			/* Top bar */
+			.topbar{
+				position:fixed;left:0;right:0;top:0;height:56px;
+				background:var(--bar);display:flex;align-items:center;gap:12px;padding:0 20px;box-shadow:0 1px 0 rgba(16,24,40,0.06);
+				z-index:10
+			}
+			.brand{font-weight:600;color:var(--accent);margin-right:12px}
+			.nav{display:flex;gap:8px}
+					.nav a{display:inline-block;padding:8px 12px;border-radius:8px;color:var(--muted);text-decoration:none;transition:all 160ms ease;font-weight:600}
+					.nav a:hover{background:rgba(11,95,255,0.06);color:var(--accent)}
+					.nav a.active{background:linear-gradient(90deg,rgba(11,95,255,0.08),rgba(11,95,255,0.02));color:var(--accent);font-weight:600}
+
+					/* Icon button (rounded-square) */
+											.icon-btn{
+										display:inline-flex;align-items:center;justify-content:center;
+										width:44px;height:44px;border-radius:8px;background:transparent;color:var(--muted);text-decoration:none;border:0;overflow:hidden;box-sizing:border-box;transition:all 160ms ease
+											}
+									.icon-btn img{display:block;width:20px;height:20px;object-fit:contain}
+									.icon-btn:hover{background:rgba(11,95,255,0.06);color:var(--accent)}
+									.icon-btn.active{background:linear-gradient(90deg,rgba(11,95,255,0.12),rgba(11,95,255,0.03));color:var(--accent)}
+
+			/* Content area fills remaining viewport; pages scroll independently */
+			.content-wrap{height:100vh;display:flex;flex-direction:column}
+			.spacer{height:56px;flex:0 0 56px} /* reserve for fixed topbar */
+			/* Each page becomes a scroll container that fills the remaining viewport under the topbar */
+			.page{flex:1;display:none;overflow:auto}
+			.page.active{display:block}
+			/* Inner wrapper centers content but allows the page to scroll when content grows */
+			.page .inner{min-height:calc(100vh - 56px);display:flex;align-items:center;justify-content:center;padding:28px;box-sizing:border-box}
+
+			h1{font-size:32px;margin:0;color:#111}
+		</style>
+	</head>
+	<body>
+			<header class="topbar">
+				<div style="display:flex;align-items:center;flex:1;gap:12px">
+					<div class="brand">Demo</div>
+					<nav class="nav" role="navigation" aria-label="Main">
+						<a href="#home" id="link-home">Home</a>
+						<a href="#projects" id="link-projects">Projects</a>
+					</nav>
+				</div>
+
+						<div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+							<!-- Social icon buttons (local icons) -->
+											<a href="https://youtu.be/dQw4w9WgXcQ" id="link-github" class="icon-btn" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
+												<img src="icons/github_64x.svg" alt="GitHub" width="20" height="20">
+											</a>
+
+											<a href="https://youtu.be/dQw4w9WgXcQ" id="link-linkedin" class="icon-btn" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+												<img src="icons/linkedin_64x.svg" alt="LinkedIn" width="20" height="20">
+											</a>
+
+											<a href="https://youtu.be/dQw4w9WgXcQ" id="link-instagram" class="icon-btn" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+												<img src="icons/instagram_64x.svg" alt="Instagram" width="20" height="20">
+											</a>
+                                            <a href="https://youtu.be/dQw4w9WgXcQ" id="link-x" class="icon-btn" aria-label="X.com" target="_blank" rel="noopener noreferrer">
+												<img src="icons/x_30x.svg" alt="X.com" width="20" height="20">
+											</a>
+						</div>
+			</header>
+
+		<div class="content-wrap">
+			<div class="spacer" aria-hidden="true"></div>
+
+			<main>
+								<section id="home" class="page" role="region" aria-label="Home page">
+										<div class="inner">
+											<h1>hello world</h1>
+										</div>
+								</section>
+
+												<section id="projects" class="page" role="region" aria-label="Projects page">
+														<div class="inner">
+															<h1>hello projects</h1>
+														</div>
+												</section>
+
+												<section id="github" class="page" role="region" aria-label="GitHub page">
+														<div class="inner">
+															<h1>cool github projects</h1>
+														</div>
+												</section>
+
+												<section id="x" class="page" role="region" aria-label="X.com page">
+														<div class="inner">
+															<h1>wow much cool</h1>
+														</div>
+												</section>
+
+												<section id="linkedin" class="page" role="region" aria-label="LinkedIn page">
+														<div class="inner">
+															<h1>500+ connections crazy</h1>
+														</div>
+												</section>
+
+												<section id="instagram" class="page" role="region" aria-label="Instagram page">
+														<div class="inner">
+															<h1>super cool model</h1>
+														</div>
+												</section>
+			</main>
+		</div>
+
+		<script>
+					// Initialization and navigation logic (now includes social pages)
+					const pages = {
+						home: document.getElementById('home'),
+						projects: document.getElementById('projects'),
+						github: document.getElementById('github'),
+						x: document.getElementById('x'),
+						linkedin: document.getElementById('linkedin'),
+						instagram: document.getElementById('instagram')
+					};
+
+					const links = {
+						home: document.getElementById('link-home'),
+						projects: document.getElementById('link-projects'),
+						github: document.getElementById('link-github'),
+						x: document.getElementById('link-x'),
+						linkedin: document.getElementById('link-linkedin'),
+						instagram: document.getElementById('link-instagram')
+					};
+
+					function setActive(pageName){
+						Object.keys(pages).forEach(name=>{
+							const isActive = name === pageName;
+							pages[name].classList.toggle('active', isActive);
+
+							if(links[name]){
+								links[name].classList.toggle('active', isActive);
+								links[name].setAttribute('aria-current', isActive ? 'page' : 'false');
+							}
+						});
+					}
+
+					function routeFromHash(){
+						const h = (location.hash || '#home').replace('#','');
+						return h in pages ? h : 'home';
+					}
+
+					// Update on hash change
+					window.addEventListener('hashchange', ()=> setActive(routeFromHash()));
+
+					// For robustness, ensure clicks also set active state immediately
+					Object.values(links).forEach(a=> a && a.addEventListener('click', ()=> setActive(routeFromHash())));
+
+					// Initial activation
+					if(!location.hash) location.hash = '#home';
+					setActive(routeFromHash());
+		</script>
+	</body>
+</html>
+
