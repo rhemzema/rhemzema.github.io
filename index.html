@@ -163,7 +163,7 @@
 					Object.values(links).forEach(a=> a && a.addEventListener('click', ()=> setActive(routeFromHash())));
 
 					// Initial activation
-					if(!location.hash) location.hash = 'home';
+					if(!location.hash) location.hash = '#home';
 					setActive(routeFromHash());
 		</script>
 	</body>
