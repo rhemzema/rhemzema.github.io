@@ -53,8 +53,8 @@
 			<header class="topbar">
 				<div style="display:flex;align-items:center;flex:1;gap:12px">
 					<nav class="nav" role="navigation" aria-label="Main">
-						<a href="home" id="link-home">About Me</a>
-						<a href="projects" id="link-projects">Projects</a>
+						<a href="#home" id="link-home">About Me</a>
+						<a href="#projects" id="link-projects">Projects</a>
 					</nav>
 				</div>
 
@@ -75,7 +75,7 @@
 												<img src="icons/x_30x.svg" alt="X.com" width="20" height="20">
 											</a>
 						</div>
-			</heaxr>
+					</header>
 
 		<div class="content-wrap">
 			<div class="spacer" aria-hidden="true"></div>
@@ -152,7 +152,7 @@
 					}
 
 					function routeFromHash(){
-						const h = (location.hash || '#home').replace('#','');
+						const h = (location.hash || '').replace('#','');
 						return h in pages ? h : 'home';
 					}
 
@@ -163,7 +163,7 @@
 					Object.values(links).forEach(a=> a && a.addEventListener('click', ()=> setActive(routeFromHash())));
 
 					// Initial activation
-					if(!location.hash) location.hash = '#home';
+					if(!location.hash) location.hash = 'home';
 					setActive(routeFromHash());
 		</script>
 	</body>
