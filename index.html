@@ -12,6 +12,8 @@
 				--bar:#ffffff;
 				--accent:#0b5fff;
 				--muted:#6b7280;
+				--text:#111;
+				--toggle-fill:#9ca3af; /* light-mode toggle color (subtle grey) */
 			}
 			html,body{height:100%;margin:0;font-family:Roboto,Inter,system-ui,Segoe UI,'Helvetica Neue',Arial}
 			body{background:var(--bg);color:#111;font-weight:400}
@@ -43,7 +45,13 @@
 										width:44px;height:44px;border-radius:8px;background:transparent;color:var(--muted);text-decoration:none;border:0;overflow:hidden;box-sizing:border-box;transition:all 160ms ease
 											}
 									.icon-btn img{display:block;width:20px;height:20px;object-fit:contain}
-									.icon-btn:hover{background:rgba(11,95,255,0.06);color:var(--accent)}
+			/* Make social SVG icons appear white in dark mode (works for embedded SVG files in <img>) */
+			body.dark .icon-btn{color:var(--text)}
+			/* transition so the color change is smooth when toggling */
+			.icon-btn img{transition:filter 180ms ease, opacity 180ms ease}
+			/* Convert icon graphics to white by making them black then inverting */
+			body.dark .icon-btn img{filter:brightness(0) invert(1);opacity:0.95}
+			body.dark .icon-btn:hover{background:rgba(255,255,255,0.06);color:var(--text)}
 									.icon-btn.active{background:linear-gradient(90deg,rgba(11,95,255,0.12),rgba(11,95,255,0.03));color:var(--accent)}
 
 			/* Content area fills remaining viewport; pages scroll independently */
@@ -55,7 +63,22 @@
 			/* Inner wrapper centers content but allows the page to scroll when content grows */
 			.page .inner{min-height:calc(100vh - 56px);display:flex;align-items:center;justify-content:center;padding:28px;box-sizing:border-box}
 
-			h1{font-size:32px;margin:0;color:#111}
+			h1{font-size:32px;margin:0;color:var(--text)}
+
+			/* Dark theme (toggle applies `dark` class to body) */
+			body.dark{
+				--bg:#071221;
+				--bar:#0b1220;
+				--accent:#7ab7ff;
+				--muted:#98a6b3;
+				--text:#e6eef8;
+				--toggle-fill:#6b7280; /* dark-mode toggle color (darker grey) */
+			}
+
+			/* Theme toggle button styles (uses same icon-btn appearance) */
+			.theme-toggle{font-size:16px;display:inline-flex;align-items:center;justify-content:center;color:var(--toggle-fill)}
+			.theme-toggle svg{display:block}
+			.theme-toggle svg path{fill:currentColor;transition:fill 180ms ease}
 		</style>
 	</head>
 	<body>
@@ -83,7 +106,14 @@
                                             <a href="https://youtu.be/dQw4w9WgXcQ" id="link-x" class="icon-btn" aria-label="X.com" target="_blank" rel="noopener noreferrer">
 												<img src="icons/x_30x.svg" alt="X.com" width="20" height="20">
 											</a>
-						</div>
+						
+											<!-- Theme toggle: placed after social icons so icons come first -->
+											<button id="theme-toggle" class="icon-btn theme-toggle" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode">
+												<svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+													<path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5373 21.3065 11.4608 21.0672 11.8568C19.9289 13.7406 17.8615 15 15.5 15C11.9101 15 9 12.0899 9 8.5C9 6.13845 10.2594 4.07105 12.1432 2.93276C12.5392 2.69347 12.4627 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor" />
+												</svg>
+											</button>
+											</div>
 					</header>
 
 		<div class="content-wrap">
@@ -169,14 +199,21 @@
 					}
 
 					// Intercept click on nav links to use history API
+					// But skip external links, links that open in a new tab, or icon buttons (social icons)
 					Object.values(links).forEach(a => {
 						if(!a) return;
 						a.addEventListener('click', (e) => {
-							// Use the link's href (which is like 'home' or 'projects')
 							const href = a.getAttribute('href');
 							if(!href) return;
+
+							const target = a.getAttribute('target');
+							// If link opens in new tab, is external, or is an icon button, allow default behavior
+							if(target === '_blank' || /^https?:\/\//i.test(href) || a.classList.contains('icon-btn')){
+								return;
+							}
+
+							// Otherwise handle via history API
 							e.preventDefault();
-							// Update the URL without reloading
 							const newPath = '/' + href.replace(/^\/+|\/+$/g, '');
 							if(location.pathname !== newPath) history.pushState({page: href}, '', newPath);
 							setActive(routeFromPath());
@@ -191,6 +228,33 @@
 						history.replaceState({page: 'home'}, '', '/home');
 					}
 					setActive(routeFromPath());
+
+					// Theme toggle (light/dark)
+					const themeToggle = document.getElementById('theme-toggle');
+
+					function applyTheme(theme){
+						if(theme === 'dark') document.body.classList.add('dark');
+						else document.body.classList.remove('dark');
+						if(themeToggle) themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+					}
+
+					function initTheme(){
+						const saved = localStorage.getItem('theme');
+						if(saved) return applyTheme(saved);
+						// Respect system preference when no saved choice
+						const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+						applyTheme(prefersDark ? 'dark' : 'light');
+					}
+
+					if(themeToggle){
+						themeToggle.addEventListener('click', ()=>{
+							const isDark = document.body.classList.toggle('dark');
+							localStorage.setItem('theme', isDark ? 'dark' : 'light');
+							themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+						});
+					}
+
+					initTheme();
 		</script>
 	</body>
 </html>
