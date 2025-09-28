@@ -31,7 +31,9 @@
 				.spacer{height:48px}
 				.nav a{padding:6px 8px;font-size:14px}
 				.icon-btn{width:36px;height:36px}
-				.icon-btn img{width:16px;height:16px}
+				/* smaller icon graphics inside buttons */
+				.icon-btn img, .icon-btn svg{width:16px;height:16px;display:block}
+				.icon-btn img{object-fit:contain}
 			}
 			.brand{font-weight:600;color:var(--accent);margin-right:12px}
 			.nav{display:flex;gap:8px}
@@ -45,6 +47,7 @@
 										width:44px;height:44px;border-radius:8px;background:transparent;color:var(--muted);text-decoration:none;border:0;overflow:hidden;box-sizing:border-box;transition:all 160ms ease
 											}
 									.icon-btn img{display:block;width:20px;height:20px;object-fit:contain}
+									.icon-btn svg{width:20px;height:20px;display:block}
 			/* Make social SVG icons appear white in dark mode (works for embedded SVG files in <img>) */
 			body.dark .icon-btn{color:var(--text)}
 			/* transition so the color change is smooth when toggling */
@@ -79,6 +82,8 @@
 			.theme-toggle{font-size:16px;display:inline-flex;align-items:center;justify-content:center;color:var(--toggle-fill)}
 			.theme-toggle svg{display:block}
 			.theme-toggle svg path{fill:currentColor;transition:fill 180ms ease}
+
+
 		</style>
 	</head>
 	<body>
@@ -91,21 +96,26 @@
 				</div>
 
 						<div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-							<!-- Social icon buttons (local icons) -->
-											<a href="https://youtu.be/dQw4w9WgXcQ" id="link-github" class="icon-btn" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
-												<img src="icons/github_64x.svg" alt="GitHub" width="20" height="20">
-											</a>
+							<!-- Social icons removed temporarily. Original markup preserved below for easy restore:
+						
+							<a href="https://youtu.be/dQw4w9WgXcQ" id="link-github" class="icon-btn" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
+								<img src="icons/github_64x.svg" alt="GitHub" width="20" height="20">
+							</a>
 
-											<a href="https://youtu.be/dQw4w9WgXcQ" id="link-linkedin" class="icon-btn" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-												<img src="icons/linkedin_64x.svg" alt="LinkedIn" width="20" height="20">
-											</a>
+							<a href="https://youtu.be/dQw4w9WgXcQ" id="link-linkedin" class="icon-btn" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+								<img src="icons/linkedin_64x.svg" alt="LinkedIn" width="20" height="20">
+							</a>
 
-											<a href="https://youtu.be/dQw4w9WgXcQ" id="link-instagram" class="icon-btn" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
-												<img src="icons/instagram_64x.svg" alt="Instagram" width="20" height="20">
-											</a>
-                                            <a href="https://youtu.be/dQw4w9WgXcQ" id="link-x" class="icon-btn" aria-label="X.com" target="_blank" rel="noopener noreferrer">
-												<img src="icons/x_30x.svg" alt="X.com" width="20" height="20">
-											</a>
+							<a href="https://youtu.be/dQw4w9WgXcQ" id="link-instagram" class="icon-btn" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+								<img src="icons/instagram_64x.svg" alt="Instagram" width="20" height="20">
+							</a>
+
+							<a href="https://youtu.be/dQw4w9WgXcQ" id="link-x" class="icon-btn" aria-label="X.com" target="_blank" rel="noopener noreferrer">
+								<img src="icons/x_30x.svg" alt="X.com" width="20" height="20">
+							</a>
+
+							Notes: button size was 44x44px with 20x20 icon images on desktop; on small screens .icon-btn was 36x36px and icons 16x16px.
+							-->
 						
 											<!-- Theme toggle: placed after social icons so icons come first -->
 											<button id="theme-toggle" class="icon-btn theme-toggle" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode">
@@ -198,21 +208,14 @@
 						return first in pages ? first : 'home';
 					}
 
-					// Intercept click on nav links to use history API
-					// But skip external links, links that open in a new tab, or icon buttons (social icons)
-					Object.values(links).forEach(a => {
+					// Intercept clicks only on internal navigation links inside the top `.nav`.
+					// This avoids touching social/external links (which live outside `.nav`).
+					document.querySelectorAll('.nav a').forEach(a => {
 						if(!a) return;
 						a.addEventListener('click', (e) => {
 							const href = a.getAttribute('href');
 							if(!href) return;
-
-							const target = a.getAttribute('target');
-							// If link opens in new tab, is external, or is an icon button, allow default behavior
-							if(target === '_blank' || /^https?:\/\//i.test(href) || a.classList.contains('icon-btn')){
-								return;
-							}
-
-							// Otherwise handle via history API
+							// Handle via history API for internal routes
 							e.preventDefault();
 							const newPath = '/' + href.replace(/^\/+|\/+$/g, '');
 							if(location.pathname !== newPath) history.pushState({page: href}, '', newPath);
@@ -258,4 +261,3 @@
 		</script>
 	</body>
 </html>
-
