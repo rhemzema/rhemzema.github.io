@@ -8,6 +8,8 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600&display=swap" rel="stylesheet">
+		<!-- SVG favicon (white-circle background) -->
+		<link rel="icon" href="icons/face_favicon.svg" type="image/svg+xml">
 		<style>
 			:root{
 				--bg:#f7f8fb;
@@ -185,7 +187,8 @@
 
 					function initTheme(){
 						const saved = localStorage.getItem('theme');
-						if(saved) return applyTheme(saved);
+						// Only accept explicit, known theme values to avoid unexpected stored values
+						if(saved === 'dark' || saved === 'light') return applyTheme(saved);
 						// Respect system preference when no saved choice
 						const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 						applyTheme(prefersDark ? 'dark' : 'light');
@@ -200,9 +203,6 @@
 					}
 
 					initTheme();
-
-
-
 					// No scrolling behaviors needed for a single-screen static landing.
 		</script>
 	</body>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img'" aria-label="favicon">
+  <!-- white circular background -->
+  <rect width="64" height="64" rx="32" ry="32" fill="#ffffff" />
+  <!-- embed the existing face svg and scale it to 48x48 centered with 8px padding -->
+  <image href="face_64x.svg" x="8" y="8" width="48" height="48" preserveAspectRatio="xMidYMid meet" />
+</svg>
