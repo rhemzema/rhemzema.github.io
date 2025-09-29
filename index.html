@@ -54,11 +54,15 @@
 					.nav a.active{background:linear-gradient(90deg,rgba(11,95,255,0.08),rgba(11,95,255,0.02));color:var(--accent);font-weight:600}
 
             /* Pill-style social buttons centered in the hero */
-            .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid rgba(16,24,40,0.06);background:transparent;color:var(--text);text-decoration:none;font-weight:600}
-			.pill:hover{background:var(--hover-bg)}
+			.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid rgba(16,24,40,0.06);background:transparent;color:var(--text);text-decoration:none;font-weight:600;transition:all 160ms ease}
 			.pill:focus{outline:2px solid rgba(11,95,255,0.12);outline-offset:3px}
 			body.dark .pill{border-color:var(--pill-border-dark);color:var(--text);background:rgba(255,255,255,0.02)}
-			body.dark .pill:hover{background:var(--hover-bg-dark)}
+
+			/* Exact same hover/active/focus animation as icon buttons */
+			.pill:hover{background:var(--hover-bg);transform:translateY(-3px) scale(1.02);box-shadow:0 6px 18px rgba(11,95,255,0.08);color:var(--accent)}
+			.pill:active{transform:translateY(-1px) scale(0.995)}
+			.pill:focus{outline:2px solid rgba(11,95,255,0.14);outline-offset:3px}
+			body.dark .pill:hover{background:var(--hover-bg-dark);box-shadow:0 8px 24px rgba(0,0,0,0.35);color:var(--text)}
 
 					/* Icon button (rounded-square) */
 											.icon-btn{
@@ -156,6 +160,10 @@
 									<a class="icon-btn" href="https://x.com/rhemzema" aria-label="X.com" target="_blank" rel="noopener noreferrer">
 										<img src="icons/x_60x.svg" alt="X.com">
 									</a>
+								</div>
+								<!-- Email pill below icons -->
+								<div style="margin-top:12px;display:flex;justify-content:center">
+									<a class="pill email-pill" href="mailto:ruiqian@vt.edu" aria-label="Email" rel="noopener noreferrer">ruiqian@vt.edu</a>
 								</div>
 							</div>
 						</div>
