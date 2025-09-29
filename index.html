@@ -5,6 +5,8 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1" />
 		<title>About Ruiqian Zhang</title>
 		<!-- Roboto: 400 (Regular) and 600 (SemiBold) -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600&display=swap" rel="stylesheet">
 		<style>
 			:root{
@@ -14,8 +16,14 @@
 				--muted:#6b7280;
 				--text:#111;
 				--toggle-fill:#9ca3af; /* light-mode toggle color (subtle grey) */
+				--hover-bg: rgba(11,95,255,0.06);
+				--hover-bg-dark: rgba(255,255,255,0.06);
+				--pill-border: rgba(16,24,40,0.06);
+				--pill-border-dark: rgba(255,255,255,0.06);
 			}
-			html,body{height:100%;margin:0;font-family:Roboto,Inter,system-ui,Segoe UI,'Helvetica Neue',Arial}
+
+			/* Disable scrolling for a single-screen static landing */
+			html,body{height:100%;margin:0;font-family:Roboto,Inter,system-ui,Segoe UI,'Helvetica Neue',Arial;overflow:hidden}
 			body{background:var(--bg);color:#111;font-weight:400}
 
 			/* Top bar */
@@ -27,13 +35,17 @@
 			
 			/* Responsive adjustments for small screens */
 			@media (max-width:480px){
-				.topbar{height:48px;padding:0 12px}
-				.spacer{height:48px}
-				.nav a{padding:6px 8px;font-size:14px}
-				.icon-btn{width:36px;height:36px}
-				/* smaller icon graphics inside buttons */
-				.icon-btn img, .icon-btn svg{width:16px;height:16px;display:block}
+				.topbar{height:52px;padding:0 14px}
+				.spacer{height:52px}
+				.nav a{padding:7px 9px;font-size:15px}
+				.icon-btn{width:40px;height:40px}
+				/* slightly larger icon graphics inside buttons for easier tapping */
+				.icon-btn img, .icon-btn svg{width:18px;height:18px;display:block}
 				.icon-btn img{object-fit:contain}
+				/* mobile: slightly normalize sizes so all icons fit comfortably */
+				.icon-btn.linkedin img{width:18px;height:18px}
+				/* ensure page inner area accounts for the taller mobile topbar */
+				.page .inner{min-height:calc(100vh - 52px)}
 			}
 			.brand{font-weight:600;color:var(--accent);margin-right:12px}
 			.nav{display:flex;gap:8px}
@@ -41,30 +53,57 @@
 					.nav a:hover{background:rgba(11,95,255,0.06);color:var(--accent)}
 					.nav a.active{background:linear-gradient(90deg,rgba(11,95,255,0.08),rgba(11,95,255,0.02));color:var(--accent);font-weight:600}
 
+            /* Pill-style social buttons centered in the hero */
+            .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid rgba(16,24,40,0.06);background:transparent;color:var(--text);text-decoration:none;font-weight:600}
+			.pill:hover{background:var(--hover-bg)}
+			.pill:focus{outline:2px solid rgba(11,95,255,0.12);outline-offset:3px}
+			body.dark .pill{border-color:var(--pill-border-dark);color:var(--text);background:rgba(255,255,255,0.02)}
+			body.dark .pill:hover{background:var(--hover-bg-dark)}
+
 					/* Icon button (rounded-square) */
 											.icon-btn{
 										display:inline-flex;align-items:center;justify-content:center;
 										width:44px;height:44px;border-radius:8px;background:transparent;color:var(--muted);text-decoration:none;border:0;overflow:hidden;box-sizing:border-box;transition:all 160ms ease
 											}
 									.icon-btn img{display:block;width:20px;height:20px;object-fit:contain}
+									/* Make LinkedIn icon slightly larger to optically match Instagram/X */
+									.icon-btn.linkedin img{width:22px;height:22px}
 									.icon-btn svg{width:20px;height:20px;display:block}
-			/* Make social SVG icons appear white in dark mode (works for embedded SVG files in <img>) */
+
+					/* Hover/focus effects for icon buttons */
+					.icon-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 6px 18px rgba(11,95,255,0.08)}
+					.icon-btn:active{transform:translateY(-1px) scale(0.995)}
+					.icon-btn:focus{outline:2px solid rgba(11,95,255,0.14);outline-offset:3px}
+
+					/* Light mode hover: subtle blue tint */
+					:root .icon-btn:hover{background:rgba(11,95,255,0.06);color:var(--accent)}
+
+					/* Dark mode hover: lighter translucent white tint */
+					body.dark .icon-btn:hover{background:rgba(255,255,255,0.06);box-shadow:0 8px 24px rgba(0,0,0,0.35);color:var(--text)}
+			/* Make SVG icons appear solid white in dark mode */
 			body.dark .icon-btn{color:var(--text)}
 			/* transition so the color change is smooth when toggling */
 			.icon-btn img{transition:filter 180ms ease, opacity 180ms ease}
-			/* Convert icon graphics to white by making them black then inverting */
-			body.dark .icon-btn img{filter:brightness(0) invert(1);opacity:0.95}
-			body.dark .icon-btn:hover{background:rgba(255,255,255,0.06);color:var(--text)}
+			/* For external SVG files loaded via <img>, convert to white using filter in dark mode */
+			body.dark .icon-btn img{filter:brightness(0) invert(1);opacity:1}
+			/* For inline SVGs, force the path fill to pure white */
+			body.dark .icon-btn svg path{fill:#ffffff}
+			body.dark .icon-btn:hover{background:var(--hover-bg-dark);color:var(--text)}
+			.icon-btn:focus{outline:2px solid rgba(11,95,255,0.12);outline-offset:3px}
+
+			/* Footer icon hover matches pill behavior */
+			.footer-icons .icon-btn:hover{background:var(--hover-bg)}
+			body.dark .footer-icons .icon-btn:hover{background:var(--hover-bg-dark)}
 									.icon-btn.active{background:linear-gradient(90deg,rgba(11,95,255,0.12),rgba(11,95,255,0.03));color:var(--accent)}
 
-			/* Content area fills remaining viewport; pages scroll independently */
-			.content-wrap{height:100vh;display:flex;flex-direction:column}
-			.spacer{height:56px;flex:0 0 56px} /* reserve for fixed topbar */
-			/* Each page becomes a scroll container that fills the remaining viewport under the topbar */
-			.page{flex:1;display:none;overflow:auto}
+			/* Content area uses normal body scrolling so the site can scroll naturally */
+			.content-wrap{min-height:100vh;display:block}
+			/* spacer removed (no fixed topbar) */
+			/* Single-page site: show page content by default */
+			.page{display:block}
 			.page.active{display:block}
-			/* Inner wrapper centers content but allows the page to scroll when content grows */
-			.page .inner{min-height:calc(100vh - 56px);display:flex;align-items:center;justify-content:center;padding:28px;box-sizing:border-box}
+			/* Inner wrapper centers content and fills the viewport (no scrolling) */
+			.page .inner{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px;box-sizing:border-box}
 
 			h1{font-size:32px;margin:0;color:var(--text)}
 
@@ -84,153 +123,48 @@
 			.theme-toggle svg path{fill:currentColor;transition:fill 180ms ease}
 
 
+			.content-wrap{position:relative;z-index:5}
+
+
 		</style>
 	</head>
 	<body>
-			<header class="topbar">
-				<div style="display:flex;align-items:center;flex:1;gap:12px">
-					<nav class="nav" role="navigation" aria-label="Main">
-						<a href="home" id="link-home">About Me</a>
-						<a href="projects" id="link-projects">Projects</a>
-					</nav>
-				</div>
-
-						<div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-							<!-- Social icons removed temporarily. Original markup preserved below for easy restore:
-						
-							<a href="https://youtu.be/dQw4w9WgXcQ" id="link-github" class="icon-btn" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
-								<img src="icons/github_64x.svg" alt="GitHub" width="20" height="20">
-							</a>
-
-							<a href="https://youtu.be/dQw4w9WgXcQ" id="link-linkedin" class="icon-btn" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-								<img src="icons/linkedin_64x.svg" alt="LinkedIn" width="20" height="20">
-							</a>
-
-							<a href="https://youtu.be/dQw4w9WgXcQ" id="link-instagram" class="icon-btn" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
-								<img src="icons/instagram_64x.svg" alt="Instagram" width="20" height="20">
-							</a>
-
-							<a href="https://youtu.be/dQw4w9WgXcQ" id="link-x" class="icon-btn" aria-label="X.com" target="_blank" rel="noopener noreferrer">
-								<img src="icons/x_30x.svg" alt="X.com" width="20" height="20">
-							</a>
-
-							Notes: button size was 44x44px with 20x20 icon images on desktop; on small screens .icon-btn was 36x36px and icons 16x16px.
-							-->
-						
-											<!-- Theme toggle: placed after social icons so icons come first -->
-											<button id="theme-toggle" class="icon-btn theme-toggle" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode">
-												<svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-													<path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5373 21.3065 11.4608 21.0672 11.8568C19.9289 13.7406 17.8615 15 15.5 15C11.9101 15 9 12.0899 9 8.5C9 6.13845 10.2594 4.07105 12.1432 2.93276C12.5392 2.69347 12.4627 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor" />
-												</svg>
-											</button>
-											</div>
-					</header>
+		<!-- Theme toggle fixed top-right -->
+		<button id="theme-toggle" class="icon-btn theme-toggle" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode" style="position:fixed;top:14px;right:14px;z-index:30">
+			<svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+				<path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5373 21.3065 11.4608 21.0672 11.8568C19.9289 13.7406 17.8615 15 15.5 15C11.9101 15 9 12.0899 9 8.5C9 6.13845 10.2594 4.07105 12.1432 2.93276C12.5392 2.69347 12.4627 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor" />
+			</svg>
+		</button>
 
 		<div class="content-wrap">
-			<div class="spacer" aria-hidden="true"></div>
-
 			<main>
-								<section id="home" class="page" role="region" aria-label="About me page">
-										<div class="inner">
-											<h1>hello world</h1>
-										</div>
-								</section>
-
-												<section id="projects" class="page" role="region" aria-label="Projects page">
-														<div class="inner">
-															<h1>hello projects</h1>
-														</div>
-												</section>
-
-												<section id="github" class="page" role="region" aria-label="GitHub page">
-														<div class="inner">
-															<h1>cool github projects</h1>
-														</div>
-												</section>
-
-												<section id="x" class="page" role="region" aria-label="X.com page">
-														<div class="inner">
-															<h1>wow much cool</h1>
-														</div>
-												</section>
-
-												<section id="linkedin" class="page" role="region" aria-label="LinkedIn page">
-														<div class="inner">
-															<h1>500+ connections crazy</h1>
-														</div>
-												</section>
-
-												<section id="instagram" class="page" role="region" aria-label="Instagram page">
-														<div class="inner">
-															<h1>super cool model</h1>
-														</div>
-												</section>
+					<section id="home" class="page" role="main" aria-label="Home">
+						<div class="inner">
+							<div style="text-align:center;max-width:900px;width:100%">
+								<h1 style="font-size:28px;margin-bottom:20px;color:var(--text);">Ruiqian Zhang</h1>
+								<p style="margin:0 0 18px;color:var(--muted)">Blacksburg, VA</p>
+								<div class="social-pills" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+									<a class="icon-btn" href="https://github.com/rhemzema" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
+										<img src="icons/github_64x.svg" alt="GitHub">
+									</a>
+									<a class="icon-btn linkedin" href="https://linkedin.com/ruiqianzhang" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+										<img src="icons/linkedin_64x.svg" alt="LinkedIn">
+									</a>
+									<a class="icon-btn" href="https://instagram.com/rhemzema" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+										<img src="icons/instagram_64x.svg" alt="Instagram">
+									</a>
+									<a class="icon-btn" href="https://x.com/rhemzema" aria-label="X.com" target="_blank" rel="noopener noreferrer">
+										<img src="icons/x_60x.svg" alt="X.com">
+									</a>
+								</div>
+							</div>
+						</div>
+					</section>
 			</main>
 		</div>
 
 		<script>
-					// Initialization and navigation logic (now includes social pages)
-					const pages = {
-						home: document.getElementById('home'),
-						projects: document.getElementById('projects'),
-						github: document.getElementById('github'),
-						x: document.getElementById('x'),
-						linkedin: document.getElementById('linkedin'),
-						instagram: document.getElementById('instagram')
-					};
-
-					const links = {
-						home: document.getElementById('link-home'),
-						projects: document.getElementById('link-projects'),
-						github: document.getElementById('link-github'),
-						x: document.getElementById('link-x'),
-						linkedin: document.getElementById('link-linkedin'),
-						instagram: document.getElementById('link-instagram')
-					};
-
-					function setActive(pageName){
-						Object.keys(pages).forEach(name=>{
-							const isActive = name === pageName;
-							pages[name].classList.toggle('active', isActive);
-
-							if(links[name]){
-								links[name].classList.toggle('active', isActive);
-								links[name].setAttribute('aria-current', isActive ? 'page' : 'false');
-							}
-						});
-					}
-
-					// Route from current pathname (e.g., /home -> 'home')
-					function routeFromPath(){
-						// Trim leading/trailing slashes and take first segment
-						const p = (location.pathname || '/').replace(/^\/+|\/+$/g, '');
-						const first = p.split('/')[0] || 'home';
-						return first in pages ? first : 'home';
-					}
-
-					// Intercept clicks only on internal navigation links inside the top `.nav`.
-					// This avoids touching social/external links (which live outside `.nav`).
-					document.querySelectorAll('.nav a').forEach(a => {
-						if(!a) return;
-						a.addEventListener('click', (e) => {
-							const href = a.getAttribute('href');
-							if(!href) return;
-							// Handle via history API for internal routes
-							e.preventDefault();
-							const newPath = '/' + href.replace(/^\/+|\/+$/g, '');
-							if(location.pathname !== newPath) history.pushState({page: href}, '', newPath);
-							setActive(routeFromPath());
-						});
-					});
-
-					// Handle back/forward navigation
-					window.addEventListener('popstate', ()=> setActive(routeFromPath()));
-
-					// Initial activation: ensure path is set to /home if root
-					if(location.pathname === '/' || location.pathname === ''){
-						history.replaceState({page: 'home'}, '', '/home');
-					}
-					setActive(routeFromPath());
+					// Single static page — no routing required. Keep theme, shape, and footer reveal behaviors.
 
 					// Theme toggle (light/dark)
 					const themeToggle = document.getElementById('theme-toggle');
@@ -258,6 +192,10 @@
 					}
 
 					initTheme();
+
+
+
+					// No scrolling behaviors needed for a single-screen static landing.
 		</script>
 	</body>
 </html>
