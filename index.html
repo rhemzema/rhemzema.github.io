@@ -57,9 +57,10 @@
       box-sizing:border-box;
       transition:all 160ms ease;
     }
-    .icon-btn img{display:block;width:20px;height:20px;object-fit:contain;transition:filter 180ms ease,opacity 180ms ease}
-    .icon-btn svg{width:20px;height:20px;display:block}
-    .icon-btn.linkedin img{width:22px;height:22px}
+    .icon-btn img{display:block;height:20px;width:auto;object-fit:contain;transition:filter 180ms ease,opacity 180ms ease}
+    .icon-btn svg{height:20px;width:auto;display:block}
+    .icon-btn.linkedin img{height:22px;width:auto}
+    .icon-btn.x img{height:17px;width:auto}
 
     /* Hover/focus effects for icon buttons */
     .icon-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 6px 18px rgba(11,95,255,0.08)}
@@ -114,8 +115,9 @@
     /* Responsive adjustments */
     @media (max-width:480px){
       .icon-btn{width:40px;height:40px}
-      .icon-btn img,.icon-btn svg{width:18px;height:18px}
-      .icon-btn.linkedin img{width:18px;height:18px}
+      .icon-btn img,.icon-btn svg{height:18px;width:auto}
+      .icon-btn.linkedin img{height:18px;width:auto}
+      .icon-btn.x img{height:18px;width:auto}
       .page .inner{min-height:calc(100vh - 52px)}
     }
 
@@ -134,6 +136,28 @@
     }
     /* also ensure the body itself transitions */
     body { transition: background-color 320ms ease, color 320ms ease; }
+
+    /* Bottom footer */
+    .site-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      height:56px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:transparent;
+      color:var(--muted);
+      font-size:14px;
+      z-index:25;
+      padding:8px 16px;
+      pointer-events:none; /* make container non-interactive, inner content still interactive if needed */
+    }
+    .site-footer .footer-inner{pointer-events:auto}
+    @media (max-width:480px){
+      .site-footer{height:48px;font-size:13px;padding:6px 12px}
+    }
   </style>
 </head>
 <body>
@@ -160,12 +184,13 @@
               <a class="icon-btn" href="https://instagram.com/rhemzema" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
                 <img src="icons/instagram_64x.svg" alt="Instagram">
               </a>
-              <a class="icon-btn" href="https://x.com/rhemzema" aria-label="X.com" target="_blank" rel="noopener noreferrer">
-                <img src="icons/x_60x.svg" alt="X.com">
+              <a class="icon-btn x" href="https://x.com/rhemzema" aria-label="X.com" target="_blank" rel="noopener noreferrer">
+                <img src="icons/x_300x.svg" alt="X.com">
               </a>
             </div>
 
             <div class="pill-row">
+              <a class="pill coffee-pill" href="https://ko-fi.com/ruiqian" aria-label="ko-fi" target="_blank" rel="noopener noreferrer">Buy me Coffee!</a>
               <a class="pill resume-pill" href="https://drive.google.com/file/d/1OEBSD_8MTlkyd5l5jpyGCGhzxFz_AGf-/view?usp=sharing" aria-label="Resume" target="_blank" rel="noopener noreferrer">Resume</a>
               <a class="pill email-pill" href="mailto:ruiqian@vt.edu" aria-label="Email" rel="noopener noreferrer">ruiqian@vt.edu</a>
             </div>
@@ -174,6 +199,10 @@
       </section>
     </main>
   </div>
+
+  <footer class="site-footer" role="contentinfo" aria-label="Footer">
+    <div class="footer-inner">&copy; 2025 Ruiqian Zhang</div>
+  </footer>
 
   <script>
     const themeToggle = document.getElementById('theme-toggle');
