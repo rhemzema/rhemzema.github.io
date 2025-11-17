@@ -21,6 +21,30 @@
       --pill-border-dark: rgba(255,255,255,0.06);
     }
 
+    /* Avatar: circular masked image with ring (no animation) */
+    .avatar-wrapper{
+      display:inline-block;
+      border-radius:999px;
+      padding:4px; /* ring thickness */
+      background:transparent;
+      margin-bottom:12px;
+      /* prevent interactions on the wrapper too so clicks/drag don't reach the image */
+      pointer-events:none;
+    }
+    .avatar{
+      display:block;
+      width:128px;
+      height:128px;
+      border-radius:999px;
+      object-fit:cover;
+      border:0;
+      /* prevent selection, dragging and pointer interactions to discourage download */
+      pointer-events:none;
+      user-select:none;
+      -webkit-user-drag:none;
+      touch-action:none;
+    }
+
     /* Page layout */
     html,body{
       height:100%;
@@ -172,6 +196,10 @@
       <section id="home" class="page" role="main" aria-label="Home">
         <div class="inner">
           <div style="text-align:center;max-width:900px;width:100%">
+            <!-- Avatar (circular masked) -->
+            <div class="avatar-wrapper" tabindex="-1" aria-hidden="false">
+              <img class="avatar" src="https://www.dropbox.com/scl/fi/udc4bvaq7gmr4ess6uvte/Ruiqian.jpg?rlkey=pl7vnh08b49nfkjdatq0n3j1g&st=2qoi35ti&dl=1" alt="Ruiqian Zhang" loading="lazy" draggable="false" oncontextmenu="return false" />
+            </div>
             <h1>Ruiqian Zhang</h1>
             <p>Blacksburg, VA</p>
             <div class="social-pills">
@@ -189,7 +217,7 @@
               </a>
             </div>
             <div class="pill-row">
-              <a class="pill resume-pill" href="https://drive.google.com/file/d/1aahcnYovKxRag3JXCUOrbV7VcdCrNn_E/view?usp=sharing" aria-label="Resume" target="_blank" rel="noopener noreferrer">Resume</a>
+              <a class="pill resume-pill" href="https://drive.google.com/file/d/1OEBSD_8MTlkyd5l5jpyGCGhzxFz_AGf-/view?usp=sharing" aria-label="Resume" target="_blank" rel="noopener noreferrer">Resume</a>
               <a class="pill email-pill" href="mailto:ruiqian@vt.edu" aria-label="Email" rel="noopener noreferrer">ruiqian@vt.edu</a>
               <a class="pill coffee-pill" href="https://ko-fi.com/ruiqian" aria-label="ko-fi" target="_blank" rel="noopener noreferrer">Buy me Boba!</a>
             </div>
