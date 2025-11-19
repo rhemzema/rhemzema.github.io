@@ -43,6 +43,15 @@
       user-select:none;
       -webkit-user-drag:none;
       touch-action:none;
+
+      /* fade-in on first load */
+      opacity: 0;
+      transition: opacity 500ms ease;
+      will-change: opacity;
+    }
+
+    .avatar.loaded {
+      opacity: 1;
     }
 
     /* Page layout */
@@ -201,7 +210,15 @@
           <div style="text-align:center;max-width:900px;width:100%">
             <!-- Avatar (circular masked) -->
             <div class="avatar-wrapper" tabindex="-1" aria-hidden="false">
-              <img class="avatar" src="./images/Ruiqian.jpg" alt="Profile" width="128" height="128" loading="eager" fetchpriority="high" decoding="async" draggable="false" oncontextmenu="return false" />
+              <img class="avatar"
+                src="https://www.dropbox.com/scl/fi/udc4bvaq7gmr4ess6uvte/Ruiqian.jpg?rlkey=pl7vnh08b49nfkjdatq0n3j1g&st=eqf9webc&dl=1"
+                alt="Profile"
+                width="128" height="128"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+                draggable="false"
+                oncontextmenu="return false" />
             </div>
             <h1>Ruiqian Zhang</h1>
             <p>Blacksburg, VA</p>
@@ -268,6 +285,28 @@
     }
 
     initTheme();
+
+    // Fade-in avatar when it finishes loading (500ms)
+    (function(){
+      const avatar = document.querySelector('.avatar');
+      if (!avatar) return;
+
+      function markLoaded(){
+        avatar.classList.add('loaded');
+      }
+
+      // If already loaded (cache), apply immediately
+      if (avatar.complete && avatar.naturalWidth !== 0){
+        // small timeout so transition runs reliably
+        requestAnimationFrame(() => requestAnimationFrame(markLoaded));
+      } else {
+        avatar.addEventListener('load', markLoaded, { once: true });
+        // fallback timeout: ensure it becomes visible eventually
+        setTimeout(() => {
+          if (!avatar.classList.contains('loaded') && avatar.naturalWidth > 0) markLoaded();
+        }, 2000);
+      }
+    })();
   </script>
 </body>
 </html>
