@@ -6,7 +6,7 @@
   <title>About Ruiqian Zhang</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   <link rel="icon" href="icons/face_64x.svg" type="image/svg+xml">
   <style>
     :root{
@@ -46,7 +46,7 @@
 
       /* fade-in on first load */
       opacity: 0;
-      transition: opacity 500ms ease;
+      transition: opacity 1000ms ease;
       will-change: opacity;
     }
 
@@ -58,7 +58,7 @@
     html,body{
       height:100%;
       margin:0;
-      font-family:Roboto,Inter,system-ui,Segoe UI,'Helvetica Neue',Arial;
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       overflow:hidden;
     }
     body{
@@ -71,7 +71,13 @@
     .content-wrap{min-height:100vh;display:block;position:relative;z-index:5}
     .page{display:block}
     .page .inner{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px;box-sizing:border-box}
-    h1{font-size:28px;margin:0 0 20px;color:var(--text)}
+    h1{
+      font-size:28px;
+      margin:0 0 20px;
+      color:var(--text);
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-style: regular;
+    }
     p{margin:0 0 18px;color:var(--muted)}
 
     /* Icon button (rounded-square) */
@@ -88,9 +94,9 @@
       border:0;
       overflow:hidden;
       box-sizing:border-box;
-      transition:all 160ms ease;
+      transition:all 500ms ease;
     }
-    .icon-btn img{display:block;height:20px;width:auto;object-fit:contain;transition:filter 180ms ease,opacity 180ms ease}
+    .icon-btn img{display:block;height:20px;width:auto;object-fit:contain;transition:filter 500ms ease,opacity 500ms ease}
     .icon-btn svg{height:20px;width:auto;display:block}
     .icon-btn.linkedin img{height:21px;width:auto}
     .icon-btn.x img{height:17px;width:auto}
@@ -133,7 +139,7 @@
       color:var(--text);
       text-decoration:none;
       font-weight:600;
-      transition:all 160ms ease;
+      transition:all 500ms ease;
     }
     .pill:focus{outline:2px solid rgba(11,95,255,0.12);outline-offset:3px}
     .pill:hover{background:var(--hover-bg);transform:translateY(-3px) scale(1.02);box-shadow:0 6px 18px rgba(11,95,255,0.08);color:var(--accent)}
@@ -194,6 +200,45 @@
 
     /* Hide the Ko-fi / coffee pill */
     .coffee-pill{ display:none !important; }
+
+    /* fade-in initial state for key UI pieces (hidden until page load) */
+    .avatar,
+    h1, p,
+    .icon-btn,
+    .pill,
+    .site-footer .footer-inner {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 1000ms ease, transform 1000ms ease;
+      will-change: opacity, transform;
+    }
+
+    /* visible state after page load */
+    .page-loaded .avatar,
+    .page-loaded h1, .page-loaded p,
+    .page-loaded .icon-btn,
+    .page-loaded .pill,
+    .page-loaded .site-footer .footer-inner {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* when a button/pill has this class (set on touch), suppress hover/glow */
+    .icon-btn.no-glow,
+    .pill.no-glow {
+      background: transparent !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+
+    /* on devices that don't support hover, prevent hover styles from sticking */
+    @media (hover: none) {
+      .icon-btn:hover,
+      .pill:hover {
+        background: transparent;
+        box-shadow: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -285,7 +330,7 @@
 
     initTheme();
 
-    // Fade-in avatar when it finishes loading (500ms)
+    // Fade-in avatar when it finishes loading (500ms) - existing logic kept
     (function(){
       const avatar = document.querySelector('.avatar');
       if (!avatar) return;
@@ -294,17 +339,45 @@
         avatar.classList.add('loaded');
       }
 
-      // If already loaded (cache), apply immediately
       if (avatar.complete && avatar.naturalWidth !== 0){
-        // small timeout so transition runs reliably
         requestAnimationFrame(() => requestAnimationFrame(markLoaded));
       } else {
         avatar.addEventListener('load', markLoaded, { once: true });
-        // fallback timeout: ensure it becomes visible eventually
         setTimeout(() => {
           if (!avatar.classList.contains('loaded') && avatar.naturalWidth > 0) markLoaded();
         }, 2000);
       }
+    })();
+
+    // Add page-loaded class on window load so all items fade in (1000ms)
+    window.addEventListener('load', () => {
+      // small timeout to ensure CSS is applied and transition runs reliably
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.body.classList.add('page-loaded');
+      }));
+    });
+
+    // Suppress hover/glow after a tap on touch devices
+    (function(){
+      const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+      if (!isTouch) return;
+
+      const elems = document.querySelectorAll('.icon-btn, .pill');
+      elems.forEach(el => {
+        el.addEventListener('touchstart', () => {
+          // add class immediately to prevent :hover from visually sticking
+          el.classList.add('no-glow');
+        }, { passive: true });
+
+        el.addEventListener('touchend', () => {
+          // remove the suppression shortly after the tap so subsequent hovers work
+          setTimeout(() => el.classList.remove('no-glow'), 200);
+        }, { passive: true });
+
+        el.addEventListener('touchcancel', () => {
+          el.classList.remove('no-glow');
+        }, { passive: true });
+      });
     })();
   </script>
 </body>
