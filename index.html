@@ -100,35 +100,27 @@
       font-weight: 500;
     }
 
-    /* --- DESKTOP NAV LAYOUT (FIXED) --- */
-    /* 1. Force wrapper to sit on top of everything (z-index 50)
-       2. Use pointer-events: none so clicks pass through the empty areas
-    */
+    /* --- DESKTOP NAV LAYOUT --- */
+    /* Wrapper is effectively invisible on Desktop */
     .nav-wrapper {
-      position: fixed; 
-      top: 0; 
-      left: 0; 
-      width: 100%; 
-      height: 0; /* Zero height so it doesn't block page */
-      z-index: 50; 
-      pointer-events: none; 
+      position: static;
+      pointer-events: none;
+      z-index: 30;
     }
 
-    /* 3. Re-enable clicks specifically for the buttons
-       4. Position absolute relative to the fixed wrapper
-    */
+    /* Buttons are fixed individually on Desktop */
     .nav-wrapper .icon-btn {
-      position: absolute;
+      position: fixed;
       top: 14px;
-      pointer-events: auto; 
+      z-index: 31;
+      pointer-events: auto;
     }
     
-    /* Desktop Positions */
     .nav-theme     { right: 14px; }
     .nav-portfolio { right: 72px; }
     .nav-home      { right: 166px; }
 
-    /* Gradient Background (Z-Index 29, so Nav 50 is on top) */
+    /* Gradient Background */
     .top-nav-bg {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -376,7 +368,12 @@
     }
     .scroll-to-top.visible { opacity: 1; transform: none; }
 
-    .site-footer-container { display: block; text-align: center; scroll-snap-align: end; padding-bottom: 30px; }
+    .site-footer-container { 
+      display: block; 
+      text-align: center; 
+      /* FIX: Removed scroll-snap-align to prevent browser from snapping to footer */
+      padding-bottom: 30px; 
+    }
     .site-footer { height: auto; color: var(--muted); font-size: 14px; padding: 8px 16px; }
 
     /* --- ANIMATIONS --- */
@@ -405,20 +402,20 @@
     /* --- MOBILE OPTIMIZATIONS (Max Width 480px) --- */
     @media (max-width: 480px) {
       .nav-wrapper {
+        position: fixed;
         top: 14px;
         left: 14px;
         right: 14px;
-        width: auto; /* Reset desktop full width */
-        height: auto; /* Allow height for buttons */
+        z-index: 30;
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 10px;
-        pointer-events: auto; /* Catch clicks on the flex container */
+        pointer-events: auto; 
       }
 
       .nav-wrapper .icon-btn {
-        position: static; /* Reset fixed positioning */
+        position: static; 
         flex: 1; 
         width: auto;
         height: 52px; 
