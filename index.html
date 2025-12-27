@@ -33,7 +33,7 @@
 
     /* --- Base Layout & Snap --- */
     html {
-      scroll-snap-type: y mandatory;
+      scroll-snap-type: y proximity;
       scroll-behavior: auto;
     }
 
@@ -66,7 +66,7 @@
       cursor: pointer;
       text-decoration: none;
       
-      /* RELEASE ANIMATION: Slow fade out */
+      /* RELEASE ANIMATION: Slow fade out of background */
       transition: 
         transform 600ms cubic-bezier(0.25, 1, 0.5, 1), 
         background-color 1000ms ease-out, 
@@ -81,7 +81,7 @@
     .icon-btn:active {
       transform: scale(0.95);
       background: var(--hover-bg);
-      /* PRESS ANIMATION: Instant */
+      /* PRESS ANIMATION: Instant background appearance */
       transition: transform 0.1s ease, background-color 0s;
     }
     body.dark .icon-btn:active {
@@ -100,26 +100,35 @@
       font-weight: 500;
     }
 
-    /* --- DESKTOP NAV LAYOUT --- */
-    /* IMPORTANT: No transform or animation on this wrapper, or fixed children break */
+    /* --- DESKTOP NAV LAYOUT (FIXED) --- */
+    /* 1. Force wrapper to sit on top of everything (z-index 50)
+       2. Use pointer-events: none so clicks pass through the empty areas
+    */
     .nav-wrapper {
-      position: static;
-      pointer-events: none;
-      z-index: 30;
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 0; /* Zero height so it doesn't block page */
+      z-index: 50; 
+      pointer-events: none; 
     }
 
+    /* 3. Re-enable clicks specifically for the buttons
+       4. Position absolute relative to the fixed wrapper
+    */
     .nav-wrapper .icon-btn {
-      position: fixed;
+      position: absolute;
       top: 14px;
-      z-index: 31;
-      pointer-events: auto;
+      pointer-events: auto; 
     }
     
+    /* Desktop Positions */
     .nav-theme     { right: 14px; }
     .nav-portfolio { right: 72px; }
     .nav-home      { right: 166px; }
 
-    /* Gradient Background */
+    /* Gradient Background (Z-Index 29, so Nav 50 is on top) */
     .top-nav-bg {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -141,7 +150,6 @@
     .page {
       display: block;
       scroll-snap-align: start;
-      scroll-snap-stop: always;
     }
 
     #home {
@@ -150,7 +158,7 @@
 
     .page .inner {
       min-height: 100vh;
-      min-height: 100svh; 
+      min-height: 100svh; /* Center on mobile */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -376,8 +384,7 @@
       transition: background-color 0.32s ease, color 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease !important;
     }
 
-    /* Fade In & Up 
-       FIX: Removed .nav-wrapper from here to prevent fixed pos breaking on desktop */
+    /* Fade In & Up */
     .avatar, h1, p, .icon-btn, .pill, .site-footer,
     .resume-section, .portfolio-header-row {
       opacity: 0; 
@@ -398,20 +405,20 @@
     /* --- MOBILE OPTIMIZATIONS (Max Width 480px) --- */
     @media (max-width: 480px) {
       .nav-wrapper {
-        position: fixed;
         top: 14px;
         left: 14px;
         right: 14px;
-        z-index: 30;
+        width: auto; /* Reset desktop full width */
+        height: auto; /* Allow height for buttons */
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 10px;
-        pointer-events: auto; 
+        pointer-events: auto; /* Catch clicks on the flex container */
       }
 
       .nav-wrapper .icon-btn {
-        position: static; 
+        position: static; /* Reset fixed positioning */
         flex: 1; 
         width: auto;
         height: 52px; 
