@@ -65,16 +65,24 @@
       color: var(--muted);
       cursor: pointer;
       text-decoration: none;
-      transition: all 500ms cubic-bezier(0.25, 1, 0.5, 1);
+      
+      /* RELEASE ANIMATION: Slow fade out */
+      transition: 
+        transform 600ms cubic-bezier(0.25, 1, 0.5, 1), 
+        background-color 1000ms ease-out, 
+        color 500ms ease, 
+        box-shadow 500ms ease;
+        
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
 
     /* Active State (Mobile Feedback) */
     .icon-btn:active {
-      transform: scale(0.92);
+      transform: scale(0.95);
       background: var(--hover-bg);
-      transition: transform 0.1s ease;
+      /* PRESS ANIMATION: Instant */
+      transition: transform 0.1s ease, background-color 0s;
     }
     body.dark .icon-btn:active {
       background: var(--hover-bg-dark);
@@ -92,24 +100,21 @@
       font-weight: 500;
     }
 
-    /* --- Top Navigation Positioning --- */
-    /* Container for the buttons */
-    .nav-fixed {
-      position: fixed;
-      top: 14px;
+    /* --- DESKTOP NAV LAYOUT --- */
+    /* IMPORTANT: No transform or animation on this wrapper, or fixed children break */
+    .nav-wrapper {
+      position: static;
+      pointer-events: none;
       z-index: 30;
-      /* On Desktop: Full width, but clicks pass through empty space */
-      width: 100%;
-      pointer-events: none; 
     }
 
-    /* Children (Buttons) catch clicks and position themselves */
-    .nav-fixed .icon-btn {
-      position: absolute;
+    .nav-wrapper .icon-btn {
+      position: fixed;
+      top: 14px;
+      z-index: 31;
       pointer-events: auto;
     }
     
-    /* Desktop Positions */
     .nav-theme     { right: 14px; }
     .nav-portfolio { right: 72px; }
     .nav-home      { right: 166px; }
@@ -177,12 +182,15 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 500;
       color: var(--muted);
       text-decoration: underline;
       text-underline-offset: 4px;
-      transition: all 0.2s ease;
+      transition: 
+        opacity 1000ms ease-out, 
+        transform 600ms cubic-bezier(0.25, 1, 0.5, 1), 
+        color 200ms ease;
       -webkit-tap-highlight-color: transparent;
     }
     .download-link:hover {
@@ -190,8 +198,9 @@
       text-decoration-color: var(--accent);
     }
     .download-link:active {
-      opacity: 0.6;
+      opacity: 0.5;
       transform: scale(0.98);
+      transition: opacity 0s, transform 0.1s ease;
     }
     .download-link svg {
       width: 10px;
@@ -286,7 +295,7 @@
     }
     .avatar.loaded { opacity: 1; }
 
-    h1 { font-size: 28px; margin: 0; color: var(--text); line-height: 1.2; }
+    h1 { font-size: 28px; margin: 0 0 8px 0; color: var(--text); line-height: 1.2; }
     p { margin: 0 0 18px; color: var(--muted); }
 
     .icon-btn img {
@@ -334,7 +343,11 @@
       color: var(--text);
       text-decoration: none;
       font-weight: 600;
-      transition: all 500ms ease;
+      transition: 
+        transform 600ms cubic-bezier(0.25, 1, 0.5, 1), 
+        background-color 1000ms ease-out, 
+        color 500ms ease, 
+        border-color 500ms ease;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
@@ -342,7 +355,7 @@
     .pill:active {
       transform: scale(0.95);
       background: var(--hover-bg);
-      transition: transform 0.1s ease;
+      transition: transform 0.1s ease, background-color 0s;
     }
     body.dark .pill:active { background: var(--hover-bg-dark); }
     body.dark .pill { border-color: var(--pill-border-dark); background: rgba(255,255,255,0.02); }
@@ -363,9 +376,10 @@
       transition: background-color 0.32s ease, color 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease !important;
     }
 
-    /* Fade In & Up */
+    /* Fade In & Up 
+       FIX: Removed .nav-wrapper from here to prevent fixed pos breaking on desktop */
     .avatar, h1, p, .icon-btn, .pill, .site-footer,
-    .resume-section, .portfolio-header-row, .nav-fixed {
+    .resume-section, .portfolio-header-row {
       opacity: 0; 
       transform: translateY(20px); 
       transition: opacity 1000ms ease, transform 1000ms ease;
@@ -375,7 +389,7 @@
     .page-loaded .avatar, .page-loaded h1, .page-loaded p, 
     .page-loaded .icon-btn, .page-loaded .pill, .page-loaded .site-footer,
     .page-loaded .scroll-to-top, .page-loaded .resume-section,
-    .page-loaded .portfolio-header-row, .page-loaded .nav-fixed {
+    .page-loaded .portfolio-header-row {
       opacity: 1; transform: none; 
     }
 
@@ -383,32 +397,29 @@
 
     /* --- MOBILE OPTIMIZATIONS (Max Width 480px) --- */
     @media (max-width: 480px) {
-      /* Transform the Fixed Nav into a Flex Container */
-      .nav-fixed {
+      .nav-wrapper {
+        position: fixed;
+        top: 14px;
+        left: 14px;
+        right: 14px;
+        z-index: 30;
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 8px;
-        padding: 0 14px;
-        box-sizing: border-box;
-        pointer-events: auto; /* Re-enable clicks on container */
-        top: 14px;
-        right: auto;
-        width: 100%;
+        gap: 10px;
+        pointer-events: auto; 
       }
 
-      /* Make Buttons Big & Static (Remove absolute pos) */
-      .nav-fixed .icon-btn {
-        position: static; /* Stop floating */
-        flex: 1; /* Grow to fill space */
+      .nav-wrapper .icon-btn {
+        position: static; 
+        flex: 1; 
         width: auto;
-        height: 52px; /* Bigger touch target */
+        height: 52px; 
         font-size: 16px;
       }
 
-      /* Theme Toggle stays square but sits in the flex row */
-      .nav-fixed .nav-theme {
-        flex: 0 0 52px; /* Fixed width */
+      .nav-wrapper .nav-theme {
+        flex: 0 0 52px; 
         width: 52px;
         height: 52px;
       }
@@ -426,7 +437,7 @@
 
   <div id="top-nav-bg" class="top-nav-bg"></div>
 
-  <nav class="nav-fixed">
+  <nav class="nav-wrapper">
     <a class="icon-btn text-btn nav-home smooth-scroll-link" href="#home">Home</a>
     <a class="icon-btn text-btn nav-portfolio smooth-scroll-link" href="#portfolio">Portfolio</a>
     <button id="theme-toggle" class="icon-btn square nav-theme theme-toggle" aria-label="Toggle dark mode">
