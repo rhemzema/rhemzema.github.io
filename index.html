@@ -2,383 +2,661 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
   <title>About Ruiqian Zhang</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-  <link rel="icon" href="icons/face_64x.svg" type="image/svg+xml">
+  <link rel="icon" href="icons/face.svg" type="image/svg+xml">
+
   <style>
-    :root{
-      --bg:#f2f0ef;
-      --accent:#0b5fff;
-      --muted:#6b7280;
-      --text:#111;
-      --toggle-fill:#9ca3af;
-      --hover-bg: rgba(11,95,255,0.06);
-      --hover-bg-dark: rgba(255,255,255,0.06);
-      --pill-border: rgba(16,24,40,0.06);
-      --pill-border-dark: rgba(255,255,255,0.06);
+    :root {
+      /* Colors */
+      --bg: #f2f0ef;
+      --accent: #0b5fff;
+      --muted: #6b7280;
+      --text: #111;
+      --toggle-fill: #9ca3af;
+      
+      /* Hover States */
+      --hover-bg: rgba(11, 95, 255, 0.06);
+      --hover-bg-dark: rgba(255, 255, 255, 0.06);
+      
+      /* Borders */
+      --pill-border: rgba(16, 24, 40, 0.06);
+      --pill-border-dark: rgba(255, 255, 255, 0.06);
+      
+      /* Dimensions */
+      --nav-height: 100px;
     }
 
-    /* Avatar: circular masked image with ring (no animation) */
-    .avatar-wrapper{
-      display:inline-block;
-      border-radius:999px;
-      padding:4px; /* ring thickness */
-      background:transparent;
-      margin-bottom:12px;
-      /* prevent interactions on the wrapper too so clicks/drag don't reach the image */
-      pointer-events:none;
-    }
-    .avatar{
-      display:block;
-      width:128px;
-      height:128px;
-      border-radius:999px;
-      object-fit:cover;
-      border:0;
-      /* prevent selection, dragging and pointer interactions to discourage download */
-      pointer-events:none;
-      user-select:none;
-      -webkit-user-drag:none;
-      touch-action:none;
-
-      /* fade-in on first load */
-      opacity: 0;
-      transition: opacity 1000ms ease;
-      will-change: opacity;
+    /* --- Base Layout & Snap --- */
+    html {
+      scroll-snap-type: y mandatory;
+      scroll-behavior: auto;
     }
 
-    .avatar.loaded {
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body.dark {
+      --bg: #071221;
+      --accent: #7ab7ff;
+      --muted: #98a6b3;
+      --text: #f2f0ef;
+      --toggle-fill: #6b7280;
+    }
+
+    /* --- Shared Button Styles --- */
+    .icon-btn {
+      display: inline-flex; 
+      align-items: center; 
+      justify-content: center;
+      border-radius: 8px; 
+      border: 0; 
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 500ms cubic-bezier(0.25, 1, 0.5, 1);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    /* Active State (Mobile Feedback) */
+    .icon-btn:active {
+      transform: scale(0.92);
+      background: var(--hover-bg);
+      transition: transform 0.1s ease;
+    }
+    body.dark .icon-btn:active {
+      background: var(--hover-bg-dark);
+    }
+
+    .icon-btn.square {
+      width: 44px;
+      height: 44px;
+    }
+
+    .icon-btn.text-btn {
+      width: 80px;
+      height: 44px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* --- Top Navigation Positioning --- */
+    /* Container for the buttons */
+    .nav-fixed {
+      position: fixed;
+      top: 14px;
+      z-index: 30;
+      /* On Desktop: Full width, but clicks pass through empty space */
+      width: 100%;
+      pointer-events: none; 
+    }
+
+    /* Children (Buttons) catch clicks and position themselves */
+    .nav-fixed .icon-btn {
+      position: absolute;
+      pointer-events: auto;
+    }
+    
+    /* Desktop Positions */
+    .nav-theme     { right: 14px; }
+    .nav-portfolio { right: 72px; }
+    .nav-home      { right: 166px; }
+
+    /* Gradient Background */
+    .top-nav-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-height);
+      z-index: 29;
+      pointer-events: none;
+      background: linear-gradient(to bottom, var(--bg) 0%, rgba(0,0,0,0) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
       opacity: 1;
+      transition: background-color 0.32s ease;
     }
 
-    /* Page layout */
-    html,body{
-      height:100%;
-      margin:0;
-      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      overflow:hidden;
-    }
-    body{
-      background:var(--bg);
-      color:var(--text);
-      font-weight:400;
+    /* --- Content & Sections --- */
+    .content-wrap { min-height: 100vh; position: relative; z-index: 5; }
+    
+    .page {
+      display: block;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
     }
 
-    /* Content */
-    .content-wrap{min-height:100vh;display:block;position:relative;z-index:5}
-    .page{display:block}
-    .page .inner{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px;box-sizing:border-box}
-    h1{
-      font-size:28px;
-      margin:0 0 20px;
-      color:var(--text);
-      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      font-style: regular;
-    }
-    p{margin:0 0 18px;color:var(--muted)}
-
-    /* Icon button (rounded-square) */
-    .icon-btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width:44px;
-      height:44px;
-      border-radius:8px;
-      background:transparent;
-      color:var(--muted);
-      text-decoration:none;
-      border:0;
-      overflow:hidden;
-      box-sizing:border-box;
-      transition:all 500ms ease;
-    }
-    .icon-btn img{display:block;height:20px;width:auto;object-fit:contain;transition:filter 500ms ease,opacity 500ms ease}
-    .icon-btn svg{height:20px;width:auto;display:block}
-    .icon-btn.linkedin img{height:21px;width:auto}
-    .icon-btn.x img{height:17px;width:auto}
-
-    /* Hover/focus effects for icon buttons */
-    .icon-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 6px 18px rgba(11,95,255,0.08)}
-    .icon-btn:active{transform:translateY(-1px) scale(0.995)}
-    .icon-btn:focus{outline:2px solid rgba(11,95,255,0.14);outline-offset:3px}
-
-    /* Light mode hover */
-    .icon-btn:hover{background:var(--hover-bg);color:var(--accent)}
-
-    /* Dark mode colors and hover halo */
-    body.dark{
-      --bg:#071221;
-      --bar:#0b1220;
-      --accent:#7ab7ff;
-      --muted:#98a6b3;
-      --text:#f2f0ef;
-      --toggle-fill:#6b7280;
-    }
-    body.dark .icon-btn{color:var(--text)}
-    body.dark .icon-btn img{filter:brightness(0) invert(1);opacity:1}
-    body.dark .icon-btn svg path{fill:#f2f0ef}
-    body.dark .icon-btn:hover{
-      background:var(--hover-bg-dark);
-      box-shadow:0 8px 24px rgba(200,200,200,0.18);
-      color:var(--text);
+    #home {
+      margin-bottom: 20vh;
     }
 
-    /* Pill (Email / Resume) - uses same animation as icon buttons */
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 14px;
-      border-radius:999px;
-      border:1px solid rgba(16,24,40,0.06);
-      background:transparent;
-      color:var(--text);
-      text-decoration:none;
-      font-weight:600;
-      transition:all 500ms ease;
-    }
-    .pill:focus{outline:2px solid rgba(11,95,255,0.12);outline-offset:3px}
-    .pill:hover{background:var(--hover-bg);transform:translateY(-3px) scale(1.02);box-shadow:0 6px 18px rgba(11,95,255,0.08);color:var(--accent)}
-    .pill:active{transform:translateY(-1px) scale(0.995)}
-    body.dark .pill{border-color:var(--pill-border-dark);color:var(--text);background:rgba(255,255,255,0.02)}
-    body.dark .pill:hover{background:var(--hover-bg-dark);box-shadow:0 8px 24px rgba(200,200,200,0.18);color:var(--text)}
-
-    /* Footer/icon grouping (center) */
-    .social-pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-    .pill-row{margin-top:12px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
-
-    /* Responsive adjustments */
-    @media (max-width:480px){
-      .icon-btn{width:40px;height:40px}
-      .icon-btn img,.icon-btn svg{height:18px;width:auto}
-      .icon-btn.linkedin img{height:18px;width:auto}
-      .icon-btn.x img{height:18px;width:auto}
-      .page .inner{min-height:calc(100vh - 52px)}
+    .page .inner {
+      min-height: 100vh;
+      min-height: 100svh; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      box-sizing: border-box;
     }
 
-    /* Theme toggle */
-    .theme-toggle{font-size:16px;display:inline-flex;align-items:center;justify-content:center;color:var(--toggle-fill)}
-    .theme-toggle svg path{fill:currentColor;transition:fill 180ms ease}
-
-    /* Theme transition helper: used briefly when toggling theme for a smooth fade */
-    /* Applied via JS by adding/removing the `theme-transition` class on <body> */
-    body.theme-transition,
-    body.theme-transition .icon-btn,
-    body.theme-transition .pill,
-    body.theme-transition .theme-toggle,
-    body.theme-transition .theme-toggle svg path {
-      transition: background-color 320ms ease, color 320ms ease, box-shadow 320ms ease, border-color 320ms ease, opacity 320ms ease, filter 320ms ease;
+    /* --- PORTFOLIO SECTION --- */
+    #portfolio {
+      scroll-margin-top: 120px; 
     }
-    /* also ensure the body itself transitions */
-    body { transition: background-color 320ms ease, color 320ms ease; }
 
-    /* Bottom footer */
-    .site-footer{
-      position:sticky;
-      left:0;
-      right:0;
-      bottom:0;
-      height:56px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:transparent;
-      color:var(--muted);
-      font-size:14px;
-      z-index:25;
-      padding:8px 16px;
-      pointer-events:none; /* make container non-interactive, inner content still interactive if needed */
+    #portfolio .inner {
+      display: block; 
+      height: auto;
+      min-height: auto;
+      padding-top: 0; 
     }
-    .site-footer .footer-inner{pointer-events:auto}
-    @media (max-width:480px){
-      .site-footer{height:48px;font-size:13px;padding:6px 12px}
-    } 
 
-    /* Hide the Ko-fi / coffee pill */
-    .coffee-pill{ display:none !important; }
+    .portfolio-header-row {
+      display: flex;
+      align-items: baseline; 
+      gap: 12px;
+      margin-bottom: 40px;
+    }
 
-    /* fade-in initial state for key UI pieces (hidden until page load) */
-    .avatar,
-    h1, p,
-    .icon-btn,
-    .pill,
-    .site-footer .footer-inner {
+    /* Download Link */
+    .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .download-link:hover {
+      color: var(--accent);
+      text-decoration-color: var(--accent);
+    }
+    .download-link:active {
+      opacity: 0.6;
+      transform: scale(0.98);
+    }
+    .download-link svg {
+      width: 10px;
+      height: 10px;
+      stroke: currentColor;
+      stroke-width: 2;
+      transition: transform 0.2s ease;
+    }
+    .download-link:hover svg {
+      transform: translate(2px, -2px); 
+    }
+
+    /* --- Resume Styling --- */
+    .resume-section { margin-bottom: 36px; }
+    
+    .resume-section h2 { 
+      font-size: 22px; 
+      border-bottom: 1px solid var(--pill-border); 
+      padding-bottom: 8px; 
+      margin-bottom: 20px;
+      color: var(--accent);
+    }
+    body.dark .resume-section h2 { border-color: var(--pill-border-dark); }
+
+    .resume-item { margin-bottom: 24px; }
+    
+    .resume-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: baseline; 
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    
+    .resume-header h3 { 
+      font-size: 18px; 
+      font-weight: 600; 
+      margin: 0; 
+      color: var(--text);
+      line-height: 1.4;
+    }
+    
+    .resume-header .date { 
+      font-size: 16px; 
+      color: var(--muted); 
+      white-space: nowrap;
+    }
+
+    .resume-item .subtitle {
+      font-size: 16px; 
+      font-style: italic;
+      margin-bottom: 10px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .resume-section ul {
+      margin: 0;
+      padding-left: 20px;
+      list-style-type: disc;
+    }
+    
+    .resume-section li {
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+    
+    .resume-section p { 
+      font-size: 16px;
+      line-height: 1.6; 
+    }
+    
+    .resume-section strong { color: var(--text); font-weight: 600; }
+
+    /* --- Components --- */
+    .avatar-wrapper {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 4px;
+      margin-bottom: 12px;
+      pointer-events: none;
+    }
+    .avatar {
+      display: block;
+      width: 128px; height: 128px;
+      border-radius: 999px;
+      object-fit: cover;
       opacity: 0;
-      transform: translateY(8px);
+      transition: opacity 1s ease;
+    }
+    .avatar.loaded { opacity: 1; }
+
+    h1 { font-size: 28px; margin: 0; color: var(--text); line-height: 1.2; }
+    p { margin: 0 0 18px; color: var(--muted); }
+
+    .icon-btn img {
+      display: block;
+      height: 20px;
+      width: auto;
+      object-fit: contain;
+      transition: filter 500ms ease, opacity 500ms ease;
+    }
+    .icon-btn.linkedin img { height: 21px; }
+    .icon-btn.x img { height: 17px; }
+
+    @media (hover: hover) {
+      .icon-btn:hover {
+        background: var(--hover-bg);
+        color: var(--accent);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 6px 18px rgba(11,95,255,0.08);
+      }
+      body.dark .icon-btn:hover {
+        background: var(--hover-bg-dark);
+        color: var(--text);
+        box-shadow: 0 8px 24px rgba(200,200,200,0.18);
+      }
+      .pill:hover {
+        background: var(--hover-bg);
+        color: var(--accent);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 6px 18px rgba(11,95,255,0.08);
+      }
+      body.dark .pill:hover { 
+        background: var(--hover-bg-dark); 
+        color: var(--text); 
+        box-shadow: 0 8px 24px rgba(200,200,200,0.18); 
+      }
+    }
+    
+    body.dark .icon-btn img { filter: brightness(0) invert(1); }
+    
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--pill-border);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 500ms ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    
+    .pill:active {
+      transform: scale(0.95);
+      background: var(--hover-bg);
+      transition: transform 0.1s ease;
+    }
+    body.dark .pill:active { background: var(--hover-bg-dark); }
+    body.dark .pill { border-color: var(--pill-border-dark); background: rgba(255,255,255,0.02); }
+
+    .social-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+    .pill-row { margin-top: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+
+    .scroll-to-top {
+      position: relative; display: flex; margin: 0 auto 20px auto; z-index: 10; opacity: 1; transform: none;
+    }
+    .scroll-to-top.visible { opacity: 1; transform: none; }
+
+    .site-footer-container { display: block; text-align: center; scroll-snap-align: end; padding-bottom: 30px; }
+    .site-footer { height: auto; color: var(--muted); font-size: 14px; padding: 8px 16px; }
+
+    /* --- ANIMATIONS --- */
+    .theme-transition, .theme-transition * {
+      transition: background-color 0.32s ease, color 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease !important;
+    }
+
+    /* Fade In & Up */
+    .avatar, h1, p, .icon-btn, .pill, .site-footer,
+    .resume-section, .portfolio-header-row, .nav-fixed {
+      opacity: 0; 
+      transform: translateY(20px); 
       transition: opacity 1000ms ease, transform 1000ms ease;
       will-change: opacity, transform;
     }
 
-    /* visible state after page load */
-    .page-loaded .avatar,
-    .page-loaded h1, .page-loaded p,
-    .page-loaded .icon-btn,
-    .page-loaded .pill,
-    .page-loaded .site-footer .footer-inner {
-      opacity: 1;
-      transform: none;
+    .page-loaded .avatar, .page-loaded h1, .page-loaded p, 
+    .page-loaded .icon-btn, .page-loaded .pill, .page-loaded .site-footer,
+    .page-loaded .scroll-to-top, .page-loaded .resume-section,
+    .page-loaded .portfolio-header-row, .page-loaded .nav-fixed {
+      opacity: 1; transform: none; 
     }
 
-    /* when a button/pill has this class (set on touch), suppress hover/glow */
-    .icon-btn.no-glow,
-    .pill.no-glow {
-      background: transparent !important;
-      box-shadow: none !important;
-      transform: none !important;
-    }
+    .coffee-pill { display: none !important; }
 
-    /* on devices that don't support hover, prevent hover styles from sticking */
-    @media (hover: none) {
-      .icon-btn:hover,
-      .pill:hover {
-        background: transparent;
-        box-shadow: none;
+    /* --- MOBILE OPTIMIZATIONS (Max Width 480px) --- */
+    @media (max-width: 480px) {
+      /* Transform the Fixed Nav into a Flex Container */
+      .nav-fixed {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 0 14px;
+        box-sizing: border-box;
+        pointer-events: auto; /* Re-enable clicks on container */
+        top: 14px;
+        right: auto;
+        width: 100%;
       }
+
+      /* Make Buttons Big & Static (Remove absolute pos) */
+      .nav-fixed .icon-btn {
+        position: static; /* Stop floating */
+        flex: 1; /* Grow to fill space */
+        width: auto;
+        height: 52px; /* Bigger touch target */
+        font-size: 16px;
+      }
+
+      /* Theme Toggle stays square but sits in the flex row */
+      .nav-fixed .nav-theme {
+        flex: 0 0 52px; /* Fixed width */
+        width: 52px;
+        height: 52px;
+      }
+
+      #portfolio .inner { padding-top: 20px; }
+      .resume-header { flex-direction: column; gap: 2px; }
+      .resume-header .date { font-size: 16px; margin-top: 2px; }
+      .avatar { width: 100px; height: 100px; }
+      .page .inner { padding: 20px; min-height: calc(100vh - 80px); }
+      h1 { font-size: 24px; }
     }
   </style>
 </head>
 <body>
-  <button id="theme-toggle" class="icon-btn theme-toggle" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode" style="position:fixed;top:14px;right:14px;z-index:30">
-    <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5373 21.3065 11.4608 21.0672 11.8568C19.9289 13.7406 17.8615 15 15.5 15C11.9101 15 9 12.0899 9 8.5C9 6.13845 10.2594 4.07105 12.1432 2.93276C12.5392 2.69347 12.4627 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor"/>
-    </svg>
-  </button>
+
+  <div id="top-nav-bg" class="top-nav-bg"></div>
+
+  <nav class="nav-fixed">
+    <a class="icon-btn text-btn nav-home smooth-scroll-link" href="#home">Home</a>
+    <a class="icon-btn text-btn nav-portfolio smooth-scroll-link" href="#portfolio">Portfolio</a>
+    <button id="theme-toggle" class="icon-btn square nav-theme theme-toggle" aria-label="Toggle dark mode">
+      <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5373 21.3065 11.4608 21.0672 11.8568C19.9289 13.7406 17.8615 15 15.5 15C11.9101 15 9 12.0899 9 8.5C9 6.13845 10.2594 4.07105 12.1432 2.93276C12.5392 2.69347 12.4627 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor"/>
+      </svg>
+    </button>
+  </nav>
 
   <div class="content-wrap">
     <main>
       <section id="home" class="page" role="main" aria-label="Home">
         <div class="inner">
           <div style="text-align:center;max-width:900px;width:100%">
-            <!-- Avatar (circular masked) -->
-            <div class="avatar-wrapper" tabindex="-1" aria-hidden="false">
-              <img class="avatar"
-                src="./Images/Ruiqian.jpg"
-                alt="Profile"
-                width="128" height="128"
-                loading="lazy"
-                decoding="async"
-                draggable="false"
-                oncontextmenu="return false" />
+            <div class="avatar-wrapper">
+              <img class="avatar" src="./Images/Ruiqian.jpg" alt="Profile" loading="lazy" />
             </div>
             <h1>Ruiqian Zhang</h1>
             <p>Blacksburg, VA</p>
+            
             <div class="social-pills">
-              <a class="icon-btn" href="https://github.com/rhemzema" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
-                <img src="icons/github_64x.svg" alt="GitHub">
-              </a>
-              <a class="icon-btn linkedin" href="https://linkedin.com/in/ruiqianzhang" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-                <img src="icons/linkedin_64x.svg" alt="LinkedIn">
-              </a>
-              <a class="icon-btn" href="https://instagram.com/rhemzema" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
-                <img src="icons/instagram_64x.svg" alt="Instagram">
-              </a>
-              <a class="icon-btn x" href="https://x.com/rhemzema" aria-label="X.com" target="_blank" rel="noopener noreferrer">
-                <img src="icons/x_300x.svg" alt="X.com">
-              </a>
+              <a class="icon-btn square" href="https://github.com/rhemzema" target="_blank" rel="noopener noreferrer"><img src="icons/github_64x.svg" alt="GitHub"></a>
+              <a class="icon-btn square linkedin" href="https://linkedin.com/in/ruiqianzhang" target="_blank" rel="noopener noreferrer"><img src="icons/linkedin_64x.svg" alt="LinkedIn"></a>
+              <a class="icon-btn square" href="https://instagram.com/rhemzema" target="_blank" rel="noopener noreferrer"><img src="icons/instagram_64x.svg" alt="Instagram"></a>
+              <a class="icon-btn square x" href="https://x.com/rhemzema" target="_blank" rel="noopener noreferrer"><img src="icons/x_300x.svg" alt="X"></a>
             </div>
+
             <div class="pill-row">
-              <a class="pill resume-pill" href="https://drive.google.com/file/d/1aahcnYovKxRag3JXCUOrbV7VcdCrNn_E/view?usp=sharing" aria-label="Resume" target="_blank" rel="noopener noreferrer">Resume</a>
-              <a class="pill email-pill" href="mailto:ruiqian@vt.edu" aria-label="Email" rel="noopener noreferrer">ruiqian@vt.edu</a>
-              <a class="pill coffee-pill" href="https://ko-fi.com/ruiqian" aria-label="ko-fi" target="_blank" rel="noopener noreferrer">Buy me Boba!</a>
+              <a class="pill" href="mailto:ruiqian@vt.edu">ruiqian@vt.edu</a>
+              <a class="pill coffee-pill" href="https://ko-fi.com/ruiqian" target="_blank" rel="noopener noreferrer">Buy me Boba!</a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="portfolio" class="page" role="main" aria-label="Portfolio">
+        <div class="inner">
+          <div style="text-align:left;max-width:800px;width:100%;margin:0 auto;">
+            
+            <div class="portfolio-header-row">
+              <h1>Portfolio</h1>
+              <a class="download-link" href="https://drive.google.com/file/d/1aahcnYovKxRag3JXCUOrbV7VcdCrNn_E/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+                Download
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7 17L17 7M17 7H7M17 7V17" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+            
+            <div class="resume-section">
+              <h2>Education</h2>
+              <div class="resume-item">
+                <div class="resume-header">
+                  <h3>Virginia Tech</h3>
+                  <span class="date">Expected May 2028</span>
+                </div>
+                <p class="subtitle">BS in Electrical Engineering | Blacksburg, VA</p>
+                <p style="margin-bottom:8px;"><strong>GPA:</strong> 3.89/4.0 (Dean's List with Distinction)</p>
+                <p><strong>Relevant Coursework:</strong> Embedded Systems, Signal and Systems, Physical Electronics, Fundamentals of Digital Systems, Circuits and Devices, Computational Engineering</p>
+              </div>
+            </div>
+
+            <div class="resume-section">
+              <h2>Technical Skills</h2>
+              <p><strong>Hardware:</strong> PCB Design, Embedded Systems, FPGA Design (basic), Power Systems, Circuit Simulation (LTSpice)</p>
+              <p><strong>Software:</strong> C/C++, Verilog/VHDL, Assembly, Python, MATLAB, Java</p>
+              <p><strong>EDA & Tools:</strong> Quartus Prime, Questa, KiCAD, EasyEDA, Git, VSCode, Arduino IDE</p>
+              <p><strong>Languages:</strong> English (fluent), Mandarin Chinese (fluent), Thai (intermediate)</p>
+            </div>
+
+            <div class="resume-section">
+              <h2>Projects & Experience</h2>
+              
+              <div class="resume-item">
+                <div class="resume-header">
+                  <h3>Electrical Hardware Engineer</h3>
+                  <span class="date">Sep 2024 – Present</span>
+                </div>
+                <p class="subtitle">Robogrinder at Virginia Tech</p>
+                <ul>
+                  <li>Designed & fabricated 2 EasyEDA PCBs for embedded control, strengthening hardware & PCB design expertise.</li>
+                  <li>Integrated 8 supercapacitors and 8 distribution boards across 4 competition robots, improving power integrity.</li>
+                </ul>
+              </div>
+
+              <div class="resume-item">
+                <div class="resume-header">
+                  <h3>Electrical Engineer</h3>
+                  <span class="date">Sep 2025 – Present</span>
+                </div>
+                <p class="subtitle">VT CRO (Competitive Robotics Organization)</p>
+                <ul>
+                  <li>Collaborated with 15-member team to compete in the 2026 IEEE Southeast Conference Robotics Competition.</li>
+                </ul>
+              </div>
+
+              <div class="resume-item">
+                <div class="resume-header">
+                  <h3>"HokieB" Hokie Passport Bracelet</h3>
+                  <span class="date">Jan – May 2025</span>
+                </div>
+                <p class="subtitle">Class Project - Foundations of Engineering</p>
+                <ul>
+                  <li>Led 6-member team to develop wearable RFID-enabled student ID.</li>
+                  <li>Programmed RFID scanner in C (Arduino IDE) for prototype validation.</li>
+                  <li>Built & tested 3 prototypes in Fusion 360 & 3D printing.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="resume-section">
+              <h2>Work Experience</h2>
+              <div class="resume-item">
+                <div class="resume-header">
+                  <h3>Virginia Tech Dining Services</h3>
+                  <span class="date">Sep 2024 – Present</span>
+                </div>
+                <ul>
+                  <li>Prepared Chick-fil-A products while maintaining food safety in high-volume environment (5,000+ orders/day).</li>
+                  <li>Produced Grab&Go pre-packaged foods, contributing to 10,000+ daily items.</li>
+                </ul>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
     </main>
   </div>
 
-  <footer class="site-footer" role="contentinfo" aria-label="Footer">
-    <div class="footer-inner">&copy; 2025 Ruiqian Zhang</div>
-  </footer>
+  <div class="site-footer-container">
+    <button class="icon-btn square scroll-to-top" id="scroll-to-top" aria-label="Scroll to top">
+      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 4L4 12H9V20H15V12H20L12 4Z" fill="currentColor"/>
+      </svg>
+    </button>
+    
+    <footer class="site-footer" role="contentinfo">
+      &copy; 2025 Ruiqian Zhang
+    </footer>
+  </div>
 
   <script>
-    const themeToggle = document.getElementById('theme-toggle');
+    /* --- CONFIG & STATE --- */
+    const UI = {
+      body: document.body,
+      topNavBg: document.getElementById('top-nav-bg'),
+      scrollToTopBtn: document.getElementById('scroll-to-top'),
+      themeToggle: document.getElementById('theme-toggle'),
+      avatar: document.querySelector('.avatar')
+    };
 
-    function applyTheme(theme){
-      if (theme === 'dark') document.body.classList.add('dark');
-      else document.body.classList.remove('dark');
-      if (themeToggle) themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
-    }
-
-    function initTheme(){
+    /* --- THEME LOGIC --- */
+    function initTheme() {
       const saved = localStorage.getItem('theme');
-      if (saved === 'dark' || saved === 'light') return applyTheme(saved);
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      applyTheme(prefersDark ? 'dark' : 'light');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved || (prefersDark ? 'dark' : 'light');
+      
+      if (theme === 'dark') UI.body.classList.add('dark');
+      UI.themeToggle.setAttribute('aria-pressed', theme === 'dark');
     }
 
-    if (themeToggle){
-      themeToggle.addEventListener('click', () => {
-        // add the transition helper class so theme change fades smoothly
-        document.body.classList.add('theme-transition');
-
-        const isDark = document.body.classList.toggle('dark');
-        try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(e) {}
-
-        themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-
-        // remove the helper class after the transition finishes
-        window.setTimeout(() => {
-          document.body.classList.remove('theme-transition');
-        }, 420);
-      });
-    }
-
-    initTheme();
-
-    // Fade-in avatar when it finishes loading (500ms) - existing logic kept
-    (function(){
-      const avatar = document.querySelector('.avatar');
-      if (!avatar) return;
-
-      function markLoaded(){
-        avatar.classList.add('loaded');
-      }
-
-      if (avatar.complete && avatar.naturalWidth !== 0){
-        requestAnimationFrame(() => requestAnimationFrame(markLoaded));
-      } else {
-        avatar.addEventListener('load', markLoaded, { once: true });
-        setTimeout(() => {
-          if (!avatar.classList.contains('loaded') && avatar.naturalWidth > 0) markLoaded();
-        }, 2000);
-      }
-    })();
-
-    // Add page-loaded class on window load so all items fade in (1000ms)
-    window.addEventListener('load', () => {
-      // small timeout to ensure CSS is applied and transition runs reliably
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        document.body.classList.add('page-loaded');
-      }));
+    UI.themeToggle.addEventListener('click', () => {
+      UI.body.classList.add('theme-transition');
+      const isDark = UI.body.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      UI.themeToggle.setAttribute('aria-pressed', isDark);
+      setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
     });
 
-    // Suppress hover/glow after a tap on touch devices
-    (function(){
-      const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-      if (!isTouch) return;
+    /* --- SCROLL LOGIC --- */
+    function toggleSnap(enable) {
+      const val = enable ? '' : 'none';
+      document.documentElement.style.scrollSnapType = val;
+      UI.body.style.scrollSnapType = val;
+    }
 
-      const elems = document.querySelectorAll('.icon-btn, .pill');
-      elems.forEach(el => {
-        el.addEventListener('touchstart', () => {
-          // add class immediately to prevent :hover from visually sticking
-          el.classList.add('no-glow');
-        }, { passive: true });
+    function smoothScrollTo(targetY) {
+      const startY = window.scrollY;
+      const distance = targetY - startY;
+      const duration = 1020; 
+      let startTime = null;
 
-        el.addEventListener('touchend', () => {
-          // remove the suppression shortly after the tap so subsequent hovers work
-          setTimeout(() => el.classList.remove('no-glow'), 200);
-        }, { passive: true });
+      toggleSnap(false); 
 
-        el.addEventListener('touchcancel', () => {
-          el.classList.remove('no-glow');
-        }, { passive: true });
+      function animation(currentTime) {
+        if (!startTime) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        
+        const ease = progress < 0.5 
+          ? 4 * progress * progress * progress 
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        window.scrollTo(0, startY + (distance * ease));
+
+        if (timeElapsed < duration) requestAnimationFrame(animation);
+        else toggleSnap(true); 
+      }
+      requestAnimationFrame(animation);
+    }
+
+    // Button Listeners
+    document.querySelectorAll('.smooth-scroll-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+            let offset = 0;
+            if (target.id === 'portfolio') offset = 120;
+            smoothScrollTo(target.offsetTop - offset);
+        }
       });
-    })();
+    });
+
+    UI.scrollToTopBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      smoothScrollTo(0);
+    });
+
+    /* --- INITIALIZATION --- */
+    initTheme();
+
+    window.addEventListener('load', () => {
+      requestAnimationFrame(() => UI.body.classList.add('page-loaded'));
+      if (UI.avatar.complete) UI.avatar.classList.add('loaded');
+      else UI.avatar.onload = () => UI.avatar.classList.add('loaded');
+    });
+
+    document.addEventListener('touchstart', () => {}, {passive: true}); 
   </script>
 </body>
 </html>
