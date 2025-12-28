@@ -749,6 +749,8 @@
           // Case 1: Block Flip (Resume Sections)
           if (target.classList.contains('reveal-flip')) {
              target.classList.add('visible');
+             // STOP WATCHING so it never hides again
+             revealObserver.unobserve(target);
           } 
           // Case 2: Character Flip (Header Row & Home Title)
           else if (target.classList.contains('portfolio-header-row') || target.classList.contains('split-flip-text')) {
@@ -758,20 +760,8 @@
                     char.classList.add('visible');
                 }, index * 30);
              });
-          }
-
-        } else {
-          // EXIT VIEWPORT -> RESET (Replay logic)
-          // We remove the visible class so it hides and resets rotation
-          
-          if (target.classList.contains('reveal-flip')) {
-             target.classList.remove('visible');
-          } 
-          else if (target.classList.contains('portfolio-header-row') || target.classList.contains('split-flip-text')) {
-             const allChars = target.querySelectorAll('.char-flip');
-             allChars.forEach(char => {
-                char.classList.remove('visible');
-             });
+             // STOP WATCHING so it never hides again
+             revealObserver.unobserve(target);
           }
         }
       });
