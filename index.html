@@ -44,6 +44,7 @@
       background: var(--bg);
       color: var(--text);
       overflow-x: hidden;
+      transition: background-color 0.32s ease;
     }
 
     body.dark {
@@ -65,23 +66,18 @@
       color: var(--muted);
       cursor: pointer;
       text-decoration: none;
-      
-      /* RELEASE ANIMATION: Slow fade out of background */
       transition: 
         transform 600ms cubic-bezier(0.25, 1, 0.5, 1), 
         background-color 1000ms ease-out, 
         color 500ms ease, 
         box-shadow 500ms ease;
-        
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
 
-    /* Active State (Mobile Feedback) */
     .icon-btn:active {
       transform: scale(0.95);
       background: var(--hover-bg);
-      /* PRESS ANIMATION: Instant background appearance */
       transition: transform 0.1s ease, background-color 0s;
     }
     body.dark .icon-btn:active {
@@ -93,34 +89,25 @@
       height: 44px;
     }
 
-    .icon-btn.text-btn {
-      width: 80px;
-      height: 44px;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    /* --- DESKTOP NAV LAYOUT --- */
-    /* Wrapper is effectively invisible on Desktop */
+    /* --- TOP NAV LAYOUT --- */
     .nav-wrapper {
-      position: static;
-      pointer-events: none;
-      z-index: 30;
+      position: fixed;
+      top: 0; 
+      left: 0;
+      width: 100%;
+      height: 0;
+      z-index: 50; 
+      pointer-events: none; 
     }
 
-    /* Buttons are fixed individually on Desktop */
     .nav-wrapper .icon-btn {
-      position: fixed;
+      position: fixed; 
       top: 14px;
-      z-index: 31;
       pointer-events: auto;
     }
     
-    .nav-theme     { right: 14px; }
-    .nav-portfolio { right: 72px; }
-    .nav-home      { right: 166px; }
+    .nav-theme { right: 14px; }
 
-    /* Gradient Background */
     .top-nav-bg {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -144,13 +131,10 @@
       scroll-snap-align: start;
     }
 
-    #home {
-      margin-bottom: 20vh;
-    }
+    #home { margin-bottom: 20vh; }
 
     .page .inner {
-      min-height: 100vh;
-      min-height: 100svh; /* Center on mobile */
+      min-height: 100svh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -167,14 +151,18 @@
       display: block; 
       height: auto;
       min-height: auto;
-      padding-top: 0; 
+      padding-top: 40px; 
     }
 
     .portfolio-header-row {
       display: flex;
-      align-items: baseline; 
+      align-items: baseline;
       gap: 12px;
       margin-bottom: 40px;
+      perspective: 1000px; /* For 3D text effects */
+    }
+    .portfolio-header-row h1 {
+      margin-bottom: 0;
     }
 
     /* Download Link */
@@ -187,56 +175,47 @@
       color: var(--muted);
       text-decoration: underline;
       text-underline-offset: 4px;
-      transition: 
-        opacity 1000ms ease-out, 
-        transform 600ms cubic-bezier(0.25, 1, 0.5, 1), 
-        color 200ms ease;
+      transition: opacity 1000ms ease-out, transform 600ms cubic-bezier(0.25, 1, 0.5, 1), color 200ms ease;
       -webkit-tap-highlight-color: transparent;
+      perspective: 1000px;
     }
-    .download-link:hover {
-      color: var(--accent);
-      text-decoration-color: var(--accent);
-    }
-    .download-link:active {
-      opacity: 0.5;
-      transform: scale(0.98);
-      transition: opacity 0s, transform 0.1s ease;
-    }
-    .download-link svg {
-      width: 10px;
-      height: 10px;
-      stroke: currentColor;
-      stroke-width: 2;
-      transition: transform 0.2s ease;
-    }
-    .download-link:hover svg {
-      transform: translate(2px, -2px); 
-    }
+    .download-link:hover { color: var(--accent); text-decoration-color: var(--accent); }
+    .download-link:active { opacity: 0.5; transform: scale(0.98); transition: opacity 0s, transform 0.1s ease; }
+    .download-link svg { width: 10px; height: 10px; stroke: currentColor; stroke-width: 2; transition: transform 0.2s ease; }
+    .download-link:hover svg { transform: translate(2px, -2px); }
 
     /* --- Resume Styling --- */
-    .resume-section { margin-bottom: 36px; }
-    
+    .resume-section { 
+      margin-bottom: 32px; 
+      padding: 24px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid var(--pill-border);
+      transition: transform 600ms cubic-bezier(0.25, 1, 0.5, 1), background-color 1000ms ease-out, box-shadow 500ms ease, border-color 500ms ease;
+    }
+    body.dark .resume-section { background: rgba(255, 255, 255, 0.03); border-color: var(--pill-border-dark); }
+
     .resume-section h2 { 
-      font-size: 22px; 
+      font-size: 20px; 
       border-bottom: 1px solid var(--pill-border); 
       padding-bottom: 8px; 
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       color: var(--accent);
     }
     body.dark .resume-section h2 { border-color: var(--pill-border-dark); }
 
-    .resume-item { margin-bottom: 24px; }
+    .resume-item { margin-bottom: 20px; }
     
     .resume-header { 
       display: flex; 
       justify-content: space-between; 
       align-items: baseline; 
       flex-wrap: wrap;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     
     .resume-header h3 { 
-      font-size: 18px; 
+      font-size: 16px; 
       font-weight: 600; 
       margin: 0; 
       color: var(--text);
@@ -244,17 +223,17 @@
     }
     
     .resume-header .date { 
-      font-size: 16px; 
+      font-size: 14px; 
       color: var(--muted); 
       white-space: nowrap;
     }
 
     .resume-item .subtitle {
-      font-size: 16px; 
+      font-size: 14px; 
       font-style: italic;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       color: var(--muted);
-      line-height: 1.5;
+      line-height: 1.4;
     }
 
     .resume-section ul {
@@ -264,37 +243,20 @@
     }
     
     .resume-section li {
-      font-size: 16px;
+      font-size: 14px;
       color: var(--muted);
-      margin-bottom: 8px;
-      line-height: 1.6;
+      margin-bottom: 6px;
+      line-height: 1.5;
     }
     
     .resume-section p { 
-      font-size: 16px;
-      line-height: 1.6; 
+      font-size: 14px;
+      line-height: 1.5; 
     }
     
     .resume-section strong { color: var(--text); font-weight: 600; }
 
     /* --- Components --- */
-    .avatar-wrapper {
-      display: inline-block;
-      border-radius: 999px;
-      padding: 4px;
-      margin-bottom: 12px;
-      pointer-events: none;
-    }
-    .avatar {
-      display: block;
-      width: 128px; height: 128px;
-      border-radius: 999px;
-      object-fit: cover;
-      opacity: 0;
-      transition: opacity 1s ease;
-    }
-    .avatar.loaded { opacity: 1; }
-
     h1 { font-size: 28px; margin: 0 0 8px 0; color: var(--text); line-height: 1.2; }
     p { margin: 0 0 18px; color: var(--muted); }
 
@@ -303,38 +265,77 @@
       height: 20px;
       width: auto;
       object-fit: contain;
-      transition: filter 500ms ease, opacity 500ms ease;
+      transition: opacity 500ms ease;
     }
     .icon-btn.linkedin img { height: 21px; }
     .icon-btn.x img { height: 17px; }
+    
+    /* --- NEW ARROW STYLING --- */
+    .icon-btn.arrow img { 
+      height: 16px; 
+      filter: invert(48%) sepia(13%) saturate(467%) hue-rotate(172deg) brightness(91%) contrast(85%);
+    }
+    body.dark .icon-btn.arrow img { 
+      filter: brightness(0) invert(1); 
+    }
 
     @media (hover: hover) {
       .icon-btn:hover {
         background: var(--hover-bg);
         color: var(--accent);
         transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 6px 18px rgba(11,95,255,0.08);
+        box-shadow: 0 6px 18px rgba(11, 95, 255, 0.08);
+      }
+      .icon-btn:hover img {
+        filter: brightness(0) saturate(100%) invert(27%) sepia(100%) saturate(2878%) hue-rotate(210deg) brightness(104%) contrast(97%);
+        transition: filter 0s;
       }
       body.dark .icon-btn:hover {
         background: var(--hover-bg-dark);
         color: var(--text);
         box-shadow: 0 8px 24px rgba(200,200,200,0.18);
       }
-      .pill:hover {
+      body.dark .icon-btn:hover img {
+        filter: brightness(0) saturate(100%) invert(70%) sepia(100%) saturate(2878%) hue-rotate(190deg) brightness(104%) contrast(97%);
+        transition: filter 0s;
+      }
+      /* Standard Pill Hover */
+      .pill:not(.pill-accent):hover {
         background: var(--hover-bg);
         color: var(--accent);
         transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 6px 18px rgba(11,95,255,0.08);
+        box-shadow: 0 6px 18px rgba(11, 95, 255, 0.08);
       }
-      body.dark .pill:hover { 
+      body.dark .pill:not(.pill-accent):hover { 
         background: var(--hover-bg-dark); 
         color: var(--text); 
         box-shadow: 0 8px 24px rgba(200,200,200,0.18); 
       }
+      
+      /* Accent Pill Hover */
+      .pill-accent:hover {
+        background: var(--accent) !important;
+        opacity: 0.95;
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 6px 18px rgba(11, 95, 255, 0.3);
+      }
+      body.dark .pill-accent:hover {
+        background: var(--accent) !important;
+        opacity: 0.95;
+        box-shadow: 0 8px 24px rgba(122,183,255,0.3);
+      }
+      
+      .resume-section:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(11, 95, 255, 0.08);
+        border-color: var(--accent);
+      }
+      body.dark .resume-section:hover { box-shadow: 0 8px 24px rgba(200,200,200,0.12); }
     }
     
     body.dark .icon-btn img { filter: brightness(0) invert(1); }
     
+    /* Generic Pill */
     .pill {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 8px 14px;
@@ -352,6 +353,7 @@
       user-select: none;
     }
     
+    /* Generic active state (faint) */
     .pill:active {
       transform: scale(0.95);
       background: var(--hover-bg);
@@ -360,55 +362,139 @@
     body.dark .pill:active { background: var(--hover-bg-dark); }
     body.dark .pill { border-color: var(--pill-border-dark); background: rgba(255,255,255,0.02); }
 
+    /* --- SLOT MACHINE PILL --- */
+    .pill-accent {
+      padding: 0 20px; 
+      height: 42px; 
+      background: var(--accent);
+      color: white;
+      border: none;
+      overflow: hidden; 
+      display: inline-flex;
+      align-items: flex-start !important; 
+      justify-content: center;
+      position: relative;
+      box-sizing: border-box; 
+    }
+    body.dark .pill-accent { background: var(--accent); color: var(--bg); }
+
+    .slot-scroller {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slot-label {
+      height: 42px; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    .pill-accent:hover .slot-scroller { transform: translateY(-42px); }
+
+    .pill-accent:active {
+      background: var(--accent) !important;
+      color: white !important;
+      opacity: 0.8;
+      transform: scale(0.95);
+    }
+    body.dark .pill-accent:active {
+      background: var(--accent) !important;
+      color: var(--bg) !important;
+    }
+
+    /* 2. SCROLL TO TOP BUTTON (Slot Machine Effect) */
+    .scroll-to-top {
+      position: relative; display: inline-flex; margin: 0 auto 20px auto; z-index: 10; opacity: 1; transform: none;
+      overflow: hidden;
+      align-items: flex-start !important; 
+      padding: 0;
+    }
+
+    .scroll-to-top .slot-label {
+      height: 44px;
+      width: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .scroll-to-top:hover .slot-scroller {
+      transform: translateY(-44px);
+    }
+
     .social-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
     .pill-row { margin-top: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 
-    .scroll-to-top {
-      position: relative; display: flex; margin: 0 auto 20px auto; z-index: 10; opacity: 1; transform: none;
-    }
-    .scroll-to-top.visible { opacity: 1; transform: none; }
-
-    .site-footer-container { 
-      display: block; 
-      text-align: center; 
-      /* FIX: Removed scroll-snap-align to prevent browser from snapping to footer */
-      padding-bottom: 30px; 
-    }
+    .site-footer-container { display: block; text-align: center; padding-bottom: 30px; }
     .site-footer { height: auto; color: var(--muted); font-size: 14px; padding: 8px 16px; }
 
-    /* --- ANIMATIONS --- */
-    .theme-transition, .theme-transition * {
-      transition: background-color 0.32s ease, color 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease !important;
+    /* --- ANIMATIONS (FLIP EFFECTS) --- */
+    .theme-transition, .theme-transition *, .theme-transition *::before, .theme-transition *::after {
+      transition: background-color 0.32s ease, background 0.32s ease, color 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease !important;
     }
 
-    /* Fade In & Up */
-    .avatar, h1, p, .icon-btn, .pill, .site-footer,
-    .resume-section, .portfolio-header-row {
+    /* Standard Fade In for Home Elements */
+    #home h1, #home p, #home .icon-btn, #home .pill, .nav-wrapper {
       opacity: 0; 
       transform: translateY(20px); 
       transition: opacity 1000ms ease, transform 1000ms ease;
       will-change: opacity, transform;
     }
 
-    .page-loaded .avatar, .page-loaded h1, .page-loaded p, 
-    .page-loaded .icon-btn, .page-loaded .pill, .page-loaded .site-footer,
-    .page-loaded .scroll-to-top, .page-loaded .resume-section,
-    .page-loaded .portfolio-header-row {
+    /* 3D FLIP REVEAL FOR RESUME BOXES */
+    .reveal-flip {
+      opacity: 0;
+      transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
+      transform-origin: top center;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .reveal-flip.visible {
+      opacity: 1;
+      transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1);
+    }
+
+    /* CHARACTER FLIP FOR TITLES (Start Hidden) */
+    .char-flip {
+      display: inline-block;
+      opacity: 0; 
+      transform: perspective(500px) rotateX(90deg) translateY(10px);
+      transform-origin: bottom center;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      will-change: opacity, transform;
+      white-space: pre; 
+    }
+    .char-flip.visible {
+      opacity: 1;
+      transform: perspective(500px) rotateX(0deg) translateY(0);
+    }
+
+    /* Active States */
+    .page-loaded #home h1, .page-loaded #home p, 
+    .page-loaded #home .icon-btn, .page-loaded #home .pill, 
+    .page-loaded .nav-wrapper {
       opacity: 1; transform: none; 
     }
 
-    .coffee-pill { display: none !important; }
-
-    /* --- MOBILE OPTIMIZATIONS (Max Width 480px) --- */
     @media (max-width: 480px) {
       .nav-wrapper {
         position: fixed;
         top: 14px;
         left: 14px;
         right: 14px;
+        width: auto;
+        height: auto;
         z-index: 30;
         display: flex;
-        justify-content: center;
+        justify-content: flex-end;
         align-items: center;
         gap: 10px;
         pointer-events: auto; 
@@ -416,7 +502,7 @@
 
       .nav-wrapper .icon-btn {
         position: static; 
-        flex: 1; 
+        flex: 0 0 auto; 
         width: auto;
         height: 52px; 
         font-size: 16px;
@@ -430,9 +516,8 @@
 
       #portfolio .inner { padding-top: 20px; }
       .resume-header { flex-direction: column; gap: 2px; }
-      .resume-header .date { font-size: 16px; margin-top: 2px; }
-      .avatar { width: 100px; height: 100px; }
-      .page .inner { padding: 20px; min-height: calc(100vh - 80px); }
+      .resume-header .date { font-size: 14px; margin-top: 2px; }
+      .page .inner { padding: 20px; min-height: 100svh; }
       h1 { font-size: 24px; }
     }
   </style>
@@ -442,8 +527,6 @@
   <div id="top-nav-bg" class="top-nav-bg"></div>
 
   <nav class="nav-wrapper">
-    <a class="icon-btn text-btn nav-home smooth-scroll-link" href="#home">Home</a>
-    <a class="icon-btn text-btn nav-portfolio smooth-scroll-link" href="#portfolio">Portfolio</a>
     <button id="theme-toggle" class="icon-btn square nav-theme theme-toggle" aria-label="Toggle dark mode">
       <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5373 21.3065 11.4608 21.0672 11.8568C19.9289 13.7406 17.8615 15 15.5 15C11.9101 15 9 12.0899 9 8.5C9 6.13845 10.2594 4.07105 12.1432 2.93276C12.5392 2.69347 12.4627 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor"/>
@@ -456,9 +539,6 @@
       <section id="home" class="page" role="main" aria-label="Home">
         <div class="inner">
           <div style="text-align:center;max-width:900px;width:100%">
-            <div class="avatar-wrapper">
-              <img class="avatar" src="./Images/Ruiqian.jpg" alt="Profile" loading="lazy" />
-            </div>
             <h1>Ruiqian Zhang</h1>
             <p>Blacksburg, VA</p>
             
@@ -470,11 +550,18 @@
             </div>
 
             <div class="pill-row">
-              <a class="pill" href="mailto:ruiqian@vt.edu">ruiqian@vt.edu</a>
-              <a class="pill coffee-pill" href="https://ko-fi.com/ruiqian" target="_blank" rel="noopener noreferrer">Buy me Boba!</a>
+              <a class="pill pill-accent smooth-scroll-link" href="#portfolio">
+                <span class="slot-scroller">
+                  <span class="slot-label">Portfolio</span>
+                  <span class="slot-label">Portfolio</span>
+                </span>
+              </a>
+            </div>
+            <div class="pill-row" style="margin-top: 12px;">
+              <a class="pill" href="mailto:ruiqian@vt.edu">Contact</a>
             </div>
           </div>
-        </div>
+        </div>  
       </section>
 
       <section id="portfolio" class="page" role="main" aria-label="Portfolio">
@@ -482,16 +569,16 @@
           <div style="text-align:left;max-width:800px;width:100%;margin:0 auto;">
             
             <div class="portfolio-header-row">
-              <h1>Portfolio</h1>
+              <h1 class="split-flip-text">Portfolio</h1>
               <a class="download-link" href="https://drive.google.com/file/d/1aahcnYovKxRag3JXCUOrbV7VcdCrNn_E/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-                Download
+                <span class="split-flip-text">Download</span>
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M7 17L17 7M17 7H7M17 7V17" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </a>
             </div>
-            
-            <div class="resume-section">
+
+            <div class="resume-section reveal-flip">
               <h2>Education</h2>
               <div class="resume-item">
                 <div class="resume-header">
@@ -504,7 +591,7 @@
               </div>
             </div>
 
-            <div class="resume-section">
+            <div class="resume-section reveal-flip">
               <h2>Technical Skills</h2>
               <p><strong>Hardware:</strong> PCB Design, Embedded Systems, FPGA Design (basic), Power Systems, Circuit Simulation (LTSpice)</p>
               <p><strong>Software:</strong> C/C++, Verilog/VHDL, Assembly, Python, MATLAB, Java</p>
@@ -512,9 +599,8 @@
               <p><strong>Languages:</strong> English (fluent), Mandarin Chinese (fluent), Thai (intermediate)</p>
             </div>
 
-            <div class="resume-section">
+            <div class="resume-section reveal-flip">
               <h2>Projects & Experience</h2>
-              
               <div class="resume-item">
                 <div class="resume-header">
                   <h3>Electrical Hardware Engineer</h3>
@@ -529,7 +615,7 @@
 
               <div class="resume-item">
                 <div class="resume-header">
-                  <h3>Electrical Engineer</h3>
+                  <h3>Robotics Engineer</h3>
                   <span class="date">Sep 2025 – Present</span>
                 </div>
                 <p class="subtitle">VT CRO (Competitive Robotics Organization)</p>
@@ -551,21 +637,6 @@
                 </ul>
               </div>
             </div>
-
-            <div class="resume-section">
-              <h2>Work Experience</h2>
-              <div class="resume-item">
-                <div class="resume-header">
-                  <h3>Virginia Tech Dining Services</h3>
-                  <span class="date">Sep 2024 – Present</span>
-                </div>
-                <ul>
-                  <li>Prepared Chick-fil-A products while maintaining food safety in high-volume environment (5,000+ orders/day).</li>
-                  <li>Produced Grab&Go pre-packaged foods, contributing to 10,000+ daily items.</li>
-                </ul>
-              </div>
-            </div>
-
           </div>
         </div>
       </section>
@@ -573,33 +644,33 @@
   </div>
 
   <div class="site-footer-container">
-    <button class="icon-btn square scroll-to-top" id="scroll-to-top" aria-label="Scroll to top">
-      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 4L4 12H9V20H15V12H20L12 4Z" fill="currentColor"/>
-      </svg>
+    <button class="icon-btn square scroll-to-top arrow" id="scroll-to-top" aria-label="Scroll to top">
+      <span class="slot-scroller">
+        <span class="slot-label">
+          <img src="icons/up_arrow.svg" alt="Up arrow" />
+        </span>
+        <span class="slot-label">
+          <img src="icons/up_arrow.svg" alt="Up arrow" />
+        </span>
+      </span>
     </button>
     
     <footer class="site-footer" role="contentinfo">
-      &copy; 2025 Ruiqian Zhang
+      &copy; 2026 Ruiqian Zhang
     </footer>
   </div>
 
   <script>
-    /* --- CONFIG & STATE --- */
     const UI = {
       body: document.body,
-      topNavBg: document.getElementById('top-nav-bg'),
       scrollToTopBtn: document.getElementById('scroll-to-top'),
       themeToggle: document.getElementById('theme-toggle'),
-      avatar: document.querySelector('.avatar')
     };
 
-    /* --- THEME LOGIC --- */
     function initTheme() {
       const saved = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const theme = saved || (prefersDark ? 'dark' : 'light');
-      
       if (theme === 'dark') UI.body.classList.add('dark');
       UI.themeToggle.setAttribute('aria-pressed', theme === 'dark');
     }
@@ -612,7 +683,6 @@
       setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
     });
 
-    /* --- SCROLL LOGIC --- */
     function toggleSnap(enable) {
       const val = enable ? '' : 'none';
       document.documentElement.style.scrollSnapType = val;
@@ -622,56 +692,108 @@
     function smoothScrollTo(targetY) {
       const startY = window.scrollY;
       const distance = targetY - startY;
-      const duration = 1020; 
+      const duration = 1020;
       let startTime = null;
-
-      toggleSnap(false); 
-
+      toggleSnap(false);
       function animation(currentTime) {
         if (!startTime) startTime = currentTime;
         const timeElapsed = currentTime - startTime;
         const progress = Math.min(timeElapsed / duration, 1);
-        
-        const ease = progress < 0.5 
-          ? 4 * progress * progress * progress 
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
+        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
         window.scrollTo(0, startY + (distance * ease));
-
         if (timeElapsed < duration) requestAnimationFrame(animation);
-        else toggleSnap(true); 
+        else toggleSnap(true);
       }
       requestAnimationFrame(animation);
     }
 
-    // Button Listeners
     document.querySelectorAll('.smooth-scroll-link').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         const target = document.querySelector(link.getAttribute('href'));
         if (target) {
-            let offset = 0;
-            if (target.id === 'portfolio') offset = 120;
-            smoothScrollTo(target.offsetTop - offset);
+          const offset = target.id === 'portfolio' ? 80 : 0;
+          smoothScrollTo(target.offsetTop - offset);
         }
       });
     });
 
-    UI.scrollToTopBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      smoothScrollTo(0);
+    UI.scrollToTopBtn.addEventListener('click', () => smoothScrollTo(0));
+
+    // --- FUNCTION 1: Split text into characters ---
+    function splitTextElements() {
+      document.querySelectorAll('.split-flip-text').forEach(el => {
+        const text = el.textContent;
+        el.setAttribute('aria-label', text);
+        el.innerHTML = ''; 
+        text.split('').forEach(char => {
+          const span = document.createElement('span');
+          span.classList.add('char-flip');
+          span.textContent = char;
+          span.setAttribute('aria-hidden', 'true'); 
+          el.appendChild(span);
+        });
+      });
+    }
+
+    // --- UPDATED OBSERVER ---
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const target = entry.target;
+
+        if (entry.isIntersecting) {
+          // ENTER VIEWPORT -> REVEAL
+
+          // Case 1: Block Flip (Resume Sections)
+          if (target.classList.contains('reveal-flip')) {
+             target.classList.add('visible');
+          } 
+          // Case 2: Character Flip (Header Row)
+          else if (target.classList.contains('portfolio-header-row')) {
+             const allChars = target.querySelectorAll('.char-flip');
+             allChars.forEach((char, index) => {
+                setTimeout(() => {
+                    char.classList.add('visible');
+                }, index * 30);
+             });
+          }
+
+        } else {
+          // EXIT VIEWPORT -> RESET
+          
+          if (target.classList.contains('reveal-flip')) {
+             target.classList.remove('visible');
+          } 
+          else if (target.classList.contains('portfolio-header-row')) {
+             const allChars = target.querySelectorAll('.char-flip');
+             allChars.forEach(char => {
+                char.classList.remove('visible');
+             });
+          }
+        }
+      });
+    }, {
+      rootMargin: '-50px',
+      threshold: 0.1
     });
 
-    /* --- INITIALIZATION --- */
-    initTheme();
+    // Initialize Split Text
+    splitTextElements();
 
+    // Attach Observer
+    document.querySelectorAll('.reveal-flip, .portfolio-header-row').forEach((el, index) => {
+      if(el.classList.contains('reveal-flip')) {
+         el.style.transitionDelay = `${index * 100}ms`;
+      }
+      revealObserver.observe(el);
+    });
+
+    initTheme();
     window.addEventListener('load', () => {
       requestAnimationFrame(() => UI.body.classList.add('page-loaded'));
-      if (UI.avatar.complete) UI.avatar.classList.add('loaded');
-      else UI.avatar.onload = () => UI.avatar.classList.add('loaded');
     });
-
-    document.addEventListener('touchstart', () => {}, {passive: true}); 
+    
+    document.addEventListener('touchstart', () => {}, {passive: true});
   </script>
 </body>
 </html>
