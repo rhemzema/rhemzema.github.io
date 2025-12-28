@@ -159,7 +159,7 @@
       align-items: baseline;
       gap: 12px;
       margin-bottom: 40px;
-      perspective: 1000px; /* For 3D text effects */
+      perspective: 1000px; 
     }
     .portfolio-header-row h1 {
       margin-bottom: 0;
@@ -269,8 +269,6 @@
     }
     .icon-btn.linkedin img { height: 21px; }
     .icon-btn.x img { height: 17px; }
-    
-    /* --- NEW ARROW STYLING --- */
     .icon-btn.arrow img { 
       height: 16px; 
       filter: invert(48%) sepia(13%) saturate(467%) hue-rotate(172deg) brightness(91%) contrast(85%);
@@ -442,7 +440,7 @@
     }
 
     /* Standard Fade In for Home Elements */
-    #home h1, #home p, #home .icon-btn, #home .pill, .nav-wrapper {
+    #home p, #home .icon-btn, #home .pill, .nav-wrapper {
       opacity: 0; 
       transform: translateY(20px); 
       transition: opacity 1000ms ease, transform 1000ms ease;
@@ -478,13 +476,17 @@
     }
 
     /* Active States */
-    .page-loaded #home h1, .page-loaded #home p, 
+    .page-loaded #home p, 
     .page-loaded #home .icon-btn, .page-loaded #home .pill, 
     .page-loaded .nav-wrapper {
       opacity: 1; transform: none; 
     }
 
     @media (max-width: 480px) {
+      /* DISABLE SNAP SCROLL ON MOBILE */
+      html { scroll-snap-type: none; }
+      .page { scroll-snap-align: none; }
+
       .nav-wrapper {
         position: fixed;
         top: 14px;
@@ -539,8 +541,8 @@
       <section id="home" class="page" role="main" aria-label="Home">
         <div class="inner">
           <div style="text-align:center;max-width:900px;width:100%">
-            <h1>Ruiqian Zhang</h1>
-            <p>Blacksburg, VA</p>
+            <h1 class="split-flip-text">Ruiqian Zhang</h1>
+            <p>Fairfax, VA</p>
             
             <div class="social-pills">
               <a class="icon-btn square" href="https://github.com/rhemzema" target="_blank" rel="noopener noreferrer"><img src="icons/github_64x.svg" alt="GitHub"></a>
@@ -748,8 +750,8 @@
           if (target.classList.contains('reveal-flip')) {
              target.classList.add('visible');
           } 
-          // Case 2: Character Flip (Header Row)
-          else if (target.classList.contains('portfolio-header-row')) {
+          // Case 2: Character Flip (Header Row & Home Title)
+          else if (target.classList.contains('portfolio-header-row') || target.classList.contains('split-flip-text')) {
              const allChars = target.querySelectorAll('.char-flip');
              allChars.forEach((char, index) => {
                 setTimeout(() => {
@@ -759,12 +761,13 @@
           }
 
         } else {
-          // EXIT VIEWPORT -> RESET
+          // EXIT VIEWPORT -> RESET (Replay logic)
+          // We remove the visible class so it hides and resets rotation
           
           if (target.classList.contains('reveal-flip')) {
              target.classList.remove('visible');
           } 
-          else if (target.classList.contains('portfolio-header-row')) {
+          else if (target.classList.contains('portfolio-header-row') || target.classList.contains('split-flip-text')) {
              const allChars = target.querySelectorAll('.char-flip');
              allChars.forEach(char => {
                 char.classList.remove('visible');
@@ -780,8 +783,9 @@
     // Initialize Split Text
     splitTextElements();
 
-    // Attach Observer
-    document.querySelectorAll('.reveal-flip, .portfolio-header-row').forEach((el, index) => {
+    // Attach Observer to all elements we want to animate (Box or Text)
+    document.querySelectorAll('.reveal-flip, .portfolio-header-row, .split-flip-text').forEach((el, index) => {
+      // Only stagger the boxes, not the text containers themselves
       if(el.classList.contains('reveal-flip')) {
          el.style.transitionDelay = `${index * 100}ms`;
       }
