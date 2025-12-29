@@ -224,13 +224,14 @@
     color: var(--text); 
     line-height: 1.1; 
     }
-    /* Mobile Adjustment (inside the existing @media block) */
-    @media (max-width: 480px) {
-      h1 { font-size: 52px; } /* Smaller size for mobile phones */
-    }
-
     h2 { font-size: 28px; margin: 0 0 8px 0; color: var(--text); line-height: 1.2; }
     p { margin: 0 0 18px; color: var(--muted); }
+
+    /* Mobile Adjustment (inside the existing @media block) */
+    @media (max-width: 768px) {
+      h1 { font-size: 42px !important;
+      } /* Smaller size for mobile phones */
+    }
 
     .social-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
     .pill-row { margin-top: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }

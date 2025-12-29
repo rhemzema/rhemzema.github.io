@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <title>Card | Ruiqian Zhang</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,8 +22,8 @@
       --border: rgba(16, 24, 40, 0.06);
       
       /* Shadows */
-      --btn-shadow: rgba(134, 31, 65, 0.08); /* Subtle shadow for buttons */
-      --card-shadow: rgba(134, 31, 65, 0.3); /* Strong glow for card */
+      --btn-shadow: rgba(134, 31, 65, 0.08);
+      --card-shadow: rgba(134, 31, 65, 0.3);
     }
 
     body.dark {
@@ -38,23 +38,35 @@
       
       /* Shadows */
       --btn-shadow: rgba(200, 200, 200, 0.18);
-      --card-shadow: rgba(229, 117, 31, 0.75); /* Strong Orange Glow */
+      --card-shadow: rgba(229, 117, 31, 0.75);
     }
 
     /* --- Base Layout --- */
     body {
-      min-height: 100vh; margin: 0;
+      height: 100vh; 
+      height: 100dvh; 
+      margin: 0; padding: 0;
+      overflow: hidden; /* Prevent Scrolling */
+      
       font-family: 'Inter', sans-serif;
       background: var(--bg); color: var(--text);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 40px 20px; overflow-x: hidden;
+      
+      display: flex; 
+      flex-direction: column;
+      align-items: center; /* Center Horizontal */
+      justify-content: center; /* Center Vertical */
+      
+      /* DEFAULT PADDING (Desktop) */
+      box-sizing: border-box;
     }
 
     /* --- ID Card --- */
     .id-card-wrapper {
-      perspective: 1000px; width: 100%; max-width: 320px; margin-bottom: 30px;
+      perspective: 1000px; 
+      width: 100%; max-width: 320px; 
+      margin-bottom: 25px; /* Gap between card and buttons */
       transform-style: preserve-3d;
+      z-index: 10;
     }
 
     .student-id {
@@ -62,7 +74,7 @@
       background: #fff; border-radius: 20px;
       border: 1px solid rgba(0,0,0,0.1); padding: 30px;
       box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;
-      overflow: hidden; touch-action: pan-y; transform-style: preserve-3d;
+      overflow: hidden; transform-style: preserve-3d;
       background-image: radial-gradient(circle at 100% 0%, rgba(134, 31, 65, 0.08) 0%, transparent 30%);
       transition: transform 0.1s linear, box-shadow 0.1s linear;
     }
@@ -105,10 +117,8 @@
     .ui-container { display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 100; }
     .icon-row { display: flex; gap: 16px; }
 
-    /* Buttons */
     .icon-btn, .pill-accent {
       cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
-      /* Optimized transitions: color/filter are fast (0s on hover) to prevent lag */
       transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
     }
 
@@ -118,18 +128,25 @@
     }
     .icon-btn:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
 
-    /* Icons (Mask Method) */
     .icon-mask {
       width: 16px; height: 16px; display: block;
-      background-color: currentColor; /* Inherits button color */
+      background-color: currentColor; 
       -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
       -webkit-mask-position: center; mask-position: center;
       -webkit-mask-size: contain; mask-size: contain;
     }
-    .back-icon { -webkit-mask-image: url('icons/up_arrow.svg'); mask-image: url('icons/up_arrow.svg'); transform: rotate(-90deg); }
-    .home-icon { -webkit-mask-image: url('icons/home.svg'); mask-image: url('icons/home.svg'); }
+    .back-icon { 
+      width: 16px; height: 16px; display: block;
+      -webkit-mask-image: url('icons/up_arrow.svg'); 
+      mask-image: url('icons/up_arrow.svg'); 
+      transform: rotate(-90deg); 
+    }
+    .home-icon { 
+      width: 20px; height: 20px; display: block;
+      -webkit-mask-image: url('icons/home.svg'); 
+      mask-image: url('icons/home.svg'); 
+    }
 
-    /* Motion Pill */
     .pill-accent {
       padding: 0 20px; height: 42px; background: var(--accent); color: white;
       border: none; border-radius: 999px; font-weight: 600; font-size: 14px;
@@ -138,13 +155,12 @@
     body.dark .pill-accent { color: var(--bg); }
     .pill-accent:active { opacity: 0.8; transform: scale(0.95); }
 
-    /* Hover States */
     @media (hover: hover) {
       .icon-btn:hover { 
         background: var(--hover-bg); color: var(--accent); 
         transform: translateY(-3px) scale(1.02); 
         box-shadow: 0 6px 18px var(--btn-shadow);
-        transition: color 0s, transform 0.6s, box-shadow 0.3s; /* Snap color instantly */
+        transition: color 0s, transform 0.6s, box-shadow 0.3s;
       }
       .pill-accent:hover { 
         opacity: 0.95; transform: translateY(-3px) scale(1.02); 
@@ -153,18 +169,33 @@
       body.dark .pill-accent:hover { box-shadow: 0 8px 24px rgba(229,117,31,0.3); }
     }
 
-    /* --- Animation --- */
-    /* Theme Transition: Matches index.html logic */
     .theme-transition, .theme-transition * { 
       transition: background-color 0.32s ease, border-color 0.32s ease, color 0s, box-shadow 0.32s ease !important; 
     }
 
-    /* Load Transition */
     .id-card-wrapper, .ui-container {
       opacity: 0; transform: translateY(20px);
       transition: opacity 1s ease, transform 1s ease;
     }
     .page-loaded .id-card-wrapper, .page-loaded .ui-container { opacity: 1; transform: none; }
+
+    /* --- MOBILE ADJUSTMENTS (Corrected) --- */
+    @media (max-width: 768px) {
+      body {
+        /* This is the key fix. 
+          By adding padding to the BOTTOM of the body, we lift the "center point"
+          of the flex container. Both the Card and Buttons will shift UP together.
+        */
+        padding-bottom: 5vh; /* Shifts everything up by ~25% of screen height */
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .id-card-wrapper {
+        /* Keep them close together */
+        margin-bottom: 30px; 
+      }
+    }
 
   </style>
 </head>
