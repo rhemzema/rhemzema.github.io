@@ -215,7 +215,7 @@
       );
     }
 
-    /* --- BUTTON STYLES (EXACT MATCH TO INDEX) --- */
+    /* --- BUTTON STYLES --- */
     .controls-container {
       display: flex;
       gap: 16px;
@@ -262,7 +262,7 @@
     }
     body.dark .icon-btn:active { background: var(--hover-bg-dark); }
 
-    /* Hover State (Matches Index) */
+    /* Hover State */
     @media (hover: hover) {
       .icon-btn:hover {
         background: var(--hover-bg);
@@ -277,44 +277,63 @@
       }
     }
 
-    /* Motion Button: Styled like a Pill from Index */
-    #btn-motion {
-      display: none; 
+    /* --- NEW PILL STYLES (MATCHING INDEX) --- */
+    .pill-accent {
+      padding: 0 20px; 
+      height: 42px; 
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      overflow: hidden; 
+      display: none; /* Hidden by default until motion valid */
+      align-items: flex-start !important; 
+      justify-content: center;
+      position: relative;
+      box-sizing: border-box; 
+      cursor: pointer;
       font-weight: 600;
       font-size: 14px;
-      padding: 0 16px;
-      height: 44px;
-      border-radius: 999px;
-      
-      /* Pill styling */
-      border: 1px solid var(--pill-border);
-      color: var(--text);
-      background: transparent;
-      
-      transition: 
-        transform 600ms cubic-bezier(0.25, 1, 0.5, 1), 
-        background-color 1000ms ease-out, 
-        color 500ms ease, 
-        border-color 500ms ease;
+      transition: transform 600ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 500ms ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
-    body.dark #btn-motion { 
-      border-color: var(--pill-border-dark); 
-      color: var(--text);
+    body.dark .pill-accent { background: var(--accent); color: var(--bg); }
+
+    .slot-scroller {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    
-    /* Motion Button Hover */
+
+    .slot-label {
+      height: 42px; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    /* Animation on hover */
     @media (hover: hover) {
-      #btn-motion:hover {
-        background: var(--hover-bg);
-        color: var(--accent);
+      .pill-accent:hover .slot-scroller { transform: translateY(-42px); }
+      
+      .pill-accent:hover {
+        opacity: 0.95;
         transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 6px 18px rgba(134, 31, 65, 0.08);
+        box-shadow: 0 6px 18px rgba(11, 95, 255, 0.3);
       }
-      body.dark #btn-motion:hover {
-        background: var(--hover-bg-dark);
-        color: var(--text);
-        box-shadow: 0 8px 24px rgba(200,200,200,0.18);
+      body.dark .pill-accent:hover {
+        box-shadow: 0 8px 24px rgba(122,183,255,0.3);
       }
+    }
+
+    .pill-accent:active {
+      opacity: 0.8;
+      transform: scale(0.95);
     }
 
     /* Helper for Theme Transition */
@@ -392,8 +411,11 @@
       </svg>
     </a>
 
-    <button id="btn-motion" onclick="requestMotionPermission()">
-      Enable Motion
+    <button id="btn-motion" class="pill-accent" onclick="requestMotionPermission()">
+      <span class="slot-scroller">
+        <span class="slot-label">Enable Motion</span>
+        <span class="slot-label">Enable Motion</span>
+      </span>
     </button>
 
     <button id="theme-toggle" class="icon-btn square" aria-label="Toggle dark mode">
@@ -412,12 +434,14 @@
     const btnMotion = document.getElementById('btn-motion');
     const themeBtn = document.getElementById('theme-toggle');
 
+    // --- SENSOR VARIABLES ---
+    let motionActive = false;
+    let targetX = 0;
+    let targetY = 0;
+    
     // --- THEME & LOAD LOGIC ---
     window.addEventListener('load', () => {
-      // Re-enable transitions slightly after load
       setTimeout(() => { document.body.style.transition = ''; }, 100);
-      
-      // Trigger Animation
       requestAnimationFrame(() => {
         document.body.classList.add('page-loaded');
       });
@@ -432,10 +456,11 @@
 
     // --- MOTION DETECT ---
     if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+      // Use inline-flex to work with the new pill layout
       btnMotion.style.display = 'inline-flex';
     }
 
-    // --- CARD PHYSICS ---
+    // --- CORE CARD UPDATE FUNCTION ---
     function updateCard(rotateX, rotateY, pctX, pctY) {
       card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
 
@@ -457,14 +482,16 @@
     }
 
     function resetCard() {
+      // Enable transition for smooth return to center
       card.style.transition = 'transform 0.5s ease, box-shadow 0.5s ease';
       card.style.transform = 'rotateX(0deg) rotateY(0deg)';
       card.style.boxShadow = 'none';
       glare.style.opacity = '0';
     }
 
-    // --- MOUSE INPUT ---
+    // --- MOUSE INPUT (Desktop) ---
     wrapper.addEventListener('mousemove', (e) => {
+      // Disable transition for instant mouse response
       card.style.transition = 'none'; 
       const rect = wrapper.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -482,44 +509,79 @@
 
     wrapper.addEventListener('mouseleave', resetCard);
 
-    // --- GYRO INPUT ---
+    // --- GYRO INPUT (Mobile) ---
+    // 
+    // The deviceorientation event provides alpha, beta, and gamma.
+    // We update variables here, but apply styles in requestAnimationFrame to fix lag.
+
     function requestMotionPermission() {
       if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission()
           .then(permissionState => {
             if (permissionState === 'granted') {
-              window.addEventListener('deviceorientation', handleOrientation);
-              btnMotion.style.display = 'none'; 
+              startMotion();
             } else {
               alert('Permission denied');
             }
           })
           .catch(console.error);
       } else {
-        window.addEventListener('deviceorientation', handleOrientation);
-        btnMotion.style.display = 'none';
+        startMotion();
       }
     }
 
+    function startMotion() {
+      window.addEventListener('deviceorientation', handleOrientation);
+      btnMotion.style.display = 'none'; 
+      motionActive = true;
+      
+      // Remove CSS transition for sensor mode to prevent "swimming" lag
+      card.style.transition = 'none';
+      
+      // Start the render loop
+      requestAnimationFrame(renderLoop);
+    }
+
     function handleOrientation(event) {
-      if (!event.beta || !event.gamma) return;
-      card.style.transition = 'transform 0.1s ease-out, box-shadow 0.1s ease-out';
+      if (event.beta === null || event.gamma === null) return;
 
       const maxTilt = 20;
+      
+      // Gamma is left-to-right tilt (-90 to 90)
       let rotateY = event.gamma; 
+      
+      // Beta is front-to-back tilt (-180 to 180). 
+      // Subtracting 45 assumes user holds phone at 45deg viewing angle.
+      let rotateX = (event.beta - 45); 
+
+      // Clamp values
       if (rotateY > maxTilt) rotateY = maxTilt;
       if (rotateY < -maxTilt) rotateY = -maxTilt;
-
-      let rotateX = (event.beta - 45); 
       if (rotateX > maxTilt) rotateX = maxTilt;
       if (rotateX < -maxTilt) rotateX = -maxTilt;
+      
+      // Invert X for natural feel
       rotateX = -rotateX;
 
-      const pctX = (rotateY + maxTilt) / (maxTilt * 2);
-      const pctY = (-rotateX + maxTilt) / (maxTilt * 2);
-
-      updateCard(rotateX, rotateY, pctX, pctY);
+      // Store these for the render loop
+      targetX = rotateX;
+      targetY = rotateY;
     }
+
+    // Render loop decouples the sensor rate from the screen refresh rate
+    // This fixes the jitter/lag issues.
+    function renderLoop() {
+      if (!motionActive) return;
+
+      const maxTilt = 20;
+      const pctX = (targetY + maxTilt) / (maxTilt * 2);
+      const pctY = (-targetX + maxTilt) / (maxTilt * 2);
+
+      updateCard(targetX, targetY, pctX, pctY);
+      
+      requestAnimationFrame(renderLoop);
+    }
+
   </script>
 
 </body>
