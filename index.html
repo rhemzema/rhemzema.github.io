@@ -14,28 +14,34 @@
     :root {
       /* Colors */
       --bg: #f2f0ef;
-      --accent: #0b5fff; /* Blue Accent */
-      --muted: #6b7280;
       --text: #111;
-      --toggle-fill: #9ca3af;
+      --muted: #6b7280;
+      --accent: #0b5fff;
       
-      /* Hover States */
+      /* Dynamic UI Colors (Light Mode Defaults) */
       --hover-bg: rgba(11, 95, 255, 0.06);
-      --hover-bg-dark: rgba(255, 255, 255, 0.06);
-      
-      /* Borders */
-      --pill-border: rgba(16, 24, 40, 0.06);
-      --pill-border-dark: rgba(255, 255, 255, 0.06);
+      --border: rgba(16, 24, 40, 0.06);
+      --section-bg: rgba(255, 255, 255, 0.4);
+      --shadow-color: rgba(11, 95, 255, 0.08);
       
       /* Dimensions */
       --nav-height: 100px;
     }
 
-    /* --- Base Layout --- */
-    html {
-      scroll-behavior: smooth; 
+    body.dark {
+      --bg: #071221;
+      --text: #f2f0ef;
+      --muted: #98a6b3;
+      --accent: #7ab7ff;
+      
+      /* Dark Mode Overrides */
+      --hover-bg: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.06);
+      --section-bg: rgba(255, 255, 255, 0.03);
+      --shadow-color: rgba(200, 200, 200, 0.18);
     }
 
+    /* --- Base Layout --- */
     body {
       min-height: 100vh;
       margin: 0;
@@ -43,523 +49,251 @@
       background: var(--bg);
       color: var(--text);
       overflow-x: hidden;
-      /* Transition is handled via JS to prevent flash on load */
     }
 
-    body.dark {
-      --bg: #071221;
-      --accent: #7ab7ff;
-      --muted: #98a6b3;
-      --text: #f2f0ef;
-      --toggle-fill: #6b7280;
+    /* --- ATMOSPHERIC GLARE (New) --- */
+    .bg-glare {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: -1; /* Behind everything */
+      pointer-events: none; /* Click through */
+      
+      /* The Glare Effect */
+      background: radial-gradient(
+        circle at 50% -10%, /* Center horizontal, slightly above top */
+        var(--accent), 
+        transparent 60%
+      );
+      filter: blur(80px); /* Soften the edges significantly */
+      
+      /* Logic: Hidden in light mode, visible in dark */
+      display: none; 
+      opacity: 0; 
+      will-change: opacity; /* Performance optimization */
     }
 
-    /* --- Shared Button Styles --- */
-    .icon-btn {
-      display: inline-flex; 
-      align-items: center; 
+    body.dark .bg-glare {
+      display: block;
+      /* Opacity is controlled via JS based on scroll, but max is set here logically */
+    }
+
+    /* --- Shared Components --- */
+    .icon-btn, .pill, .download-link {
+      display: inline-flex;
+      align-items: center;
       justify-content: center;
-      border-radius: 8px; 
-      border: 0; 
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
       text-decoration: none;
-      transition: 
-        transform 600ms cubic-bezier(0.25, 1, 0.5, 1), 
-        background-color 1000ms ease-out, 
-        color 500ms ease, 
-        box-shadow 500ms ease;
       -webkit-tap-highlight-color: transparent;
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      cursor: pointer;
       user-select: none;
     }
 
-    .icon-btn:active {
-      transform: scale(0.95);
-      background: var(--hover-bg);
-      transition: transform 0.1s ease, background-color 0s;
+    /* Icon Buttons */
+    .icon-btn {
+      border-radius: 8px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
     }
-    body.dark .icon-btn:active {
-      background: var(--hover-bg-dark);
-    }
-
-    .icon-btn.square {
-      width: 44px;
-      height: 44px;
-    }
-
-    /* --- TOP NAV LAYOUT --- */
-    .nav-wrapper {
-      position: fixed;
-      top: 0; 
-      left: 0;
-      width: 100%;
-      height: 0;
-      z-index: 50; 
-      pointer-events: none; 
-    }
-
-    .nav-wrapper .icon-btn {
-      position: fixed; 
-      top: 20px;
-      pointer-events: auto;
-    }
+    .icon-btn.square { width: 44px; height: 44px; }
     
+    .icon-btn:active, .pill:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
+
+    /* Icons inside buttons (Socials) */
+    .icon-btn img { height: 20px; width: auto; }
+    .icon-btn.linkedin img { height: 21px; }
+    .icon-btn.x img { height: 17px; }
+    
+    /* Social Icons: Invert to white in Dark Mode only */
+    body.dark .icon-btn img { filter: brightness(0) invert(1); }
+
+    /* Footer Arrow Icon (Mask Method) */
+    .arrow-icon {
+      width: 16px; height: 16px; display: block;
+      background-color: currentColor;
+      -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain;
+      mask: url('icons/up_arrow.svg') no-repeat center / contain;
+    }
+
+    /* Pills */
+    .pill {
+      gap: 8px; padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Accent Pill (Slot Machine) */
+    .pill-accent {
+      padding: 0 20px; height: 42px;
+      background: var(--accent); color: white;
+      border: none; overflow: hidden;
+      align-items: flex-start !important;
+      position: relative;
+    }
+    body.dark .pill-accent { color: var(--bg); }
+    .pill-accent:active { opacity: 0.8; background: var(--accent) !important; }
+
+    /* Slot Animation */
+    .slot-scroller { display: flex; flex-direction: column; width: 100%; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .slot-label { height: 42px; display: flex; align-items: center; justify-content: center; width: 100%; flex-shrink: 0; }
+    .pill-accent:hover .slot-scroller { transform: translateY(-42px); }
+
+    /* Scroll To Top (Slot Style) */
+    .scroll-to-top {
+      position: relative; margin: 0 auto 20px auto; z-index: 10;
+      overflow: hidden; align-items: flex-start !important; padding: 0;
+    }
+    .scroll-to-top .slot-label { height: 44px; width: 44px; }
+    .scroll-to-top:hover .slot-scroller { transform: translateY(-44px); }
+
+    /* Hover States */
+    @media (hover: hover) {
+      .icon-btn:hover, .pill:not(.pill-accent):hover {
+        background: var(--hover-bg);
+        color: var(--accent);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 6px 18px var(--shadow-color);
+      }
+      /* Hover Logic for Social Icons (Filters) */
+      .icon-btn:hover img { filter: brightness(0) saturate(100%) invert(27%) sepia(100%) saturate(2878%) hue-rotate(210deg) brightness(104%) contrast(97%); }
+      body.dark .icon-btn:hover img { filter: brightness(0) saturate(100%) invert(70%) sepia(100%) saturate(2878%) hue-rotate(190deg) brightness(104%) contrast(97%); }
+      
+      .pill-accent:hover {
+        opacity: 0.95; transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 6px 18px rgba(11, 95, 255, 0.3);
+      }
+      .about-section:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px var(--shadow-color);
+        border-color: var(--accent);
+      }
+    }
+
+    /* --- Layout & Sections --- */
+    .nav-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 50; pointer-events: none; }
+    .nav-wrapper .icon-btn { position: fixed; top: 20px; pointer-events: auto; }
     .nav-theme { right: 20px; }
 
     .top-nav-bg {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: var(--nav-height);
-      z-index: 29;
-      pointer-events: none;
-      background: linear-gradient(to bottom, var(--bg) 0%, rgba(0,0,0,0) 100%);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height); z-index: 29; pointer-events: none;
+      background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
       mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-      opacity: 1;
       transition: background-color 0.32s ease;
     }
 
-    /* --- Content & Sections --- */
-    .content-wrap { min-height: 100vh; position: relative; z-index: 5; }
-    
-    .page {
-      display: block;
-      scroll-snap-align: start;
-    }
-
+    .page { display: block; scroll-snap-align: start; }
+    .page .inner { min-height: 100svh; display: flex; align-items: center; justify-content: center; padding: 28px; box-sizing: border-box; }
     #home { margin-bottom: 20vh; }
+    #about { scroll-margin-top: 120px; }
+    #about .inner { display: block; height: auto; min-height: auto; padding-top: 40px; }
 
-    .page .inner {
-      min-height: 100svh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 28px;
-      box-sizing: border-box;
+    /* About Section Specifics */
+    .about-section { 
+      margin-bottom: 32px; padding: 24px; border-radius: 16px;
+      background: var(--section-bg); border: 1px solid var(--border);
     }
+    .about-section h2 { font-size: 20px; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px; color: var(--accent); }
+    .about-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 4px; }
+    .about-header h3 { font-size: 16px; font-weight: 600; margin: 0; color: var(--text); }
+    .about-header .date, .about-item .subtitle, .about-section li { font-size: 14px; color: var(--muted); }
+    .about-item .subtitle { font-style: italic; margin-bottom: 8px; }
+    .about-section ul { margin: 0; padding-left: 20px; }
+    .about-section li { margin-bottom: 6px; line-height: 1.5; }
 
-    /* --- ABOUT SECTION --- */
-    #about {
-      scroll-margin-top: 120px; 
-    }
-
-    #about .inner {
-      display: block; 
-      height: auto;
-      min-height: auto;
-      padding-top: 40px; 
-    }
-
-    .about-title-row {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 40px;
-      perspective: 1000px; 
-    }
-    .about-title-row h1 {
-      margin-bottom: 0;
-    }
-
-    /* Download Link */
     .download-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--muted);
-      text-decoration: none; 
-      border-bottom: 1px solid currentColor;
-      padding-bottom: 1px;
-      transition: opacity 1000ms ease-out, transform 600ms cubic-bezier(0.25, 1, 0.5, 1), color 200ms ease;
-      -webkit-tap-highlight-color: transparent;
-      perspective: 1000px;
+      gap: 4px; font-size: 14px; font-weight: 500; color: var(--muted);
+      border-bottom: 1px solid currentColor; padding-bottom: 1px;
     }
-    .download-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
-    .download-link:active { opacity: 0.5; transform: scale(0.98); transition: opacity 0s, transform 0.1s ease; }
-    .download-link svg { width: 10px; height: 10px; stroke: currentColor; stroke-width: 2; transition: transform 0.2s ease; }
+    .download-link:hover { color: var(--accent); border-color: var(--accent); }
+    .download-link svg { width: 10px; stroke: currentColor; stroke-width: 2; transition: transform 0.2s; }
     .download-link:hover svg { transform: translate(2px, -2px); }
 
-    /* --- About Content Styling --- */
-    .about-section { 
-      margin-bottom: 32px; 
-      padding: 24px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.4);
-      border: 1px solid var(--pill-border);
-      transition: transform 600ms cubic-bezier(0.25, 1, 0.5, 1), background-color 1000ms ease-out, box-shadow 500ms ease, border-color 500ms ease;
+    .about-title-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 40px; }
+    h1 { 
+    font-size: 84px; /* Increased from 28px */
+    font-weight: 600; /* Optional: Make it bolder */
+    margin: 0 0 16px 0; 
+    color: var(--text); 
+    line-height: 1.1; 
     }
-    body.dark .about-section { background: rgba(255, 255, 255, 0.03); border-color: var(--pill-border-dark); }
-
-    .about-section h2 { 
-      font-size: 20px; 
-      border-bottom: 1px solid var(--pill-border); 
-      padding-bottom: 8px; 
-      margin-bottom: 16px;
-      color: var(--accent);
-    }
-    body.dark .about-section h2 { border-color: var(--pill-border-dark); }
-
-    .about-item { margin-bottom: 20px; }
-    
-    .about-header { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: baseline; 
-      flex-wrap: wrap;
-      margin-bottom: 4px;
-    }
-    
-    .about-header h3 { 
-      font-size: 16px; 
-      font-weight: 600; 
-      margin: 0; 
-      color: var(--text);
-      line-height: 1.4;
-    }
-    
-    .about-header .date { 
-      font-size: 14px; 
-      color: var(--muted); 
-      white-space: nowrap;
+    /* Mobile Adjustment (inside the existing @media block) */
+    @media (max-width: 480px) {
+      h1 { font-size: 52px; } /* Smaller size for mobile phones */
     }
 
-    .about-item .subtitle {
-      font-size: 14px; 
-      font-style: italic;
-      margin-bottom: 8px;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-
-    .about-section ul {
-      margin: 0;
-      padding-left: 20px;
-      list-style-type: disc;
-    }
-    
-    .about-section li {
-      font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 6px;
-      line-height: 1.5;
-    }
-    
-    .about-section p { 
-      font-size: 14px;
-      line-height: 1.5; 
-    }
-    
-    .about-section strong { color: var(--text); font-weight: 600; }
-
-    /* --- Components --- */
-    h1 { font-size: 28px; margin: 0 0 8px 0; color: var(--text); line-height: 1.2; }
+    h2 { font-size: 28px; margin: 0 0 8px 0; color: var(--text); line-height: 1.2; }
     p { margin: 0 0 18px; color: var(--muted); }
-
-    /* Social Icons (Keeping as Img tags with filters for now, per context) */
-    .icon-btn img {
-      display: block;
-      height: 20px;
-      width: auto;
-      object-fit: contain;
-      transition: opacity 500ms ease;
-    }
-    .icon-btn.linkedin img { height: 21px; }
-    .icon-btn.x img { height: 17px; }
-
-    /* METHOD 2: CSS MASK FOR ARROW ICON */
-    .arrow-icon {
-      width: 16px;
-      height: 16px;
-      display: block;
-      /* "currentColor" inherits the color from the parent button.
-         - Default: var(--muted)
-         - Hover: var(--accent)
-         This removes the need for filters. */
-      background-color: currentColor;
-      
-      /* Masking Logic */
-      -webkit-mask-image: url('icons/up_arrow.svg');
-      mask-image: url('icons/up_arrow.svg');
-      
-      -webkit-mask-size: contain;
-      mask-size: contain;
-      -webkit-mask-repeat: no-repeat;
-      mask-repeat: no-repeat;
-      -webkit-mask-position: center;
-      mask-position: center;
-    }
-
-    @media (hover: hover) {
-      .icon-btn:hover {
-        background: var(--hover-bg);
-        color: var(--accent);
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 6px 18px rgba(11, 95, 255, 0.08);
-      }
-      /* Social Icons Filter Logic (Retained) */
-      .icon-btn:hover img {
-        filter: brightness(0) saturate(100%) invert(27%) sepia(100%) saturate(2878%) hue-rotate(210deg) brightness(104%) contrast(97%);
-        transition: filter 0s;
-      }
-      body.dark .icon-btn:hover {
-        background: var(--hover-bg-dark);
-        color: var(--text);
-        box-shadow: 0 8px 24px rgba(200,200,200,0.18);
-      }
-      /* Social Icons Dark Mode Filter */
-      body.dark .icon-btn:hover img {
-        filter: brightness(0) saturate(100%) invert(70%) sepia(100%) saturate(2878%) hue-rotate(190deg) brightness(104%) contrast(97%);
-        transition: filter 0s;
-      }
-      /* Standard Pill Hover */
-      .pill:not(.pill-accent):hover {
-        background: var(--hover-bg);
-        color: var(--accent);
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 6px 18px rgba(11, 95, 255, 0.08);
-      }
-      body.dark .pill:not(.pill-accent):hover { 
-        background: var(--hover-bg-dark); 
-        color: var(--text); 
-        box-shadow: 0 8px 24px rgba(200,200,200,0.18); 
-      }
-      
-      /* Accent Pill Hover */
-      .pill-accent:hover {
-        background: var(--accent) !important;
-        opacity: 0.95;
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 6px 18px rgba(11, 95, 255, 0.3);
-      }
-      body.dark .pill-accent:hover {
-        background: var(--accent) !important;
-        opacity: 0.95;
-        box-shadow: 0 8px 24px rgba(122,183,255,0.3);
-      }
-      
-      .about-section:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(11, 95, 255, 0.08);
-        border-color: var(--accent);
-      }
-      body.dark .about-section:hover { box-shadow: 0 8px 24px rgba(200,200,200,0.12); }
-    }
-    
-    body.dark .icon-btn img { filter: brightness(0) invert(1); }
-    
-    /* Generic Pill */
-    .pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--pill-border);
-      color: var(--text);
-      text-decoration: none;
-      font-weight: 600;
-      transition: 
-        transform 600ms cubic-bezier(0.25, 1, 0.5, 1), 
-        background-color 1000ms ease-out, 
-        color 500ms ease, 
-        border-color 500ms ease;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-    
-    /* Generic active state (faint) */
-    .pill:active {
-      transform: scale(0.95);
-      background: var(--hover-bg);
-      transition: transform 0.1s ease, background-color 0s;
-    }
-    body.dark .pill:active { background: var(--hover-bg-dark); }
-    body.dark .pill { border-color: var(--pill-border-dark); background: rgba(255,255,255,0.02); }
-
-    /* --- SLOT MACHINE PILL --- */
-    .pill-accent {
-      padding: 0 20px; 
-      height: 42px; 
-      background: var(--accent);
-      color: white;
-      border: none;
-      overflow: hidden; 
-      display: inline-flex;
-      align-items: flex-start !important; 
-      justify-content: center;
-      position: relative;
-      box-sizing: border-box; 
-    }
-    body.dark .pill-accent { background: var(--accent); color: var(--bg); }
-
-    .slot-scroller {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .slot-label {
-      height: 42px; 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      width: 100%;
-      flex-shrink: 0;
-    }
-
-    .pill-accent:hover .slot-scroller { transform: translateY(-42px); }
-
-    .pill-accent:active {
-      background: var(--accent) !important;
-      color: white !important;
-      opacity: 0.8;
-      transform: scale(0.95);
-    }
-    body.dark .pill-accent:active {
-      background: var(--accent) !important;
-      color: var(--bg) !important;
-    }
-
-    /* 2. SCROLL TO TOP BUTTON (Slot Machine Effect) */
-    .scroll-to-top {
-      position: relative; display: inline-flex; margin: 0 auto 20px auto; z-index: 10; opacity: 1; transform: none;
-      overflow: hidden;
-      align-items: flex-start !important; 
-      padding: 0;
-    }
-
-    .scroll-to-top .slot-label {
-      height: 44px;
-      width: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .scroll-to-top:hover .slot-scroller {
-      transform: translateY(-44px);
-    }
 
     .social-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
     .pill-row { margin-top: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .site-footer-container { text-align: center; padding-bottom: 30px; }
+    .site-footer { color: var(--muted); font-size: 14px; padding: 8px 16px; }
 
-    .site-footer-container { display: block; text-align: center; padding-bottom: 30px; }
-    .site-footer { height: auto; color: var(--muted); font-size: 14px; padding: 8px 16px; }
-
-    /* --- ANIMATIONS --- */
-    .theme-transition, .theme-transition *, .theme-transition *::before, .theme-transition *::after {
-      transition: background-color 0.32s ease, background 0.32s ease, color 0s, box-shadow 0.32s ease, border-color 0.32s ease !important;
+    /* --- Animations --- */
+    /* FIXED: Added .theme-transition itself so 'body' transition applies */
+    .theme-transition, .theme-transition * { 
+      transition: background-color 0.32s ease, background 0.32s ease, color 0s, box-shadow 0.32s ease, border-color 0.32s ease !important; 
     }
 
-    /* Standard Fade In for Home Elements */
+    /* Entry Animations */
     #home p, #home .icon-btn, #home .pill, .nav-wrapper {
-      opacity: 0; 
-      transform: translateY(20px); 
-      transition: opacity 1000ms ease, transform 1000ms ease;
-      will-change: opacity, transform;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+    .page-loaded #home p, .page-loaded #home .icon-btn, .page-loaded #home .pill, .page-loaded .nav-wrapper {
+      opacity: 1; transform: none;
     }
 
-    /* 3D FLIP REVEAL FOR BLOCKS */
+    /* Flip Reveals */
     .reveal-flip {
-      opacity: 0;
-      transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
+      opacity: 0; transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
       transform-origin: top center;
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: opacity, transform;
+      transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .reveal-flip.visible {
-      opacity: 1;
-      transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1);
-    }
+    .reveal-flip.visible { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); }
 
-    /* CHARACTER FLIP FOR TITLES (Start Hidden) */
     .char-flip {
-      display: inline-block;
-      opacity: 0; 
-      transform: perspective(500px) rotateX(90deg) translateY(10px);
-      transform-origin: bottom center;
-      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-      will-change: opacity, transform;
-      white-space: pre; 
+      display: inline-block; opacity: 0; white-space: pre;
+      transform: perspective(500px) rotateX(90deg) translateY(10px); transform-origin: bottom center;
+      transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .char-flip.visible {
-      opacity: 1;
-      transform: perspective(500px) rotateX(0deg) translateY(0);
-    }
-
-    /* Active States */
-    .page-loaded #home p, 
-    .page-loaded #home .icon-btn, .page-loaded #home .pill, 
-    .page-loaded .nav-wrapper {
-      opacity: 1; transform: none; 
-    }
+    .char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
 
     @media (max-width: 480px) {
-      .nav-wrapper {
-        position: fixed;
-        /* UPDATED: Mobile padding match */
-        top: 20px;
-        left: 20px;
-        right: 20px;
-        width: auto;
-        height: auto;
-        z-index: 30;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 10px;
-        pointer-events: auto; 
-      }
-
-      .nav-wrapper .icon-btn {
-        position: static; 
-        flex: 0 0 auto; 
-        width: auto;
-        height: 52px; 
-        font-size: 16px;
-      }
-
-      .nav-wrapper .nav-theme {
-        flex: 0 0 52px; 
-        width: 52px;
-        height: 52px;
-      }
-
+      .nav-wrapper { top: 20px; left: 20px; right: 20px; width: auto; height: auto; display: flex; justify-content: flex-end; gap: 10px; pointer-events: auto; }
+      .nav-wrapper .icon-btn, .nav-wrapper .nav-theme { position: static; flex: 0 0 52px; width: 52px; height: 52px; }
       #about .inner { padding-top: 20px; }
       .about-header { flex-direction: column; gap: 2px; }
-      .about-header .date { font-size: 14px; margin-top: 2px; }
-      .page .inner { padding: 20px; min-height: 100svh; }
       h1 { font-size: 24px; }
     }
   </style>
 </head>
 <body>
   <script>
+    // Immediate Theme Apply
     (function() {
       const saved = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
-      // Temporarily disable transitions
       document.body.style.transition = 'none';
-
-      if (saved === 'dark' || (!saved && prefersDark)) {
-        document.body.classList.add('dark');
-      }
+      if (saved === 'dark' || (!saved && prefersDark)) document.body.classList.add('dark');
     })();
   </script>
 
-  <div id="top-nav-bg" class="top-nav-bg"></div>
+  <div class="bg-glare"></div>
+
+  <div class="top-nav-bg"></div>
 
   <nav class="nav-wrapper">
-    <button id="theme-toggle" class="icon-btn square nav-theme theme-toggle" aria-label="Toggle dark mode">
-      <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <button id="theme-toggle" class="icon-btn square nav-theme" aria-label="Toggle dark mode">
+      <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5373 21.3065 11.4608 21.0672 11.8568C19.9289 13.7406 17.8615 15 15.5 15C11.9101 15 9 12.0899 9 8.5C9 6.13845 10.2594 4.07105 12.1432 2.93276C12.5392 2.69347 12.4627 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor"/>
       </svg>
     </button>
@@ -567,21 +301,22 @@
 
   <div class="content-wrap">
     <main>
-      <section id="home" class="page" role="main" aria-label="Home">
+      <section id="home" class="page">
         <div class="inner">
           <div style="text-align:center;max-width:900px;width:100%">
             <h1 class="split-flip-text">Ruiqian Zhang</h1>
-            <p>Blacksburg, VA</p>
+            <p>📍 Blacksburg, VA</p>
             
             <div class="social-pills">
-              <a class="icon-btn square" href="https://github.com/rhemzema" target="_blank" rel="noopener noreferrer"><img src="icons/github_64x.svg" alt="GitHub"></a>
-              <a class="icon-btn square linkedin" href="https://linkedin.com/in/ruiqianzhang" target="_blank" rel="noopener noreferrer"><img src="icons/linkedin_64x.svg" alt="LinkedIn"></a>
-              <a class="icon-btn square" href="https://instagram.com/rhemzema" target="_blank" rel="noopener noreferrer"><img src="icons/instagram_64x.svg" alt="Instagram"></a>
-              <a class="icon-btn square x" href="https://x.com/rhemzema" target="_blank" rel="noopener noreferrer"><img src="icons/x_300x.svg" alt="X"></a>
+              <a class="icon-btn square" href="https://github.com/rhemzema" target="_blank"><img src="icons/github_64x.svg" alt="GitHub"></a>
+              <a class="icon-btn square linkedin" href="https://linkedin.com/in/ruiqianzhang" target="_blank"><img src="icons/linkedin_64x.svg" alt="LinkedIn"></a>
+              <a class="icon-btn square" href="https://instagram.com/rhemzema" target="_blank"><img src="icons/instagram_64x.svg" alt="Instagram"></a>
+              <a class="icon-btn square x" href="https://x.com/rhemzema" target="_blank"><img src="icons/x_300x.svg" alt="X"></a>
             </div>
 
             <div class="pill-row" style="margin-top: 16px;">
               <a class="pill" href="projects.html">Projects</a>
+              <a class="pill" href="mailto:ruiqian.zh@gmail.com">Get In Touch</a>
             </div>
 
             <div class="pill-row">
@@ -592,35 +327,26 @@
                 </span>
               </a>
             </div>
-            
-            <div class="pill-row" style="margin-top: 12px;">
-              <a class="pill" href="mailto:ruiqian.zh@gmail.com">Connect</a>
-            </div>
           </div>
         </div>  
       </section>
 
-      <section id="about" class="page" role="main" aria-label="About Me">
+      <section id="about" class="page">
         <div class="inner">
           <div style="text-align:left;max-width:800px;width:100%;margin:0 auto;">
             
             <div class="about-title-row">
-              <h1 class="split-flip-text">Who Am I?</h1>
-              <a class="download-link" href="https://drive.google.com/file/d/1aahcnYovKxRag3JXCUOrbV7VcdCrNn_E/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-                <span class="split-flip-text">Download</span>
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 17L17 7M17 7H7M17 7V17" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+              <h2 class="split-flip-text">Who Am I?</h2>
+              <a class="download-link" href="https://drive.google.com/file/d/1aahcnYovKxRag3JXCUOrbV7VcdCrNn_E/view?usp=sharing" target="_blank">
+                <span class="split-flip-text" data-delay="600">Download</span>
+                <svg viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </a>
             </div>
 
             <div class="about-section reveal-flip">
               <h2>Education</h2>
               <div class="about-item">
-                <div class="about-header">
-                  <h3>Virginia Tech</h3>
-                  <span class="date">Expected May 2028</span>
-                </div>
+                <div class="about-header"><h3>Virginia Tech</h3><span class="date">Expected May 2028</span></div>
                 <p class="subtitle">BS in Electrical Engineering | Blacksburg, VA</p>
                 <p style="margin-bottom:8px;"><strong>GPA:</strong> 3.89/4.0 (Dean's List with Distinction)</p>
                 <p><strong>Relevant Coursework:</strong> Embedded Systems, Signal and Systems, Physical Electronics, Fundamentals of Digital Systems, Circuits and Devices, Computational Engineering</p>
@@ -638,10 +364,7 @@
             <div class="about-section reveal-flip">
               <h2>Projects & Experience</h2>
               <div class="about-item">
-                <div class="about-header">
-                  <h3>Electrical Hardware Engineer</h3>
-                  <span class="date">Sep 2024 – Present</span>
-                </div>
+                <div class="about-header"><h3>Electrical Hardware Engineer</h3><span class="date">Sep 2024 – Present</span></div>
                 <p class="subtitle">Robogrinder at Virginia Tech</p>
                 <ul>
                   <li>Designed and simulated a 24 → 12V DC-DC buck converter in LTSpice and validated performance to meet requirements.</li>
@@ -649,23 +372,13 @@
                   <li>Integrated 8 supercapacitors and 8 distribution boards across 4 competition robots, improving power integrity.</li>
                 </ul>
               </div>
-
               <div class="about-item">
-                <div class="about-header">
-                  <h3>Robotics Engineer</h3>
-                  <span class="date">Sep 2025 – Present</span>
-                </div>
+                <div class="about-header"><h3>Robotics Engineer</h3><span class="date">Sep 2025 – Present</span></div>
                 <p class="subtitle">VT CRO (Competitive Robotics Organization)</p>
-                <ul>
-                  <li>Collaborated with 15-member team to build an all-terrain robot for the 2026 IEEE Southeast Conference Competition.</li>
-                </ul>
+                <ul><li>Collaborated with 15-member team to build an all-terrain robot for the 2026 IEEE Southeast Conference Competition.</li></ul>
               </div>
-
               <div class="about-item">
-                <div class="about-header">
-                  <h3>"HokieB" Hokie Passport Bracelet</h3>
-                  <span class="date">Jan – May 2025</span>
-                </div>
+                <div class="about-header"><h3>"HokieB" Hokie Passport Bracelet</h3><span class="date">Jan – May 2025</span></div>
                 <p class="subtitle">Class Project - Foundations of Engineering</p>
                 <ul>
                   <li>Led 6-member team to develop wearable RFID-enabled student ID.</li>
@@ -678,49 +391,30 @@
             <div class="about-section reveal-flip">
               <h2>Leadership & Volunteering</h2>
               <div class="about-item">
-                <div class="about-header">
-                  <h3>High School Photography</h3>
-                  <span class="date">2022 – 2024</span>
-                </div>
+                <div class="about-header"><h3>High School Photography</h3><span class="date">2022 – 2024</span></div>
                 <p class="subtitle">President & Lead Photographer | Bangkok, Thailand</p>
                 <ul>
                   <li>Directed media coverage for major school events & contributed photos for 6 school publications.</li>
                   <li>Documented 4 MUN conferences, including THAIMUN X & XI (400+ delegates, 8 countries).</li>
                 </ul>
               </div>
-
               <div class="about-item">
-                <div class="about-header">
-                  <h3>National Art Honor Society</h3>
-                  <span class="date">2022 – 2024</span>
-                </div>
+                <div class="about-header"><h3>National Art Honor Society</h3><span class="date">2022 – 2024</span></div>
                 <p class="subtitle">Historian & Officer | Bangkok, Thailand</p>
-                <ul>
-                  <li>Led 21-member team to organize art auctions, Maker's Fair 2023, charity fundraisers, & painted 3 murals.</li>
-                </ul>
+                <ul><li>Led 21-member team to organize art auctions, Maker's Fair 2023, charity fundraisers, & painted 3 murals.</li></ul>
               </div>
-
               <div class="about-item">
-                <div class="about-header">
-                  <h3>Fruit For Hope: Capstone Service Project</h3>
-                  <span class="date">2022</span>
-                </div>
+                <div class="about-header"><h3>Fruit For Hope: Capstone Service Project</h3><span class="date">2022</span></div>
                 <p class="subtitle">Project Lead & Volunteer | Bangkok, Thailand</p>
                 <ul>
                   <li>Distributed food & supplies to 100+ refugee families; completed 39 hours.</li>
                   <li>Organized sanitation workshop benefiting 20 families & generating 9,000 THB (~$280).</li>
                 </ul>
               </div>
-
               <div class="about-item">
-                <div class="about-header">
-                  <h3>Foundation for the Blind in Thailand</h3>
-                  <span class="date">2022 – 2024</span>
-                </div>
+                <div class="about-header"><h3>Foundation for the Blind in Thailand</h3><span class="date">2022 – 2024</span></div>
                 <p class="subtitle">Volunteer | Bangkok, Thailand</p>
-                <ul>
-                  <li>Tutored Math, Biology, Computer Science, English, & Chinese for visually impaired students; completed 13.5 hours.</li>
-                </ul>
+                <ul><li>Tutored Math, Biology, Computer Science, English, & Chinese for visually impaired students; completed 13.5 hours.</li></ul>
               </div>
             </div>
 
@@ -733,151 +427,157 @@
   <div class="site-footer-container">
     <button class="icon-btn square scroll-to-top arrow" id="scroll-to-top" aria-label="Scroll to top">
       <span class="slot-scroller">
-        <span class="slot-label">
-          <div class="arrow-icon"></div>
-        </span>
-        <span class="slot-label">
-          <div class="arrow-icon"></div>
-        </span>
+        <span class="slot-label"><div class="arrow-icon"></div></span>
+        <span class="slot-label"><div class="arrow-icon"></div></span>
       </span>
     </button>
-    
-    <footer class="site-footer" role="contentinfo">
-      &copy; 2026 Ruiqian Zhang
-    </footer>
+    <footer class="site-footer">&copy; 2026 Ruiqian Zhang</footer>
   </div>
 
   <script>
+    // --- UI Utilities ---
     const UI = {
       body: document.body,
-      scrollToTopBtn: document.getElementById('scroll-to-top'),
       themeToggle: document.getElementById('theme-toggle'),
+      scrollBtn: document.getElementById('scroll-to-top'),
+      glare: document.querySelector('.bg-glare'), // Select the glare
+      homeSection: document.getElementById('home') // Select Home section
     };
 
-    // Re-enable transitions slightly after load
+    // --- 1. Load Animation ---
     window.addEventListener('load', () => {
       requestAnimationFrame(() => {
         UI.body.classList.add('page-loaded');
-        setTimeout(() => {
-          document.body.style.transition = '';
-        }, 100);
+        setTimeout(() => UI.body.style.transition = '', 100);
+        updateGlare(); // Initial calculation
       });
     });
 
-    // Theme Toggle Logic
+    // --- 2. Theme Toggle ---
     UI.themeToggle.addEventListener('click', () => {
       UI.body.classList.add('theme-transition');
       const isDark = UI.body.classList.toggle('dark');
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      UI.themeToggle.setAttribute('aria-pressed', isDark);
       setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
+      updateGlare(); // Recalculate visibility immediately on toggle
     });
 
+    // --- 3. Smooth Scroll Engine ---
     function smoothScrollTo(targetY) {
       const startY = window.scrollY;
       const distance = targetY - startY;
-      const duration = 1020;
-      let startTime = null;
-      function animation(currentTime) {
-        if (!startTime) startTime = currentTime;
-        const timeElapsed = currentTime - startTime;
-        const progress = Math.min(timeElapsed / duration, 1);
-        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+      const duration = 800; // Optimized duration
+      let start = null;
+
+      function step(timestamp) {
+        if (!start) start = timestamp;
+        const progress = Math.min((timestamp - start) / duration, 1);
+        // EaseInOutCubic
+        const ease = progress < 0.5 
+          ? 4 * progress * progress * progress 
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        
         window.scrollTo(0, startY + (distance * ease));
-        if (timeElapsed < duration) requestAnimationFrame(animation);
+        if (progress < 1) requestAnimationFrame(step);
       }
-      requestAnimationFrame(animation);
+      requestAnimationFrame(step);
     }
 
     document.querySelectorAll('.smooth-scroll-link').forEach(link => {
-      link.addEventListener('click', (e) => {
+      link.addEventListener('click', e => {
         e.preventDefault();
         const target = document.querySelector(link.getAttribute('href'));
-        if (target) {
-          const offset = target.id === 'about' ? 80 : 0;
-          smoothScrollTo(target.offsetTop - offset);
-        }
+        if (target) smoothScrollTo(target.offsetTop - (target.id === 'about' ? 80 : 0));
       });
     });
 
-    UI.scrollToTopBtn.addEventListener('click', () => smoothScrollTo(0));
+    UI.scrollBtn.addEventListener('click', () => smoothScrollTo(0));
 
-    // --- FUNCTION 1: Split text into characters ---
-    function splitTextElements() {
-      document.querySelectorAll('.split-flip-text').forEach(el => {
-        const text = el.textContent;
-        el.setAttribute('aria-label', text);
-        el.innerHTML = ''; 
-        text.split('').forEach(char => {
-          const span = document.createElement('span');
-          span.classList.add('char-flip');
-          span.textContent = char;
-          span.setAttribute('aria-hidden', 'true'); 
-          el.appendChild(span);
-        });
-      });
+    // --- 4. Glare Scroll Logic ---
+    function updateGlare() {
+      // Only run math if dark mode is active
+      if (!UI.body.classList.contains('dark')) return;
+
+      const scrollY = window.scrollY;
+      const homeHeight = UI.homeSection.offsetHeight || window.innerHeight;
+      
+      // Calculate opacity: 
+      // At scrollY 0 = opacity 0.15 (Max)
+      // At scrollY = homeHeight = opacity 0
+      const maxOpacity = 0.15; // Set max intensity (15%)
+      let opacity = maxOpacity - (scrollY / homeHeight) * maxOpacity;
+
+      // Clamp values
+      if (opacity < 0) opacity = 0;
+      if (opacity > maxOpacity) opacity = maxOpacity;
+
+      UI.glare.style.opacity = opacity;
     }
 
-    // --- UPDATED OBSERVER (CASCADE EFFECT) ---
+    // Attach scroll listener for glare
+    window.addEventListener('scroll', updateGlare);
+
+
+    // --- 5. Text Reveal Effects ---
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        const target = entry.target;
-
         if (entry.isIntersecting) {
-          // ENTER VIEWPORT -> REVEAL
+          const target = entry.target;
+          
+          // 1. Check for staggered delay from HTML data attribute
+          const delay = parseInt(target.getAttribute('data-delay') || 0);
 
-          // Case 1: About Header Row (Triggers Titles AND Block Sequence)
-          if (target.classList.contains('about-title-row')) {
-             
-             // 1. Animate Header Text
-             const allChars = target.querySelectorAll('.char-flip');
-             allChars.forEach((char, index) => {
-                setTimeout(() => {
-                    char.classList.add('visible');
-                }, index * 30);
-             });
+          const chars = target.querySelectorAll('.char-flip');
+          const blocks = target.classList.contains('about-title-row') 
+            ? document.querySelectorAll('.reveal-flip') 
+            : [];
 
-             // 2. Animate About Sections sequentially
-             const aboutSections = document.querySelectorAll('.about-section.reveal-flip');
-             aboutSections.forEach((section, index) => {
+          // Reveal Characters (With added delay if present)
+          chars.forEach((c, i) => setTimeout(() => c.classList.add('visible'), delay + (i * 30)));
+          
+          // If this target is part of the download link, find the sibling SVG and animate it too
+          // This ensures the icon waits for the text, keeping it "clean"
+          const parentLink = target.closest('.download-link');
+          if (parentLink) {
+             const icon = parentLink.querySelector('svg');
+             if (icon) {
+                // Ensure initial hidden state then reveal
+                icon.style.opacity = '0';
+                icon.style.transform = 'translateY(5px)';
+                icon.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                 setTimeout(() => {
-                   section.classList.add('visible');
-                }, index * 200); // 200ms stagger
-             });
-             
-             // STOP WATCHING
-             revealObserver.unobserve(target);
-
-          } 
-          // Case 2: Home Title
-          else if (target.classList.contains('split-flip-text')) {
-             const allChars = target.querySelectorAll('.char-flip');
-             allChars.forEach((char, index) => {
-                setTimeout(() => {
-                    char.classList.add('visible');
-                }, index * 30);
-             });
-             // STOP WATCHING
-             revealObserver.unobserve(target);
+                    icon.style.opacity = '1';
+                    icon.style.transform = 'translateY(0) translate(0, 0)'; // Reset to allow hover effect later
+                }, delay);
+             }
           }
 
-        } 
+          // Reveal Blocks (if header)
+          blocks.forEach((b, i) => setTimeout(() => b.classList.add('visible'), i * 200));
+          
+          revealObserver.unobserve(target);
+        }
       });
-    }, {
-      rootMargin: '-50px',
-      threshold: 0.1
-    });
+    }, { rootMargin: '-50px', threshold: 0.1 });
 
     // Initialize Split Text
-    splitTextElements();
+    document.querySelectorAll('.split-flip-text').forEach(el => {
+      const text = el.textContent;
+      el.innerHTML = '';
+      text.split('').forEach(char => {
+        const span = document.createElement('span');
+        span.className = 'char-flip';
+        span.textContent = char;
+        el.appendChild(span);
+      });
+      revealObserver.observe(el);
+    });
 
-    // Attach Observer to Triggers only
+    // Specifically observe the About header container to trigger block reveals
     const aboutHeader = document.querySelector('.about-title-row');
     if (aboutHeader) revealObserver.observe(aboutHeader);
 
-    const homeTitle = document.querySelector('#home h1.split-flip-text');
-    if (homeTitle) revealObserver.observe(homeTitle);
-    
+    // Prevent mobile hover stuck states
     document.addEventListener('touchstart', () => {}, {passive: true});
   </script>
 </body>

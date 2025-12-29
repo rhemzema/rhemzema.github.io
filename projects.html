@@ -11,22 +11,33 @@
 
   <style>
     :root {
-      /* Colors - Matching index.html */
+      /* Colors */
       --bg: #f2f0ef;
-      --accent: #861F41; /* Light Mode: Maroon */
-      --muted: #6b7280;
       --text: #111;
+      --muted: #6b7280;
+      --accent: #0b5fff;
       
-      /* Borders */
-      --pill-border: rgba(16, 24, 40, 0.06);
-      --pill-border-dark: rgba(255, 255, 255, 0.06);
-      
-      /* Hover */
+      /* Dynamic UI Colors (Light Mode Defaults) */
       --hover-bg: rgba(134, 31, 65, 0.06);
-      --hover-bg-dark: rgba(255, 255, 255, 0.06);
+      --border: rgba(16, 24, 40, 0.06);
+      --card-bg: #f7f6f5;
+      --shadow-color: rgba(134, 31, 65, 0.08);
       
       /* Dimensions */
       --nav-height: 100px;
+    }
+
+    body.dark {
+      --bg: #071221;
+      --text: #f2f0ef;
+      --muted: #98a6b3;
+      --accent: #7ab7ff;
+      
+      /* Dark Mode Overrides */
+      --hover-bg: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.06);
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --shadow-color: rgba(229, 117, 31, 0.15);
     }
 
     /* --- Base Layout --- */
@@ -36,288 +47,123 @@
       font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text);
-      /* Transition handled via JS to prevent flash */
-      padding: 0;
       overflow-x: hidden;
     }
 
-    body.dark {
-      --bg: #071221;
-      --accent: #E5751F; /* Dark Mode: Orange */
-      --muted: #98a6b3;
-      --text: #f2f0ef;
-    }
-
-    /* --- NAVIGATION --- */
-    .nav-wrapper {
-      position: fixed;
-      top: 0; 
-      left: 0;
-      width: 100%;
-      height: 0;
-      z-index: 50; 
-      pointer-events: none; 
-    }
-
-    /* FIXED ALIGNMENT: Matches index.html */
-    .nav-right-group {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      display: flex;
-      gap: 12px;
-      z-index: 100;
-      pointer-events: auto;
-    }
-
-    /* Blur Background */
-    .top-nav-bg {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: var(--nav-height);
-      z-index: 29;
-      pointer-events: none;
-      background: linear-gradient(to bottom, var(--bg) 0%, rgba(0,0,0,0) 100%);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-      mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-      opacity: 1;
-      transition: background-color 0.32s ease;
-    }
-
-    /* --- SHARED BUTTON STYLES --- */
-    .icon-btn {
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: center;
-      border-radius: 8px; 
-      border: 0; 
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
+    /* --- Shared Components --- */
+    .icon-btn, .project-card {
       text-decoration: none;
-      transition: 
-        transform 600ms cubic-bezier(0.25, 1, 0.5, 1), 
-        background-color 1000ms ease-out, 
-        color 500ms ease, 
-        box-shadow 500ms ease;
       -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-
-    .icon-btn.square {
-      width: 44px;
-      height: 44px;
-    }
-
-    .icon-btn:active {
-      transform: scale(0.95);
-      background: var(--hover-bg);
-      transition: transform 0.1s ease, background-color 0s;
-    }
-    body.dark .icon-btn:active { background: var(--hover-bg-dark); }
-
-    /* Hover States (Mouse Only) */
-    @media (hover: hover) {
-      .icon-btn:hover {
-        background: var(--hover-bg);
-        color: var(--accent);
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 6px 18px rgba(134, 31, 65, 0.08);
-      }
-      body.dark .icon-btn:hover {
-        background: var(--hover-bg-dark);
-        color: var(--text);
-        box-shadow: 0 8px 24px rgba(200,200,200,0.18);
-      }
-    }
-
-    /* --- Content --- */
-    .content-wrap {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 120px 20px 40px 20px; /* Top padding clears nav */
-      box-sizing: border-box;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 600px;
-    }
-
-    h1 {
-      font-size: 32px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      letter-spacing: -0.5px;
-      perspective: 1000px; 
-    }
-
-    p.intro {
-      color: var(--muted);
-      margin-bottom: 40px;
-      line-height: 1.5;
-    }
-
-    /* --- PROJECT BUTTON --- */
-    .project-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      padding: 20px 24px;
-      background: #fff;
-      border: 1px solid var(--pill-border);
-      border-radius: 24px; 
-      text-decoration: none;
-      color: var(--text);
-      /* Smooth Physics */
-      transition: 
-        transform 600ms cubic-bezier(0.25, 1, 0.5, 1), 
-        background-color 1000ms ease-out, 
-        border-color 500ms ease, 
-        box-shadow 500ms ease;
-      box-sizing: border-box;
-      margin-bottom: 16px;
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
+      user-select: none;
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
     }
 
-    body.dark .project-card {
-      background: rgba(255, 255, 255, 0.03);
-      border-color: var(--pill-border-dark);
+    /* Icon Buttons */
+    .icon-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 8px; border: 0; background: transparent; color: var(--muted);
     }
+    .icon-btn.square { width: 44px; height: 44px; }
+    .icon-btn:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
 
-    .project-info h2 {
-      font-size: 18px;
-      font-weight: 700;
-      margin: 0 0 4px 0;
-      transition: color 0.3s ease;
+    /* Project Card */
+    .project-card {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 20px 24px; box-sizing: border-box; margin-bottom: 16px;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px;
+      color: var(--text); position: relative; overflow: hidden;
     }
+    .project-card:active { transform: scale(0.98); background: var(--hover-bg); transition-duration: 0.1s; }
 
-    .project-info p {
-      font-size: 14px;
-      color: var(--muted);
-      margin: 0;
-    }
+    /* Project Info */
+    .project-info h2 { font-size: 18px; font-weight: 700; margin: 0 0 4px 0; transition: color 0.3s ease; }
+    .project-info p { font-size: 14px; color: var(--muted); margin: 0; }
 
-    /* --- METHOD 2: CSS MASK ICON --- */
-    .project-card .arrow-icon {
-      width: 16px;
-      height: 16px;
-      flex-shrink: 0;
-      margin-left: 16px;
-      
-      /* 1. Set the background color (Visible Color) */
-      background-color: var(--muted); 
-      
-      /* 2. Define the Mask (The Shape) */
-      -webkit-mask-image: url('icons/up_arrow.svg');
-      mask-image: url('icons/up_arrow.svg');
-      
-      /* 3. Formatting */
-      -webkit-mask-size: contain;
-      mask-size: contain;
-      -webkit-mask-repeat: no-repeat;
-      mask-repeat: no-repeat;
-      -webkit-mask-position: center;
-      mask-position: center;
-
-      /* Animation */
+    /* Arrow Icon (Mask Method) */
+    .arrow-icon {
+      width: 16px; height: 16px; flex-shrink: 0; margin-left: 16px;
+      background-color: var(--muted);
+      -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain;
+      mask: url('icons/up_arrow.svg') no-repeat center / contain;
       transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease;
-      
-      /* Rotate 90deg because original points UP, we want RIGHT */
       transform: rotate(90deg);
     }
 
-    /* Project Card Hover Effects */
+    /* NEW: Home Icon (Mask Method) */
+    .home-icon {
+      width: 20px; height: 20px; display: block;
+      /* Inherits color from .icon-btn (Grey -> Accent on hover) */
+      background-color: currentColor;
+      -webkit-mask: url('icons/home.svg') no-repeat center / contain;
+      mask: url('icons/home.svg') no-repeat center / contain;
+    }
+
+    /* Hover States */
     @media (hover: hover) {
+      .icon-btn:hover {
+        background: var(--hover-bg); color: var(--accent);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 6px 18px var(--shadow-color);
+      }
+      
       .project-card:hover {
         transform: translateY(-3px) scale(1.01);
         border-color: var(--accent);
+        box-shadow: 0 8px 24px var(--shadow-color);
       }
-      .project-card:hover {
-        box-shadow: 0 8px 24px rgba(134, 31, 65, 0.08);
-      }
-      body.dark .project-card:hover {
-        box-shadow: 0 8px 24px rgba(229, 117, 31, 0.15);
-      }
-
       .project-card:hover h2 { color: var(--accent); }
-      
       .project-card:hover .arrow-icon {
-        /* Change Background Color to Accent */
         background-color: var(--accent);
-        
-        /* Move slightly right on hover (TranslateY because it's rotated) */
-        transform: rotate(90deg) translateY(-4px); 
+        transform: rotate(90deg) translateY(-4px);
       }
     }
 
-    /* Active State (Click) */
-    .project-card:active {
-      transform: scale(0.98);
-      background: var(--hover-bg);
-      transition: transform 0.1s ease, background-color 0s;
-    }
-    body.dark .project-card:active {
-      background: var(--hover-bg-dark);
+    /* --- Layout --- */
+    .nav-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 50; pointer-events: none; }
+    .nav-right-group { position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 100; pointer-events: auto; }
+
+    .top-nav-bg {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height); z-index: 29; pointer-events: none;
+      background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+      transition: background-color 0.32s ease;
     }
 
-    /* --- ANIMATION CLASSES --- */
-    
-    /* 1. Initial State (Hidden) */
-    .nav-wrapper, .nav-right-group, p.intro {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 1000ms ease, transform 1000ms ease;
-      will-change: opacity, transform;
+    .content-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 120px 20px 40px 20px; box-sizing: border-box; }
+    .container { width: 100%; max-width: 600px; }
+
+    h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+    p.intro { color: var(--muted); margin-bottom: 40px; line-height: 1.5; }
+
+    /* --- Animations --- */
+    .theme-transition, .theme-transition * { 
+      transition: background-color 0.32s ease, border-color 0.32s ease, color 0s, box-shadow 0.32s ease !important; 
     }
 
-    /* 2. Loaded State (Visible) */
-    .page-loaded .nav-wrapper, 
-    .page-loaded .nav-right-group,
-    .page-loaded p.intro {
-      opacity: 1; 
-      transform: none; 
+    /* Entry Animations */
+    .nav-right-group, p.intro {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 1s ease, transform 1s ease;
     }
+    .page-loaded .nav-right-group, .page-loaded p.intro { opacity: 1; transform: none; }
 
-    /* Character Flip */
-    .char-flip {
-      display: inline-block;
-      opacity: 0; 
-      transform: perspective(500px) rotateX(90deg) translateY(10px);
-      transform-origin: bottom center;
-      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-      will-change: opacity, transform;
-      white-space: pre; 
-    }
-    .char-flip.visible {
-      opacity: 1;
-      transform: perspective(500px) rotateX(0deg) translateY(0);
-    }
-
-    /* Block Reveal Flip */
+    /* Flip Reveals */
     .reveal-flip {
-      opacity: 0;
-      transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
+      opacity: 0; transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
       transform-origin: top center;
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: opacity, transform;
+      transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .reveal-flip.visible {
-      opacity: 1;
-      transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1);
-    }
+    .reveal-flip.visible { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); }
 
-    /* Theme Transition helper */
-    .theme-transition, .theme-transition * {
-      transition: background-color 0.32s ease, color 0.32s ease, border-color 0.32s ease, box-shadow 0.32s ease !important;
+    .char-flip {
+      display: inline-block; opacity: 0; white-space: pre;
+      transform: perspective(500px) rotateX(90deg) translateY(10px); transform-origin: bottom center;
+      transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    .char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
 
   </style>
 </head>
@@ -328,25 +174,19 @@
       const saved = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       document.body.style.transition = 'none';
-      if (saved === 'dark' || (!saved && prefersDark)) {
-        document.body.classList.add('dark');
-      }
+      if (saved === 'dark' || (!saved && prefersDark)) document.body.classList.add('dark');
     })();
   </script>
 
-  <div id="top-nav-bg" class="top-nav-bg"></div>
+  <div class="top-nav-bg"></div>
 
   <nav class="nav-wrapper">
     <div class="nav-right-group">
       <a href="index.html" class="icon-btn square" aria-label="Go to Home">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
+        <div class="home-icon"></div>
       </a>
-
-      <button id="theme-toggle" class="icon-btn square theme-toggle" aria-label="Toggle dark mode">
-        <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <button id="theme-toggle" class="icon-btn square" aria-label="Toggle dark mode">
+        <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5373 21.3065 11.4608 21.0672 11.8568C19.9289 13.7406 17.8615 15 15.5 15C11.9101 15 9 12.0899 9 8.5C9 6.13845 10.2594 4.07105 12.1432 2.93276C12.5392 2.69347 12.4627 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor"/>
         </svg>
       </button>
@@ -355,74 +195,42 @@
 
   <div class="content-wrap">
     <div class="container">
-      
       <h1 class="split-flip-text">Selected Projects</h1>
-      <p class="intro">A collection of engineering, design, and web experiments.</p>
+      <p class="intro">My closet of engineering, design, and creative experiments.</p>
 
       <a href="id_card.html" class="project-card reveal-flip">
         <div class="project-info">
-          <h2>Student ID UX Exploration</h2>
+          <h2>Project_Card </h2>
           <p>Interactive 3D digital ID card with gyroscope and light physics.</p>
         </div>
         <div class="arrow-icon"></div>
       </a>
-
     </div>
   </div>
 
   <script>
-    // --- UI LOGIC ---
+    // --- UI Logic ---
     const UI = {
       body: document.body,
       toggleBtn: document.getElementById('theme-toggle'),
     };
 
-    // 1. Split Text Function
-    function splitTextElements() {
-      document.querySelectorAll('.split-flip-text').forEach(el => {
-        const text = el.textContent;
-        el.setAttribute('aria-label', text);
-        el.innerHTML = ''; 
-        text.split('').forEach(char => {
-          const span = document.createElement('span');
-          span.classList.add('char-flip');
-          span.textContent = char;
-          span.setAttribute('aria-hidden', 'true'); 
-          el.appendChild(span);
-        });
-      });
-    }
-
-    // 2. Load Animations
+    // --- 1. Load Animation ---
     window.addEventListener('load', () => {
-      setTimeout(() => { document.body.style.transition = ''; }, 100);
+      setTimeout(() => UI.body.style.transition = '', 100);
       requestAnimationFrame(() => UI.body.classList.add('page-loaded'));
-      triggerAnimationSequence();
+      
+      // Sequence
+      const chars = document.querySelectorAll('.char-flip');
+      chars.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 30));
+      
+      const cards = document.querySelectorAll('.reveal-flip');
+      setTimeout(() => {
+        cards.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 150));
+      }, 300);
     });
 
-    // 3. Animation Sequencer
-    function triggerAnimationSequence() {
-      const title = document.querySelector('.split-flip-text');
-      if (title) {
-        const chars = title.querySelectorAll('.char-flip');
-        chars.forEach((char, index) => {
-          setTimeout(() => {
-            char.classList.add('visible');
-          }, index * 30);
-        });
-      }
-
-      setTimeout(() => {
-        const cards = document.querySelectorAll('.reveal-flip');
-        cards.forEach((card, index) => {
-          setTimeout(() => {
-            card.classList.add('visible');
-          }, index * 150);
-        });
-      }, 300); 
-    }
-
-    // --- THEME TOGGLE ---
+    // --- 2. Theme Toggle ---
     UI.toggleBtn.addEventListener('click', () => {
       UI.body.classList.add('theme-transition');
       const isDark = UI.body.classList.toggle('dark');
@@ -430,7 +238,18 @@
       setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
     });
 
-    splitTextElements();
+    // --- 3. Split Text Init ---
+    document.querySelectorAll('.split-flip-text').forEach(el => {
+      const text = el.textContent;
+      el.setAttribute('aria-label', text);
+      el.innerHTML = ''; 
+      text.split('').forEach(char => {
+        const span = document.createElement('span');
+        span.className = 'char-flip';
+        span.textContent = char;
+        el.appendChild(span);
+      });
+    });
   </script>
 
 </body>
