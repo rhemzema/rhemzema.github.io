@@ -14,7 +14,7 @@
     :root {
       /* Colors */
       --bg: #f2f0ef;
-      --accent: #0b5fff;
+      --accent: #0b5fff; /* Blue Accent */
       --muted: #6b7280;
       --text: #111;
       --toggle-fill: #9ca3af;
@@ -31,10 +31,9 @@
       --nav-height: 100px;
     }
 
-    /* --- Base Layout & Snap --- */
+    /* --- Base Layout --- */
     html {
-      scroll-snap-type: y proximity;
-      scroll-behavior: auto;
+      scroll-behavior: smooth; 
     }
 
     body {
@@ -44,7 +43,7 @@
       background: var(--bg);
       color: var(--text);
       overflow-x: hidden;
-      transition: background-color 0.32s ease;
+      /* Transition is handled via JS to prevent flash on load */
     }
 
     body.dark {
@@ -102,11 +101,11 @@
 
     .nav-wrapper .icon-btn {
       position: fixed; 
-      top: 14px;
+      top: 20px;
       pointer-events: auto;
     }
     
-    .nav-theme { right: 14px; }
+    .nav-theme { right: 20px; }
 
     .top-nav-bg {
       position: fixed;
@@ -142,26 +141,26 @@
       box-sizing: border-box;
     }
 
-    /* --- PORTFOLIO SECTION --- */
-    #portfolio {
+    /* --- ABOUT SECTION --- */
+    #about {
       scroll-margin-top: 120px; 
     }
 
-    #portfolio .inner {
+    #about .inner {
       display: block; 
       height: auto;
       min-height: auto;
       padding-top: 40px; 
     }
 
-    .portfolio-header-row {
+    .about-title-row {
       display: flex;
       align-items: baseline;
       gap: 12px;
       margin-bottom: 40px;
       perspective: 1000px; 
     }
-    .portfolio-header-row h1 {
+    .about-title-row h1 {
       margin-bottom: 0;
     }
 
@@ -173,19 +172,20 @@
       font-size: 14px;
       font-weight: 500;
       color: var(--muted);
-      text-decoration: underline;
-      text-underline-offset: 4px;
+      text-decoration: none; 
+      border-bottom: 1px solid currentColor;
+      padding-bottom: 1px;
       transition: opacity 1000ms ease-out, transform 600ms cubic-bezier(0.25, 1, 0.5, 1), color 200ms ease;
       -webkit-tap-highlight-color: transparent;
       perspective: 1000px;
     }
-    .download-link:hover { color: var(--accent); text-decoration-color: var(--accent); }
+    .download-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
     .download-link:active { opacity: 0.5; transform: scale(0.98); transition: opacity 0s, transform 0.1s ease; }
     .download-link svg { width: 10px; height: 10px; stroke: currentColor; stroke-width: 2; transition: transform 0.2s ease; }
     .download-link:hover svg { transform: translate(2px, -2px); }
 
-    /* --- Resume Styling --- */
-    .resume-section { 
+    /* --- About Content Styling --- */
+    .about-section { 
       margin-bottom: 32px; 
       padding: 24px;
       border-radius: 16px;
@@ -193,20 +193,20 @@
       border: 1px solid var(--pill-border);
       transition: transform 600ms cubic-bezier(0.25, 1, 0.5, 1), background-color 1000ms ease-out, box-shadow 500ms ease, border-color 500ms ease;
     }
-    body.dark .resume-section { background: rgba(255, 255, 255, 0.03); border-color: var(--pill-border-dark); }
+    body.dark .about-section { background: rgba(255, 255, 255, 0.03); border-color: var(--pill-border-dark); }
 
-    .resume-section h2 { 
+    .about-section h2 { 
       font-size: 20px; 
       border-bottom: 1px solid var(--pill-border); 
       padding-bottom: 8px; 
       margin-bottom: 16px;
       color: var(--accent);
     }
-    body.dark .resume-section h2 { border-color: var(--pill-border-dark); }
+    body.dark .about-section h2 { border-color: var(--pill-border-dark); }
 
-    .resume-item { margin-bottom: 20px; }
+    .about-item { margin-bottom: 20px; }
     
-    .resume-header { 
+    .about-header { 
       display: flex; 
       justify-content: space-between; 
       align-items: baseline; 
@@ -214,7 +214,7 @@
       margin-bottom: 4px;
     }
     
-    .resume-header h3 { 
+    .about-header h3 { 
       font-size: 16px; 
       font-weight: 600; 
       margin: 0; 
@@ -222,13 +222,13 @@
       line-height: 1.4;
     }
     
-    .resume-header .date { 
+    .about-header .date { 
       font-size: 14px; 
       color: var(--muted); 
       white-space: nowrap;
     }
 
-    .resume-item .subtitle {
+    .about-item .subtitle {
       font-size: 14px; 
       font-style: italic;
       margin-bottom: 8px;
@@ -236,30 +236,31 @@
       line-height: 1.4;
     }
 
-    .resume-section ul {
+    .about-section ul {
       margin: 0;
       padding-left: 20px;
       list-style-type: disc;
     }
     
-    .resume-section li {
+    .about-section li {
       font-size: 14px;
       color: var(--muted);
       margin-bottom: 6px;
       line-height: 1.5;
     }
     
-    .resume-section p { 
+    .about-section p { 
       font-size: 14px;
       line-height: 1.5; 
     }
     
-    .resume-section strong { color: var(--text); font-weight: 600; }
+    .about-section strong { color: var(--text); font-weight: 600; }
 
     /* --- Components --- */
     h1 { font-size: 28px; margin: 0 0 8px 0; color: var(--text); line-height: 1.2; }
     p { margin: 0 0 18px; color: var(--muted); }
 
+    /* Social Icons (Keeping as Img tags with filters for now, per context) */
     .icon-btn img {
       display: block;
       height: 20px;
@@ -269,12 +270,28 @@
     }
     .icon-btn.linkedin img { height: 21px; }
     .icon-btn.x img { height: 17px; }
-    .icon-btn.arrow img { 
-      height: 16px; 
-      filter: invert(48%) sepia(13%) saturate(467%) hue-rotate(172deg) brightness(91%) contrast(85%);
-    }
-    body.dark .icon-btn.arrow img { 
-      filter: brightness(0) invert(1); 
+
+    /* METHOD 2: CSS MASK FOR ARROW ICON */
+    .arrow-icon {
+      width: 16px;
+      height: 16px;
+      display: block;
+      /* "currentColor" inherits the color from the parent button.
+         - Default: var(--muted)
+         - Hover: var(--accent)
+         This removes the need for filters. */
+      background-color: currentColor;
+      
+      /* Masking Logic */
+      -webkit-mask-image: url('icons/up_arrow.svg');
+      mask-image: url('icons/up_arrow.svg');
+      
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
     }
 
     @media (hover: hover) {
@@ -284,6 +301,7 @@
         transform: translateY(-3px) scale(1.02);
         box-shadow: 0 6px 18px rgba(11, 95, 255, 0.08);
       }
+      /* Social Icons Filter Logic (Retained) */
       .icon-btn:hover img {
         filter: brightness(0) saturate(100%) invert(27%) sepia(100%) saturate(2878%) hue-rotate(210deg) brightness(104%) contrast(97%);
         transition: filter 0s;
@@ -293,6 +311,7 @@
         color: var(--text);
         box-shadow: 0 8px 24px rgba(200,200,200,0.18);
       }
+      /* Social Icons Dark Mode Filter */
       body.dark .icon-btn:hover img {
         filter: brightness(0) saturate(100%) invert(70%) sepia(100%) saturate(2878%) hue-rotate(190deg) brightness(104%) contrast(97%);
         transition: filter 0s;
@@ -323,12 +342,12 @@
         box-shadow: 0 8px 24px rgba(122,183,255,0.3);
       }
       
-      .resume-section:hover {
+      .about-section:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 24px rgba(11, 95, 255, 0.08);
         border-color: var(--accent);
       }
-      body.dark .resume-section:hover { box-shadow: 0 8px 24px rgba(200,200,200,0.12); }
+      body.dark .about-section:hover { box-shadow: 0 8px 24px rgba(200,200,200,0.12); }
     }
     
     body.dark .icon-btn img { filter: brightness(0) invert(1); }
@@ -434,10 +453,9 @@
     .site-footer-container { display: block; text-align: center; padding-bottom: 30px; }
     .site-footer { height: auto; color: var(--muted); font-size: 14px; padding: 8px 16px; }
 
-    /* --- ANIMATIONS (FLIP EFFECTS) --- */
-    /* Updated theme transition with faster color snap (0.05s) */
+    /* --- ANIMATIONS --- */
     .theme-transition, .theme-transition *, .theme-transition *::before, .theme-transition *::after {
-      transition: background-color 0.32s ease, background 0.32s ease, color 0.05s ease, box-shadow 0.32s ease, border-color 0.32s ease !important;
+      transition: background-color 0.32s ease, background 0.32s ease, color 0s, box-shadow 0.32s ease, border-color 0.32s ease !important;
     }
 
     /* Standard Fade In for Home Elements */
@@ -448,7 +466,7 @@
       will-change: opacity, transform;
     }
 
-    /* 3D FLIP REVEAL FOR RESUME BOXES */
+    /* 3D FLIP REVEAL FOR BLOCKS */
     .reveal-flip {
       opacity: 0;
       transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
@@ -484,15 +502,12 @@
     }
 
     @media (max-width: 480px) {
-      /* DISABLE SNAP SCROLL ON MOBILE */
-      html { scroll-snap-type: none; }
-      .page { scroll-snap-align: none; }
-
       .nav-wrapper {
         position: fixed;
-        top: 14px;
-        left: 14px;
-        right: 14px;
+        /* UPDATED: Mobile padding match */
+        top: 20px;
+        left: 20px;
+        right: 20px;
         width: auto;
         height: auto;
         z-index: 30;
@@ -517,15 +532,28 @@
         height: 52px;
       }
 
-      #portfolio .inner { padding-top: 20px; }
-      .resume-header { flex-direction: column; gap: 2px; }
-      .resume-header .date { font-size: 14px; margin-top: 2px; }
+      #about .inner { padding-top: 20px; }
+      .about-header { flex-direction: column; gap: 2px; }
+      .about-header .date { font-size: 14px; margin-top: 2px; }
       .page .inner { padding: 20px; min-height: 100svh; }
       h1 { font-size: 24px; }
     }
   </style>
 </head>
 <body>
+  <script>
+    (function() {
+      const saved = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      // Temporarily disable transitions
+      document.body.style.transition = 'none';
+
+      if (saved === 'dark' || (!saved && prefersDark)) {
+        document.body.classList.add('dark');
+      }
+    })();
+  </script>
 
   <div id="top-nav-bg" class="top-nav-bg"></div>
 
@@ -552,27 +580,32 @@
               <a class="icon-btn square x" href="https://x.com/rhemzema" target="_blank" rel="noopener noreferrer"><img src="icons/x_300x.svg" alt="X"></a>
             </div>
 
+            <div class="pill-row" style="margin-top: 16px;">
+              <a class="pill" href="projects.html">Projects</a>
+            </div>
+
             <div class="pill-row">
-              <a class="pill pill-accent smooth-scroll-link" href="#portfolio">
+              <a class="pill pill-accent smooth-scroll-link" href="#about">
                 <span class="slot-scroller">
-                  <span class="slot-label">Portfolio</span>
-                  <span class="slot-label">Portfolio</span>
+                  <span class="slot-label">About Me</span>
+                  <span class="slot-label">About Me</span>
                 </span>
               </a>
             </div>
+            
             <div class="pill-row" style="margin-top: 12px;">
-              <a class="pill" href="mailto:ruiqian@vt.edu">Contact</a>
+              <a class="pill" href="mailto:ruiqian.zh@gmail.com">Connect</a>
             </div>
           </div>
         </div>  
       </section>
 
-      <section id="portfolio" class="page" role="main" aria-label="Portfolio">
+      <section id="about" class="page" role="main" aria-label="About Me">
         <div class="inner">
           <div style="text-align:left;max-width:800px;width:100%;margin:0 auto;">
             
-            <div class="portfolio-header-row">
-              <h1 class="split-flip-text">Portfolio</h1>
+            <div class="about-title-row">
+              <h1 class="split-flip-text">Who Am I?</h1>
               <a class="download-link" href="https://drive.google.com/file/d/1aahcnYovKxRag3JXCUOrbV7VcdCrNn_E/view?usp=sharing" target="_blank" rel="noopener noreferrer">
                 <span class="split-flip-text">Download</span>
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -581,10 +614,10 @@
               </a>
             </div>
 
-            <div class="resume-section reveal-flip">
+            <div class="about-section reveal-flip">
               <h2>Education</h2>
-              <div class="resume-item">
-                <div class="resume-header">
+              <div class="about-item">
+                <div class="about-header">
                   <h3>Virginia Tech</h3>
                   <span class="date">Expected May 2028</span>
                 </div>
@@ -594,41 +627,42 @@
               </div>
             </div>
 
-            <div class="resume-section reveal-flip">
+            <div class="about-section reveal-flip">
               <h2>Technical Skills</h2>
               <p><strong>Hardware:</strong> PCB Design, Embedded Systems, FPGA Design (basic), Power Systems, Circuit Simulation (LTSpice)</p>
-              <p><strong>Software:</strong> C/C++, Verilog/VHDL, Assembly, Python, MATLAB, Java</p>
-              <p><strong>EDA & Tools:</strong> Quartus Prime, Questa, KiCAD, EasyEDA, Git, VSCode, Arduino IDE</p>
+              <p><strong>Software:</strong> Verilog/VHDL, C/C++, Python, MATLAB, Java, HTML, CSS</p>
+              <p><strong>EDA & Tools:</strong> Quartus Prime, QuestaSim, KiCAD, EasyEDA, Git, VSCode, Arduino IDE, Docker, Autodesk Fusion 360</p>
               <p><strong>Languages:</strong> English (fluent), Mandarin Chinese (fluent), Thai (intermediate)</p>
             </div>
 
-            <div class="resume-section reveal-flip">
+            <div class="about-section reveal-flip">
               <h2>Projects & Experience</h2>
-              <div class="resume-item">
-                <div class="resume-header">
+              <div class="about-item">
+                <div class="about-header">
                   <h3>Electrical Hardware Engineer</h3>
                   <span class="date">Sep 2024 – Present</span>
                 </div>
                 <p class="subtitle">Robogrinder at Virginia Tech</p>
                 <ul>
-                  <li>Designed & fabricated 2 EasyEDA PCBs for embedded control, strengthening hardware & PCB design expertise.</li>
+                  <li>Designed and simulated a 24 → 12V DC-DC buck converter in LTSpice and validated performance to meet requirements.</li>
+                  <li>Designed & fabricated 2 EasyEDA PCBs, strengthening hardware & PCB design expertise.</li>
                   <li>Integrated 8 supercapacitors and 8 distribution boards across 4 competition robots, improving power integrity.</li>
                 </ul>
               </div>
 
-              <div class="resume-item">
-                <div class="resume-header">
+              <div class="about-item">
+                <div class="about-header">
                   <h3>Robotics Engineer</h3>
                   <span class="date">Sep 2025 – Present</span>
                 </div>
                 <p class="subtitle">VT CRO (Competitive Robotics Organization)</p>
                 <ul>
-                  <li>Collaborated with 15-member team to compete in the 2026 IEEE Southeast Conference Robotics Competition.</li>
+                  <li>Collaborated with 15-member team to build an all-terrain robot for the 2026 IEEE Southeast Conference Competition.</li>
                 </ul>
               </div>
 
-              <div class="resume-item">
-                <div class="resume-header">
+              <div class="about-item">
+                <div class="about-header">
                   <h3>"HokieB" Hokie Passport Bracelet</h3>
                   <span class="date">Jan – May 2025</span>
                 </div>
@@ -640,6 +674,56 @@
                 </ul>
               </div>
             </div>
+
+            <div class="about-section reveal-flip">
+              <h2>Leadership & Volunteering</h2>
+              <div class="about-item">
+                <div class="about-header">
+                  <h3>High School Photography</h3>
+                  <span class="date">2022 – 2024</span>
+                </div>
+                <p class="subtitle">President & Lead Photographer | Bangkok, Thailand</p>
+                <ul>
+                  <li>Directed media coverage for major school events & contributed photos for 6 school publications.</li>
+                  <li>Documented 4 MUN conferences, including THAIMUN X & XI (400+ delegates, 8 countries).</li>
+                </ul>
+              </div>
+
+              <div class="about-item">
+                <div class="about-header">
+                  <h3>National Art Honor Society</h3>
+                  <span class="date">2022 – 2024</span>
+                </div>
+                <p class="subtitle">Historian & Officer | Bangkok, Thailand</p>
+                <ul>
+                  <li>Led 21-member team to organize art auctions, Maker's Fair 2023, charity fundraisers, & painted 3 murals.</li>
+                </ul>
+              </div>
+
+              <div class="about-item">
+                <div class="about-header">
+                  <h3>Fruit For Hope: Capstone Service Project</h3>
+                  <span class="date">2022</span>
+                </div>
+                <p class="subtitle">Project Lead & Volunteer | Bangkok, Thailand</p>
+                <ul>
+                  <li>Distributed food & supplies to 100+ refugee families; completed 39 hours.</li>
+                  <li>Organized sanitation workshop benefiting 20 families & generating 9,000 THB (~$280).</li>
+                </ul>
+              </div>
+
+              <div class="about-item">
+                <div class="about-header">
+                  <h3>Foundation for the Blind in Thailand</h3>
+                  <span class="date">2022 – 2024</span>
+                </div>
+                <p class="subtitle">Volunteer | Bangkok, Thailand</p>
+                <ul>
+                  <li>Tutored Math, Biology, Computer Science, English, & Chinese for visually impaired students; completed 13.5 hours.</li>
+                </ul>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -650,10 +734,10 @@
     <button class="icon-btn square scroll-to-top arrow" id="scroll-to-top" aria-label="Scroll to top">
       <span class="slot-scroller">
         <span class="slot-label">
-          <img src="icons/up_arrow.svg" alt="Up arrow" />
+          <div class="arrow-icon"></div>
         </span>
         <span class="slot-label">
-          <img src="icons/up_arrow.svg" alt="Up arrow" />
+          <div class="arrow-icon"></div>
         </span>
       </span>
     </button>
@@ -670,14 +754,17 @@
       themeToggle: document.getElementById('theme-toggle'),
     };
 
-    function initTheme() {
-      const saved = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const theme = saved || (prefersDark ? 'dark' : 'light');
-      if (theme === 'dark') UI.body.classList.add('dark');
-      UI.themeToggle.setAttribute('aria-pressed', theme === 'dark');
-    }
+    // Re-enable transitions slightly after load
+    window.addEventListener('load', () => {
+      requestAnimationFrame(() => {
+        UI.body.classList.add('page-loaded');
+        setTimeout(() => {
+          document.body.style.transition = '';
+        }, 100);
+      });
+    });
 
+    // Theme Toggle Logic
     UI.themeToggle.addEventListener('click', () => {
       UI.body.classList.add('theme-transition');
       const isDark = UI.body.classList.toggle('dark');
@@ -686,18 +773,11 @@
       setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
     });
 
-    function toggleSnap(enable) {
-      const val = enable ? '' : 'none';
-      document.documentElement.style.scrollSnapType = val;
-      UI.body.style.scrollSnapType = val;
-    }
-
     function smoothScrollTo(targetY) {
       const startY = window.scrollY;
       const distance = targetY - startY;
       const duration = 1020;
       let startTime = null;
-      toggleSnap(false);
       function animation(currentTime) {
         if (!startTime) startTime = currentTime;
         const timeElapsed = currentTime - startTime;
@@ -705,7 +785,6 @@
         const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
         window.scrollTo(0, startY + (distance * ease));
         if (timeElapsed < duration) requestAnimationFrame(animation);
-        else toggleSnap(true);
       }
       requestAnimationFrame(animation);
     }
@@ -715,7 +794,7 @@
         e.preventDefault();
         const target = document.querySelector(link.getAttribute('href'));
         if (target) {
-          const offset = target.id === 'portfolio' ? 80 : 0;
+          const offset = target.id === 'about' ? 80 : 0;
           smoothScrollTo(target.offsetTop - offset);
         }
       });
@@ -739,7 +818,7 @@
       });
     }
 
-    // --- UPDATED OBSERVER (Play Once) ---
+    // --- UPDATED OBSERVER (CASCADE EFFECT) ---
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         const target = entry.target;
@@ -747,24 +826,42 @@
         if (entry.isIntersecting) {
           // ENTER VIEWPORT -> REVEAL
 
-          // Case 1: Block Flip (Resume Sections)
-          if (target.classList.contains('reveal-flip')) {
-             target.classList.add('visible');
-             // STOP WATCHING so it never hides again
-             revealObserver.unobserve(target);
-          } 
-          // Case 2: Character Flip (Header Row & Home Title)
-          else if (target.classList.contains('portfolio-header-row') || target.classList.contains('split-flip-text')) {
+          // Case 1: About Header Row (Triggers Titles AND Block Sequence)
+          if (target.classList.contains('about-title-row')) {
+             
+             // 1. Animate Header Text
              const allChars = target.querySelectorAll('.char-flip');
              allChars.forEach((char, index) => {
                 setTimeout(() => {
                     char.classList.add('visible');
                 }, index * 30);
              });
-             // STOP WATCHING so it never hides again
+
+             // 2. Animate About Sections sequentially
+             const aboutSections = document.querySelectorAll('.about-section.reveal-flip');
+             aboutSections.forEach((section, index) => {
+                setTimeout(() => {
+                   section.classList.add('visible');
+                }, index * 200); // 200ms stagger
+             });
+             
+             // STOP WATCHING
+             revealObserver.unobserve(target);
+
+          } 
+          // Case 2: Home Title
+          else if (target.classList.contains('split-flip-text')) {
+             const allChars = target.querySelectorAll('.char-flip');
+             allChars.forEach((char, index) => {
+                setTimeout(() => {
+                    char.classList.add('visible');
+                }, index * 30);
+             });
+             // STOP WATCHING
              revealObserver.unobserve(target);
           }
-        }
+
+        } 
       });
     }, {
       rootMargin: '-50px',
@@ -774,19 +871,12 @@
     // Initialize Split Text
     splitTextElements();
 
-    // Attach Observer to all elements we want to animate (Box or Text)
-    document.querySelectorAll('.reveal-flip, .portfolio-header-row, .split-flip-text').forEach((el, index) => {
-      // Only stagger the boxes, not the text containers themselves
-      if(el.classList.contains('reveal-flip')) {
-         el.style.transitionDelay = `${index * 100}ms`;
-      }
-      revealObserver.observe(el);
-    });
+    // Attach Observer to Triggers only
+    const aboutHeader = document.querySelector('.about-title-row');
+    if (aboutHeader) revealObserver.observe(aboutHeader);
 
-    initTheme();
-    window.addEventListener('load', () => {
-      requestAnimationFrame(() => UI.body.classList.add('page-loaded'));
-    });
+    const homeTitle = document.querySelector('#home h1.split-flip-text');
+    if (homeTitle) revealObserver.observe(homeTitle);
     
     document.addEventListener('touchstart', () => {}, {passive: true});
   </script>
