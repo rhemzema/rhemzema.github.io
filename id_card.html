@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="icon" href="icons/face.svg" type="image/svg+xml">
 
   <style>
     :root {
@@ -174,14 +175,18 @@
     }
 
     .id-card-wrapper, .ui-container {
-      opacity: 0; transform: translateY(20px);
-      transition: opacity 1s ease, transform 1s ease;
+      opacity: 0; transform: none;
     }
     .page-loaded .id-card-wrapper, .page-loaded .ui-container { opacity: 1; transform: none; }
 
     /* --- MOBILE ADJUSTMENTS (Corrected) --- */
     @media (max-width: 768px) {
       body {
+        /* This is the key fix. 
+          By adding padding to the BOTTOM of the body, we lift the "center point"
+          of the flex container. Both the Card and Buttons will shift UP together.
+        */
+        padding-bottom: 2vh;
         padding-left: 20px;
         padding-right: 20px;
       }

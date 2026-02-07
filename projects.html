@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="icon" href="icons/face.svg" type="image/svg+xml">
 
   <style>
     :root {
@@ -18,10 +19,11 @@
       --accent: #0b5fff;
       
       /* Dynamic UI Colors (Light Mode Defaults) */
-      --hover-bg: rgba(134, 31, 65, 0.06);
+      --hover-bg: rgba(11, 95, 255, 0.06);
       --border: rgba(16, 24, 40, 0.06);
       --card-bg: #f7f6f5;
-      --shadow-color: rgba(134, 31, 65, 0.08);
+      --shadow-color: rgba(11, 95, 255, 0.08);
+      --menu-bg: rgba(255, 255, 255, 0.85); /* Semi-transparent for blur */
       
       /* Dimensions */
       --nav-height: 100px;
@@ -37,7 +39,8 @@
       --hover-bg: rgba(255, 255, 255, 0.06);
       --border: rgba(255, 255, 255, 0.06);
       --card-bg: rgba(255, 255, 255, 0.03);
-      --shadow-color: rgba(229, 117, 31, 0.15);
+      --shadow-color: rgba(200, 200, 200, 0.18);
+      --menu-bg: rgba(17, 27, 39, 0.85); /* Semi-transparent for blur */
     }
 
     /* --- Base Layout --- */
@@ -67,22 +70,191 @@
     .icon-btn.square { width: 44px; height: 44px; }
     .icon-btn:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
 
+    /* --- Filter Styles --- */
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .filter-btn {
+      font-family: 'Inter', sans-serif;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--hover-bg);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    
+    body.dark .filter-btn.active {
+        color: var(--bg); /* Dark mode text contrast on accent */
+    }
+
+    /* --- Control Bar (Filters + Sort) --- */
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      gap: 16px;
+      position: relative;
+      z-index: 20;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* --- Sort Menu (Hamburger) --- */
+    .sort-wrapper { position: relative; }
+    
+    .sort-menu {
+      position: absolute;
+      top: 100%; right: 0;
+      margin-top: 12px;
+      background: var(--menu-bg);
+      /* Improved Visuals: Glassmorphism */
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 6px;
+      min-width: 180px;
+      box-shadow: 0 16px 40px var(--shadow-color);
+      opacity: 0; visibility: hidden; transform: translateY(-10px) scale(0.98);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+    }
+    
+    .sort-menu.open {
+      opacity: 1; visibility: visible; transform: translateY(0) scale(1);
+    }
+
+    .sort-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      text-align: left;
+      padding: 10px 14px;
+      background: transparent;
+      border: 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .sort-option:hover { background: var(--hover-bg); color: var(--text); }
+    
+    .sort-option.selected { 
+      color: var(--accent); 
+      background: var(--hover-bg); 
+      font-weight: 600;
+    }
+
+    /* Checkmark for selected state */
+    .sort-option.selected::after {
+      content: '';
+      display: block;
+      width: 6px; height: 10px;
+      border: solid currentColor;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg) translateY(-2px);
+      margin-left: 8px;
+    }
+
+    /* Hamburger Icon */
+    .menu-icon {
+      width: 20px; height: 20px;
+      background-color: currentColor;
+      -webkit-mask: url('icons/menu.svg') no-repeat center / contain;
+      mask: url('icons/menu.svg') no-repeat center / contain;
+      /* Fallback SVG */
+      -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12H21M3 6H21M3 18H21" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>');
+      mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12H21M3 6H21M3 18H21" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>');
+    }
+
+    /* --- Project Grid --- */
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+
     /* Project Card */
     .project-card {
       display: flex; align-items: center; justify-content: space-between;
-      width: 100%; padding: 20px 24px; box-sizing: border-box; margin-bottom: 16px;
-      background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px;
-      color: var(--text); position: relative; overflow: hidden;
+      width: 100%; 
+      padding: 24px 28px; 
+      box-sizing: border-box; 
+      background: var(--card-bg); 
+      border: 1px solid var(--border); 
+      border-radius: 24px;
+      color: var(--text); 
+      position: relative; 
+      overflow: hidden;
     }
+    .project-card.hidden { display: none; }
     .project-card:active { transform: scale(0.98); background: var(--hover-bg); transition-duration: 0.1s; }
 
     /* Project Info */
-    .project-info h2 { font-size: 18px; font-weight: 700; margin: 0 0 4px 0; transition: color 0.3s ease; }
-    .project-info p { font-size: 14px; color: var(--muted); margin: 0; }
+    .project-info { display: flex; flex-direction: column; gap: 4px; }
+    .project-info h2 { font-size: 20px; font-weight: 700; margin: 0; transition: color 0.3s ease; }
+    .project-info p { font-size: 15px; color: var(--muted); margin: 0 0 8px 0; line-height: 1.4; }
 
-    /* Arrow Icon (Mask Method) */
+    /* Metadata Row (Status + Date) */
+    .meta-row { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+    
+    .date-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      opacity: 0.8;
+    }
+
+    /* Status Dot Inside Card */
+    .card-status {
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      gap: 6px;
+    }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+    
+    .card-status[data-status="in-progress"] .status-dot { background-color: #3b82f6; box-shadow: 0 0 6px #3b82f6; }
+    .card-status[data-status="paused"] .status-dot { background-color: #eab308; box-shadow: 0 0 6px #eab308; }
+    .card-status[data-status="dropped"] .status-dot { background-color: #ef4444; box-shadow: 0 0 6px #ef4444; }
+    .card-status[data-status="completed"] .status-dot { background-color: #22c55e; box-shadow: 0 0 6px #22c55e; }
+
+    /* Arrow Icon */
     .arrow-icon {
-      width: 16px; height: 16px; flex-shrink: 0; margin-left: 16px;
+      width: 18px; height: 18px; flex-shrink: 0; margin-left: 16px;
       background-color: var(--muted);
       -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain;
       mask: url('icons/up_arrow.svg') no-repeat center / contain;
@@ -90,10 +262,9 @@
       transform: rotate(90deg);
     }
 
-    /* NEW: Home Icon (Mask Method) */
+    /* Home Icon */
     .home-icon {
       width: 20px; height: 20px; display: block;
-      /* Inherits color from .icon-btn (Grey -> Accent on hover) */
       background-color: currentColor;
       -webkit-mask: url('icons/home.svg') no-repeat center / contain;
       mask: url('icons/home.svg') no-repeat center / contain;
@@ -108,20 +279,22 @@
       }
       
       .project-card:hover {
-        transform: translateY(-3px) scale(1.01);
+        transform: translateY(-5px) scale(1.01);
         border-color: var(--accent);
-        box-shadow: 0 8px 24px var(--shadow-color);
+        box-shadow: 0 12px 32px var(--shadow-color);
       }
       .project-card:hover h2 { color: var(--accent); }
+      
       .project-card:hover .arrow-icon {
         background-color: var(--accent);
-        transform: rotate(90deg) translateY(-4px);
+        transform: rotate(90deg) translateY(-4px); 
       }
     }
 
     /* --- Layout --- */
     .nav-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 50; pointer-events: none; }
     .nav-right-group { position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 100; pointer-events: auto; }
+    .nav-left-group { position: fixed; top: 20px; left: 20px; z-index: 100; pointer-events: auto; }
 
     .top-nav-bg {
       position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height); z-index: 29; pointer-events: none;
@@ -132,25 +305,17 @@
       transition: background-color 0.32s ease;
     }
 
-    .content-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 80px 20px 40px 20px; box-sizing: border-box; }
-    .container { width: 100%; max-width: 600px; }
+    .content-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 120px 20px 40px 20px; box-sizing: border-box; }
+    .container { width: 100%; max-width: 920px; }
 
     h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
-    p.intro { color: var(--muted); margin-bottom: 40px; line-height: 1.5; }
+    p.intro { color: var(--muted); margin-bottom: 32px; line-height: 1.5; max-width: 600px; }
 
     /* --- Animations --- */
     .theme-transition, .theme-transition * { 
       transition: background-color 0.32s ease, border-color 0.32s ease, color 0s, box-shadow 0.32s ease !important; 
     }
 
-    /* Entry Animations */
-    .nav-right-group, p.intro {
-      opacity: 0; transform: translateY(20px);
-      transition: opacity 1s ease, transform 1s ease;
-    }
-    .page-loaded .nav-right-group, .page-loaded p.intro { opacity: 1; transform: none; }
-
-    /* Flip Reveals */
     .reveal-flip {
       opacity: 0; transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
       transform-origin: top center;
@@ -181,6 +346,12 @@
   <div class="top-nav-bg"></div>
 
   <nav class="nav-wrapper">
+    <div class="nav-left-group">
+      <a href="index.html" class="icon-btn square" aria-label="Back to Home">
+        <div class="icon-mask back-icon"></div>
+      </a>
+    </div>
+
     <div class="nav-right-group">
       <a href="index.html" class="icon-btn square" aria-label="Go to Home">
         <div class="home-icon"></div>
@@ -195,17 +366,62 @@
 
   <div class="content-wrap">
     <div class="container">
-      <h1 class="split-flip-text">Selected Projects</h1>
-      <p class="intro">My closet of engineering, design, and creative experiments.</p>
+      <h1 class="split-flip-text">Featured Projects</h1>
+      <p class="intro">My wardrobe of engineering, design, and creative experiments.</p>
 
-      <a href="id_card.html" class="project-card reveal-flip">
-        <div class="project-info">
-          <h2>Project_Card </h2>
-          <p>Interactive 3D digital ID card with gyroscope and light physics.</p>
+      <div class="controls-row reveal-flip" style="transition-delay: 0.1s">
+        <div class="filter-group">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="in-progress">In Progress</button>
+          <button class="filter-btn" data-filter="paused">Paused</button>
+          <button class="filter-btn" data-filter="completed">Completed</button>
+          <button class="filter-btn" data-filter="dropped">Dropped</button>
         </div>
-        <div class="arrow-icon"></div>
-      </a>
-    </div>
+
+        <div class="sort-wrapper">
+          <button class="icon-btn square" id="sort-toggle" aria-label="Sort Options">
+            <div class="menu-icon"></div>
+          </button>
+          <div class="sort-menu" id="sort-menu">
+            <button class="sort-option selected" data-sort="newest">Newest First</button>
+            <button class="sort-option" data-sort="oldest">Oldest First</button>
+            <button class="sort-option" data-sort="alphabetical">Alphabetical</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-grid" id="project-grid">
+        
+        <a href="mepad.html" class="project-card reveal-flip" data-status="in-progress" data-date="2026-01-03">
+          <div class="project-info">
+            <h2>MePad V1</h2>
+            <p>Custom programmable USB macro keypad</p>
+            <div class="meta-row">
+              <div class="card-status" data-status="in-progress">
+                <span class="status-dot"></span> In Progress
+              </div>
+              <span class="date-label">Jan 3, 2026</span>
+            </div>
+          </div>
+          <div class="arrow-icon"></div>
+        </a>
+
+        <a href="id_card.html" class="project-card reveal-flip" data-status="completed" data-date="2025-12-28">
+          <div class="project-info">
+            <h2>The ID</h2>
+            <p>Interactive card with motion and light physics</p>
+            <div class="meta-row">
+              <div class="card-status" data-status="completed">
+                <span class="status-dot"></span> Completed
+              </div>
+              <span class="date-label">Dec 28, 2025</span>
+            </div>
+          </div>
+          <div class="arrow-icon"></div>
+        </a>
+
+      </div>
+      </div>
   </div>
 
   <script>
@@ -213,14 +429,17 @@
     const UI = {
       body: document.body,
       toggleBtn: document.getElementById('theme-toggle'),
+      filterBtns: document.querySelectorAll('.filter-btn'),
+      grid: document.getElementById('project-grid'),
+      sortToggle: document.getElementById('sort-toggle'),
+      sortMenu: document.getElementById('sort-menu'),
+      sortOptions: document.querySelectorAll('.sort-option')
     };
 
     // --- 1. Load Animation ---
     window.addEventListener('load', () => {
       setTimeout(() => UI.body.style.transition = '', 100);
-      requestAnimationFrame(() => UI.body.classList.add('page-loaded'));
       
-      // Sequence
       const chars = document.querySelectorAll('.char-flip');
       chars.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 30));
       
@@ -238,7 +457,70 @@
       setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
     });
 
-    // --- 3. Split Text Init ---
+    // --- 3. Filtering Logic ---
+    UI.filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        UI.filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filterValue = btn.getAttribute('data-filter');
+        const cards = UI.grid.querySelectorAll('.project-card');
+
+        cards.forEach(card => {
+          const cardStatus = card.getAttribute('data-status');
+          if (filterValue === 'all' || cardStatus === filterValue) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // --- 4. Sorting Logic ---
+    
+    // Toggle Menu
+    UI.sortToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        UI.sortMenu.classList.toggle('open');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!UI.sortMenu.contains(e.target) && !UI.sortToggle.contains(e.target)) {
+            UI.sortMenu.classList.remove('open');
+        }
+    });
+
+    // Sort Function
+    UI.sortOptions.forEach(opt => {
+        opt.addEventListener('click', () => {
+            // Update UI
+            UI.sortOptions.forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            UI.sortMenu.classList.remove('open');
+
+            const sortType = opt.getAttribute('data-sort');
+            const cards = Array.from(UI.grid.querySelectorAll('.project-card'));
+
+            cards.sort((a, b) => {
+                if (sortType === 'alphabetical') {
+                    const titleA = a.querySelector('h2').textContent.trim().toLowerCase();
+                    const titleB = b.querySelector('h2').textContent.trim().toLowerCase();
+                    return titleA.localeCompare(titleB);
+                } else {
+                    const dateA = new Date(a.getAttribute('data-date'));
+                    const dateB = new Date(b.getAttribute('data-date'));
+                    return sortType === 'newest' ? dateB - dateA : dateA - dateB;
+                }
+            });
+
+            // Re-append in new order
+            cards.forEach(card => UI.grid.appendChild(card));
+        });
+    });
+
+    // --- 5. Split Text Init ---
     document.querySelectorAll('.split-flip-text').forEach(el => {
       const text = el.textContent;
       el.setAttribute('aria-label', text);
