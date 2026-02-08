@@ -123,9 +123,54 @@
     .scroll-to-top .slot-label { height: 44px; width: 44px; }
     .scroll-to-top:hover .slot-scroller { transform: translateY(-44px); }
 
+    /* --- Animations --- */
+    
+    /* 1. Theme Transitions */
+    .theme-transition, .theme-transition * { 
+      transition: background-color 0.32s ease, background 0.32s ease, color 0s, box-shadow 0.32s ease, border-color 0.32s ease !important; 
+    }
+
+    /* 2. Center Wipe Entrance (For Pills) */
+    @keyframes pill-wipe {
+      0% { clip-path: inset(0 50% 0 50% round 999px); opacity: 0; }
+      100% { clip-path: inset(0 0 0 0 round 999px); opacity: 1; }
+    }
+
+    .pill-wipe {
+      opacity: 0; 
+      animation: pill-wipe 0.9s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    }
+
+    /* 3. Pop-In Grow (For Social Icons) */
+    @keyframes pop-in {
+      0% { opacity: 0; transform: scale(0.5); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .pop-in {
+      /* 'backwards' ensures opacity:0 is applied during the delay period, 
+         but allows the element to return to default CSS state (for hover) after animation ends */
+      animation: pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
+    }
+
+    /* 4. Flip Reveals (For Text/Blocks) */
+    .reveal-flip {
+      opacity: 0; transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
+      transform-origin: top center;
+      transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-flip.visible { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); }
+
+    .char-flip {
+      display: inline-block; opacity: 0; white-space: pre;
+      transform: perspective(500px) rotateX(90deg) translateY(10px); transform-origin: bottom center;
+      transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
+
     /* Hover States */
     @media (hover: hover) {
-      /* Icon Buttons (Still move up) */
+      /* Icon Buttons */
       .icon-btn:hover {
         background: var(--hover-bg);
         color: var(--accent);
@@ -133,12 +178,12 @@
         box-shadow: 0 6px 18px var(--shadow-color);
       }
 
-      /* Pills (Stationary Highlight) */
+      /* Pills (Standard Hover) */
       .pill:not(.pill-accent):hover {
         background: var(--hover-bg);
         color: var(--accent);
         border-color: var(--accent);
-        transform: none;
+        transform: translateY(-2px);
         box-shadow: 0 4px 12px var(--shadow-color);
       }
 
@@ -160,7 +205,7 @@
     /* --- Layout & Sections --- */
     .nav-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 50; pointer-events: none; }
     
-    /* Navigation Group (Matches Projects Page) */
+    /* Navigation Group */
     .nav-right-group { position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 100; pointer-events: auto; }
 
     .top-nav-bg {
@@ -220,26 +265,6 @@
     .site-footer-container { text-align: center; padding-bottom: 30px; }
     .site-footer { color: var(--muted); font-size: 14px; padding: 8px 16px; }
 
-    /* --- Animations --- */
-    .theme-transition, .theme-transition * { 
-      transition: background-color 0.32s ease, background 0.32s ease, color 0s, box-shadow 0.32s ease, border-color 0.32s ease !important; 
-    }
-
-    /* Flip Reveals */
-    .reveal-flip {
-      opacity: 0; transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
-      transform-origin: top center;
-      transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .reveal-flip.visible { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); }
-
-    .char-flip {
-      display: inline-block; opacity: 0; white-space: pre;
-      transform: perspective(500px) rotateX(90deg) translateY(10px); transform-origin: bottom center;
-      transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
-
     @media (max-width: 480px) {
       #about .inner { padding-top: 20px; }
       .about-header { flex-direction: column; gap: 2px; }
@@ -280,19 +305,19 @@
             <p class="reveal-flip" data-delay="300">📍 Blacksburg, VA</p>
             
             <div class="social-pills">
-              <a class="icon-btn square" href="https://github.com/rhemzema" target="_blank"><img src="icons/github_64x.svg" alt="GitHub"></a>
-              <a class="icon-btn square linkedin" href="https://linkedin.com/in/ruiqianzhang" target="_blank"><img src="icons/linkedin_64x.svg" alt="LinkedIn"></a>
-              <a class="icon-btn square" href="https://instagram.com/rhemzema" target="_blank"><img src="icons/instagram_64x.svg" alt="Instagram"></a>
-              <a class="icon-btn square x" href="https://x.com/rhemzema" target="_blank"><img src="icons/x_300x.svg" alt="X"></a>
+              <a class="icon-btn square pop-in" style="animation-delay: 400ms" href="https://github.com/rhemzema" target="_blank"><img src="icons/github_64x.svg" alt="GitHub"></a>
+              <a class="icon-btn square linkedin pop-in" style="animation-delay: 450ms" href="https://linkedin.com/in/ruiqianzhang" target="_blank"><img src="icons/linkedin_64x.svg" alt="LinkedIn"></a>
+              <a class="icon-btn square pop-in" style="animation-delay: 500ms" href="https://instagram.com/rhemzema" target="_blank"><img src="icons/instagram_64x.svg" alt="Instagram"></a>
+              <a class="icon-btn square x pop-in" style="animation-delay: 550ms" href="https://x.com/rhemzema" target="_blank"><img src="icons/x_300x.svg" alt="X"></a>
             </div>
 
             <div class="pill-row" style="margin-top: 16px;">
-              <a class="pill" href="projects.html">Projects</a>
-              <a class="pill" href="mailto:ruiqian.zh@gmail.com">Email</a>
+              <a class="pill pill-wipe" href="projects.html" style="animation-delay: 500ms">Projects</a>
+              <a class="pill pill-wipe" href="mailto:ruiqian.zh@gmail.com" style="animation-delay: 500ms">Email</a>
             </div>
 
             <div class="pill-row">
-              <a class="pill pill-accent smooth-scroll-link" href="#about">
+              <a class="pill pill-accent smooth-scroll-link pill-wipe" href="#about" style="animation-delay: 750ms">
                 <span class="slot-scroller">
                   <span class="slot-label">About Me</span>
                   <span class="slot-label">About Me</span>
@@ -309,7 +334,7 @@
             
             <div class="about-title-row">
               <h2 class="split-flip-text">Who Am I?</h2>
-              <a class="download-link" href="https://drive.google.com/file/d/1aahcnYovKxRag3JXCUOrbV7VcdCrNn_E/view?usp=sharing" target="_blank">
+              <a class="download-link" href="https://drive.google.com/file/d/16BJaZmmX7ZM_sW_otVHfL_wDuC9--Ux6/view?usp=sharing" target="_blank">
                 <span class="split-flip-text" data-delay="600">Download</span>
                 <svg viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </a>

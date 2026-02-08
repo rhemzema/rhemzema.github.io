@@ -68,6 +68,8 @@
       margin-bottom: 25px; /* Gap between card and buttons */
       transform-style: preserve-3d;
       z-index: 10;
+      /* Ensure touches are captured */
+      touch-action: none; 
     }
 
     .student-id {
@@ -115,15 +117,19 @@
     }
 
     /* --- Controls --- */
-    .ui-container { display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 100; }
+    .ui-container { 
+      display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 100; 
+      opacity: 0; 
+      transition: opacity 0.8s ease; 
+      transition-delay: 0.4s; /* Slight delay so it appears after card starts */
+    }
+    .page-loaded .ui-container { opacity: 1; }
+
     .icon-row { display: flex; gap: 16px; }
 
-    .icon-btn, .pill-accent {
+    .icon-btn {
       cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
       transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .icon-btn {
       display: inline-flex; align-items: center; justify-content: center;
       width: 44px; height: 44px; border-radius: 8px; border: 0; background: transparent; color: var(--muted);
     }
@@ -148,14 +154,6 @@
       mask-image: url('icons/home.svg'); 
     }
 
-    .pill-accent {
-      padding: 0 20px; height: 42px; background: var(--accent); color: white;
-      border: none; border-radius: 999px; font-weight: 600; font-size: 14px;
-      display: none; align-items: center; justify-content: center;
-    }
-    body.dark .pill-accent { color: var(--bg); }
-    .pill-accent:active { opacity: 0.8; transform: scale(0.95); }
-
     @media (hover: hover) {
       .icon-btn:hover { 
         background: var(--hover-bg); color: var(--accent); 
@@ -163,40 +161,35 @@
         box-shadow: 0 6px 18px var(--btn-shadow);
         transition: color 0s, transform 0.6s, box-shadow 0.3s;
       }
-      .pill-accent:hover { 
-        opacity: 0.95; transform: translateY(-3px) scale(1.02); 
-        box-shadow: 0 6px 18px rgba(11,95,255,0.3); 
-      }
-      body.dark .pill-accent:hover { box-shadow: 0 8px 24px rgba(229,117,31,0.3); }
     }
 
     .theme-transition, .theme-transition * { 
       transition: background-color 0.32s ease, border-color 0.32s ease, color 0s, box-shadow 0.32s ease !important; 
     }
 
-    .id-card-wrapper, .ui-container {
-      opacity: 0; transform: none;
+    /* --- ANIMATION (Only for Card) --- */
+    .reveal-flip {
+      opacity: 0; 
+      transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
+      transform-origin: top center;
+      transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .page-loaded .id-card-wrapper, .page-loaded .ui-container { opacity: 1; transform: none; }
+    .reveal-flip.visible { 
+      opacity: 1; 
+      transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); 
+    }
 
-    /* --- MOBILE ADJUSTMENTS (Corrected) --- */
+    /* --- MOBILE ADJUSTMENTS --- */
     @media (max-width: 768px) {
       body {
-        /* This is the key fix. 
-          By adding padding to the BOTTOM of the body, we lift the "center point"
-          of the flex container. Both the Card and Buttons will shift UP together.
-        */
         padding-bottom: 2vh;
         padding-left: 20px;
         padding-right: 20px;
       }
-
       .id-card-wrapper {
-        /* Keep them close together */
         margin-bottom: 30px; 
       }
     }
-
   </style>
 </head>
 <body>
@@ -210,7 +203,7 @@
     })();
   </script>
 
-  <div class="id-card-wrapper" id="id-wrapper">
+  <div class="id-card-wrapper reveal-flip" id="id-wrapper">
     <div class="student-id" id="id-card">
       <div class="id-glare" id="id-glare"></div>
       <div class="id-header"><span class="id-school-name">Virginia Tech</span></div>
@@ -220,7 +213,7 @@
         <div class="id-info">
           <h3 class="id-name">Ruiqian Zhang</h3>
           <div class="id-field"><span class="id-label">Major:</span><span class="id-value">Electrical Engineering</span></div>
-          <div class="id-field"><span class="id-label">GPA:</span><span class="id-value">3.89 / 4.0</span></div>
+          <div class="id-field"><span class="id-label">GPA:</span><span class="id-value">3.64 / 4.0</span></div>
           <div class="id-field" style="border-bottom: none;"><span class="id-label">Expected:</span><span class="id-value">May 2028</span></div>
         </div>
       </div>
@@ -242,7 +235,6 @@
         </svg>
       </button>
     </div>
-    <button id="btn-motion" class="pill-accent" onclick="requestMotionPermission()">Click Me!</button>
   </div>
 
   <script>
@@ -251,22 +243,22 @@
       wrapper: document.getElementById('id-wrapper'),
       card: document.getElementById('id-card'),
       glare: document.getElementById('id-glare'),
-      btnMotion: document.getElementById('btn-motion'),
       themeBtn: document.getElementById('theme-toggle')
     };
     
-    let motionActive = false;
-    let target = { x: 0, y: 0 };
-
     // --- Init ---
     window.addEventListener('load', () => {
       setTimeout(() => document.body.style.transition = '', 100);
+      
+      // 1. Trigger Card Flip
+      const animatedElements = document.querySelectorAll('.reveal-flip');
+      setTimeout(() => {
+        animatedElements.forEach(el => el.classList.add('visible'));
+      }, 100);
+
+      // 2. Trigger Button Fade (Standard)
       requestAnimationFrame(() => document.body.classList.add('page-loaded'));
     });
-
-    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-      UI.btnMotion.style.display = 'inline-flex';
-    }
 
     // --- Actions ---
     UI.themeBtn.addEventListener('click', () => {
@@ -291,50 +283,46 @@
       UI.glare.style.opacity = '0';
     }
 
-    // --- Mouse (Desktop) ---
-    UI.wrapper.addEventListener('mousemove', e => {
+    // --- Universal Interaction Handler ---
+    function handleInteract(clientX, clientY) {
       UI.card.style.transition = 'none'; 
       const rect = UI.wrapper.getBoundingClientRect();
-      const pctX = (e.clientX - rect.left) / rect.width;
-      const pctY = (e.clientY - rect.top) / rect.height;
+      
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      
+      // Normalize to 0-1
+      const pctX = Math.max(0, Math.min(1, x / rect.width));
+      const pctY = Math.max(0, Math.min(1, y / rect.height));
       
       const maxRot = 12;
+      // Tilt calc: 
+      // X-axis rotation comes from Y position (tilt forward/back)
+      // Y-axis rotation comes from X position (tilt left/right)
       updateCard((pctY - 0.5) * -2 * maxRot, (pctX - 0.5) * 2 * maxRot, pctX, pctY);
+    }
+
+    // --- Mouse Listeners ---
+    UI.wrapper.addEventListener('mousemove', e => {
+      handleInteract(e.clientX, e.clientY);
     });
     UI.wrapper.addEventListener('mouseleave', resetCard);
 
-    // --- Gyro (Mobile) ---
-    function requestMotionPermission() {
-      if (typeof DeviceOrientationEvent?.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission()
-          .then(s => s === 'granted' ? startMotion() : alert('Permission denied'))
-          .catch(console.error);
-      } else {
-        startMotion();
-      }
-    }
+    // --- Touch Listeners ---
+    UI.wrapper.addEventListener('touchstart', e => {
+       // Optional: reset transition for immediate response
+       UI.card.style.transition = 'none';
+    }, { passive: true });
 
-    function startMotion() {
-      window.addEventListener('deviceorientation', e => {
-        if (e.beta === null) return;
-        const max = 20;
-        let rx = -(Math.min(Math.max((e.beta - 45), -max), max));
-        let ry = Math.min(Math.max(e.gamma, -max), max);
-        target = { x: rx, y: ry };
-      });
+    UI.wrapper.addEventListener('touchmove', e => {
+       // Prevent default scroll when dragging on the card specifically
+       if (e.cancelable) e.preventDefault(); 
+       handleInteract(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
 
-      UI.btnMotion.style.display = 'none'; 
-      motionActive = true;
-      UI.card.style.transition = 'none';
-      loop();
-    }
+    UI.wrapper.addEventListener('touchend', resetCard);
+    UI.wrapper.addEventListener('touchcancel', resetCard);
 
-    function loop() {
-      if (!motionActive) return;
-      const max = 20;
-      updateCard(target.x, target.y, (target.y + max) / (max * 2), (-target.x + max) / (max * 2));
-      requestAnimationFrame(loop);
-    }
   </script>
 
 </body>
