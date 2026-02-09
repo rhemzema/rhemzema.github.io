@@ -136,7 +136,7 @@
     /* --- Status Dot Styling (New) --- */
     
     /* 1. Reset the container to match basic pill style */
-    .status-in-progress, .status-paused, .status-dropped, .status-completed {
+    .status-in-progress, .status-on-hold, .status-dropped, .status-completed {
         background: var(--section-bg) !important;
         border: 1px solid var(--border) !important;
         color: var(--muted) !important;
@@ -144,7 +144,7 @@
 
     /* 2. Create the Dot using ::before */
     .status-in-progress::before,
-    .status-paused::before,
+    .status-on-hold::before,
     .status-dropped::before,
     .status-completed::before {
         content: '';
@@ -367,6 +367,13 @@
       }
     }
 
+    /* Hide Modal Navigation Arrows on Small Screens (Mobile/Tablet) */
+    @media (max-width: 768px) {
+      .modal-nav {
+        display: none !important;
+      }
+    }
+
     @media (max-width: 600px) {
       .req-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -392,6 +399,146 @@
       transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
+
+    /* --- Image Preview & Modal --- */
+    .content-image-grid {
+      display: flex;
+      gap: 12px;
+      /* Adjusted spacing to prevent shadow clipping */
+      padding: 20px; 
+      margin: -20px; 
+      margin-bottom: -4px; /* Counteract padding to keep visual flow */
+      overflow: hidden;
+      scroll-behavior: smooth;
+      cursor: grab;
+      user-select: none;
+      
+      /* Ensure touch action allows horizontal pan but doesn't block vertical scroll */
+      touch-action: pan-y;
+    }
+
+    .content-image-grid.dragging {
+      cursor: grabbing;
+      scroll-behavior: auto; /* Remove smooth scroll during drag */
+    }
+
+    .content-image {
+      flex-shrink: 0;
+      max-height: 250px;
+      border-radius: 12px;
+      cursor: pointer;
+      object-fit: contain;
+      transition: box-shadow 0.3s ease;
+      border: 1px solid var(--border);
+      display: block;
+    }
+
+    .content-image.square {
+      width: 250px;
+      height: 250px;
+    }
+
+    @media (hover: hover) {
+      .content-image:hover {
+        box-shadow: 0 4px 12px var(--shadow-color);
+      }
+    }
+
+    /* Modal Overlay */
+    .image-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85); /* Slightly darker for better focus */
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(8px);
+      cursor: zoom-out; /* Indicates clicking anywhere closes it */
+    }
+
+    .image-modal.active {
+      display: flex;
+      opacity: 1;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-modal-content {
+      position: relative;
+      /* Max sizes used for constraint, width/height will be animated by JS */
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default; /* Reset cursor on the image itself */
+      /* Smooth container resize transition */
+      transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    /* Nav Arrows */
+    .modal-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1010;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .modal-nav:hover { background: rgba(255, 255, 255, 0.25); transform: translateY(-50%) scale(1.1); }
+    .modal-nav:active { transform: translateY(-50%) scale(0.95); }
+    .modal-nav.prev { left: 24px; }
+    .modal-nav.next { right: 24px; }
+    
+    /* Arrow Icons (Masked) */
+    .modal-arrow-icon {
+      width: 20px; height: 20px; background: white;
+      -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain;
+      mask: url('icons/up_arrow.svg') no-repeat center / contain;
+    }
+    .modal-nav.prev .modal-arrow-icon { transform: rotate(-90deg); }
+    .modal-nav.next .modal-arrow-icon { transform: rotate(90deg); }
+
+    /* Keyframes for Image Wipe (Expand/Decrease Mask) */
+    @keyframes wipe-enter {
+      0% {
+        clip-path: circle(0% at 50% 50%);
+        transform: scale(0.95);
+        opacity: 0.5;
+      }
+      100% {
+        clip-path: circle(150% at 50% 50%);
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .image-modal-img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto; height: auto;
+      border-radius: 12px;
+      display: block;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    /* Helper class to trigger animation on source change */
+    .animate-wipe {
+      animation: wipe-enter 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
 
   </style>
 </head>
@@ -474,6 +621,9 @@
           <div class="content-card reveal-flip">
             <h3>Day 1: Layout Design</h3>
             <span class="meta">Jan 3, 2026</span>
+            <div class="content-image-grid">
+              <img src="MePad/MePad_Layout.jpg" alt="MePad Layout Design" class="content-image" />
+            </div>
             <p>Day one was the day I decided to start the project on a whim. I focused on researching and taking inspiration from online resources like Bilibili.</p>
             <p>I set the initial layout for the keypad using <a href="http://keyboard-layout-editor.com" target="_blank">keyboard-layout-editor.com</a>. The plan is to have 9 custom regular switch keys and 2 scroll knobs—one for audio controls and one for scrolling through webpages or Premiere Pro timelines.</p>
           </div>
@@ -481,6 +631,10 @@
           <div class="content-card reveal-flip">
             <h3>Day 2: PCB Schematics & Firmware</h3>
             <span class="meta">Jan 5, 2026</span>
+            <div class="content-image-grid">
+              <img src="MePad/MePad_Matrix.jpg" alt="MePad Switch Matrix" class="content-image" />
+              <img src="MePad/MePad_PCB_Day2.png" alt="MePad PCB Day 2" class="content-image" />
+            </div>
             <p>Today was a big day for learning and design. I dived into the electrical engineering side of keyboards:</p>
             <ul>
                 <li>Learned how to optimize microcontroller connections using a switch matrix.</li>
@@ -494,6 +648,9 @@
           <div class="content-card reveal-flip">
             <h3>Day 3: Component Placement</h3>
             <span class="meta">Jan 6, 2026</span>
+            <div class="content-image-grid">
+              <img src="MePad/MePad_PCB_Day3.png" alt="MePad PCB Day 3" class="content-image" />
+            </div>
             <p>Continued refining the PCB design, focusing on component placement to ensure components on the board fits within the planned housing constraints.</p>
           </div>
 
@@ -510,6 +667,20 @@
         </section>
       </div>
 
+    </div>
+  </div>
+
+  <div class="image-modal" id="image-modal">
+    
+    <div class="modal-nav prev" id="modal-prev" style="display: none;">
+      <div class="modal-arrow-icon"></div>
+    </div>
+    <div class="modal-nav next" id="modal-next" style="display: none;">
+      <div class="modal-arrow-icon"></div>
+    </div>
+
+    <div class="image-modal-content" id="modal-content">
+      <img id="modal-image" class="image-modal-img animate-wipe" src="" alt="" />
     </div>
   </div>
 
@@ -535,29 +706,18 @@
     window.addEventListener('load', () => {
       setTimeout(() => UI.body.style.transition = '', 100);
       
-      // Title Sequence
       const chars = document.querySelectorAll('.char-flip');
       chars.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 30));
       
-      // Parallel Load Sequence (Synced Sidebar & Feed)
       setTimeout(() => {
         const sidebarItems = document.querySelectorAll('.project-sidebar .reveal-flip');
         const feedItems = document.querySelectorAll('.project-feed .reveal-flip');
-        
         const maxLen = Math.max(sidebarItems.length, feedItems.length);
 
         for (let i = 0; i < maxLen; i++) {
-          const delay = i * 150; // Stagger delay
-          
-          // Trigger Left Item
-          if (sidebarItems[i]) {
-            setTimeout(() => sidebarItems[i].classList.add('visible'), delay);
-          }
-          
-          // Trigger Right Item (Synced)
-          if (feedItems[i]) {
-            setTimeout(() => feedItems[i].classList.add('visible'), delay);
-          }
+          const delay = i * 150;
+          if (sidebarItems[i]) setTimeout(() => sidebarItems[i].classList.add('visible'), delay);
+          if (feedItems[i]) setTimeout(() => feedItems[i].classList.add('visible'), delay);
         }
       }, 300);
     });
@@ -570,7 +730,7 @@
       setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
     });
 
-    // --- 3. Scroll to Top Logic (Custom Engine) ---
+    // --- 3. Scroll to Top Logic ---
     function smoothScrollToTop() {
         const duration = 800;
         const startY = window.scrollY;
@@ -581,27 +741,18 @@
             if (startTime === null) startTime = currentTime;
             const timeElapsed = currentTime - startTime;
             const progress = Math.min(timeElapsed / duration, 1);
-
-            // EaseInOutCubic Easing
-            const ease = progress < 0.5 
-                ? 4 * progress * progress * progress 
-                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+            const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
 
             window.scrollTo(0, startY + (distance * ease));
-
             if (timeElapsed < duration) requestAnimationFrame(animation);
         }
-
         requestAnimationFrame(animation);
     }
-
     UI.scrollBtn.addEventListener('click', smoothScrollToTop);
 
-    // Show button only when near bottom (Desktop only via JS toggling class, Mobile overrides via CSS)
     window.addEventListener('scroll', () => {
         const scrollPosition = window.innerHeight + window.scrollY;
         const bottomPosition = document.body.offsetHeight - 100;
-
         if (scrollPosition >= bottomPosition) {
             UI.scrollBtn.classList.add('visible');
         } else {
@@ -621,6 +772,243 @@
         el.appendChild(span);
       });
     });
+
+    // --- 5. Image Grid Drag Logic (Mouse & Touch + Momentum) ---
+    const imageGrids = document.querySelectorAll('.content-image-grid');
+    
+    imageGrids.forEach(grid => {
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+      let velX = 0;
+      let lastX = 0;
+      let momentumID;
+
+      function momentumLoop() {
+        // Apply velocity
+        grid.scrollLeft += velX;
+        velX *= 0.95; // Friction factor (0.95 creates a smooth ease-out)
+
+        // Continue loop if velocity is significant
+        if (Math.abs(velX) > 0.5) {
+          momentumID = requestAnimationFrame(momentumLoop);
+        } else {
+          // Stop momentum and restore CSS smooth scrolling (for arrow navigation)
+          grid.style.scrollBehavior = ''; 
+        }
+      }
+
+      const handleStart = (x) => {
+        isDown = true;
+        grid.classList.add('dragging');
+        // Force 'auto' to make drag responsive (disable CSS smooth scroll)
+        grid.style.scrollBehavior = 'auto'; 
+        
+        startX = x - grid.offsetLeft;
+        scrollLeft = grid.scrollLeft;
+        lastX = x;
+        velX = 0;
+        cancelAnimationFrame(momentumID);
+      };
+
+      const handleEnd = () => {
+        isDown = false;
+        grid.classList.remove('dragging');
+        // Start momentum loop (keeps scrollBehavior: auto until stopped)
+        momentumLoop();
+      };
+
+      const handleMove = (x) => {
+        if (!isDown) return;
+        const xPos = x - grid.offsetLeft;
+        // Reduced multiplier from 1.5 to 1.1 for tighter control
+        const walk = (xPos - startX) * 1.1; 
+        grid.scrollLeft = scrollLeft - walk;
+        
+        // Reduced velocity multiplier from 0.9 to 0.7 so it doesn't "fly" as fast
+        velX = (lastX - x) * 0.7; 
+        lastX = x;
+      };
+
+      // Mouse Events
+      grid.addEventListener('mousedown', (e) => {
+        e.preventDefault(); // Stop text selection
+        handleStart(e.pageX);
+      });
+      grid.addEventListener('mouseleave', () => {
+        if(isDown) handleEnd();
+      });
+      grid.addEventListener('mouseup', handleEnd);
+      grid.addEventListener('mousemove', (e) => {
+        e.preventDefault();
+        handleMove(e.pageX);
+      });
+
+      // Touch Events
+      grid.addEventListener('touchstart', (e) => {
+        handleStart(e.touches[0].pageX);
+      }, { passive: true });
+      grid.addEventListener('touchend', handleEnd);
+      grid.addEventListener('touchmove', (e) => {
+        handleMove(e.touches[0].pageX);
+      }, { passive: false });
+    });
+
+    // --- 6. Enhanced Image Modal Logic (Arrows + Animation) ---
+    const imageModal = document.getElementById('image-modal');
+    const modalImage = document.getElementById('modal-image');
+    const modalContent = document.getElementById('modal-content');
+    const prevBtn = document.getElementById('modal-prev');
+    const nextBtn = document.getElementById('modal-next');
+    
+    // Global State for Gallery Navigation
+    let currentGalleryImages = [];
+    let currentImageIndex = 0;
+
+    const contentImages = document.querySelectorAll('.content-image');
+    contentImages.forEach(img => {
+        // Detect Squares
+        const checkSquare = () => {
+            if (img.naturalWidth === img.naturalHeight && img.naturalWidth > 0) img.classList.add('square');
+        };
+        if (img.complete) checkSquare();
+        else img.addEventListener('load', checkSquare);
+        
+        // Interaction Logic
+        let clickStartScrollLeft = 0;
+        const grid = img.closest('.content-image-grid');
+        if (grid) {
+            grid.addEventListener('mousedown', () => { clickStartScrollLeft = grid.scrollLeft; });
+        }
+
+        img.addEventListener('click', (e) => {
+            // Prevent opening if dragged
+            if (grid && Math.abs(grid.scrollLeft - clickStartScrollLeft) > 5) return;
+            
+            // 1. Identify Siblings (Create Gallery)
+            if (grid) {
+                currentGalleryImages = Array.from(grid.querySelectorAll('.content-image'));
+                currentImageIndex = currentGalleryImages.indexOf(img);
+            } else {
+                // Standalone image
+                currentGalleryImages = [img];
+                currentImageIndex = 0;
+            }
+
+            // 2. Open Modal
+            updateModalContent(currentImageIndex);
+            imageModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // 3. Show/Hide Arrows
+            updateArrowVisibility();
+        });
+    });
+
+    // --- Navigation Functions (No Cycling + Swipe) ---
+    function updateModalContent(index) {
+        const sourceImg = currentGalleryImages[index];
+        
+        modalImage.classList.remove('animate-wipe');
+        void modalImage.offsetWidth; // Trigger reflow
+        
+        modalImage.src = sourceImg.src;
+        modalImage.alt = sourceImg.alt;
+        
+        modalImage.classList.add('animate-wipe');
+    }
+
+    function updateArrowVisibility() {
+        // Hide arrows if single image, or based on position (No Cycling)
+        if (currentGalleryImages.length <= 1) {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            return;
+        }
+
+        // Left Arrow: Show only if NOT at the start
+        if (currentImageIndex > 0) {
+            prevBtn.style.display = 'flex';
+        } else {
+            prevBtn.style.display = 'none';
+        }
+
+        // Right Arrow: Show only if NOT at the end
+        if (currentImageIndex < currentGalleryImages.length - 1) {
+            nextBtn.style.display = 'flex';
+        } else {
+            nextBtn.style.display = 'none';
+        }
+    }
+
+    function nextImage(e) {
+        if (e) e.stopPropagation();
+        // Check bounds: Do not cycle if at last image
+        if (currentImageIndex < currentGalleryImages.length - 1) {
+            currentImageIndex++;
+            updateModalContent(currentImageIndex);
+            updateArrowVisibility();
+        }
+    }
+
+    function prevImage(e) {
+        if (e) e.stopPropagation();
+        // Check bounds: Do not cycle if at first image
+        if (currentImageIndex > 0) {
+            currentImageIndex--;
+            updateModalContent(currentImageIndex);
+            updateArrowVisibility();
+        }
+    }
+
+    // Event Listeners for Nav
+    nextBtn.addEventListener('click', nextImage);
+    prevBtn.addEventListener('click', prevImage);
+
+    // Keyboard Navigation
+    document.addEventListener('keydown', (e) => {
+        if (!imageModal.classList.contains('active')) return;
+        if (e.key === 'ArrowRight') nextImage(e);
+        if (e.key === 'ArrowLeft') prevImage(e);
+        if (e.key === 'Escape') closeModal();
+    });
+
+    // --- Modal Swipe Logic (Mobile) ---
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    imageModal.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    imageModal.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+        // Threshold for swipe detection
+        if (touchEndX < touchStartX - 50) {
+            // Swiped Left -> Next Image
+            nextImage(); 
+        }
+        if (touchEndX > touchStartX + 50) {
+            // Swiped Right -> Prev Image
+            prevImage();
+        }
+    }
+
+    // Close Modal
+    function closeModal() {
+        imageModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    imageModal.addEventListener('click', (e) => {
+        // Only close if clicking the background, not the image or arrows
+        if (e.target === imageModal || e.target === modalContent) closeModal();
+    });
+
   </script>
 
 </body>

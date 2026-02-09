@@ -22,8 +22,9 @@
       --hover-bg: rgba(11, 95, 255, 0.06);
       --border: rgba(16, 24, 40, 0.06);
       --card-bg: #f7f6f5;
+      /* Removed shadow-color usage for menu underglow, keeping for hover lifts */
       --shadow-color: rgba(11, 95, 255, 0.08);
-      --menu-bg: rgba(255, 255, 255, 0.85); /* Semi-transparent for blur */
+      --menu-bg: rgba(255, 255, 255, 0.95); /* Increased opacity for cleaner look */
       
       /* Dimensions */
       --nav-height: 100px;
@@ -40,7 +41,7 @@
       --border: rgba(255, 255, 255, 0.06);
       --card-bg: rgba(255, 255, 255, 0.03);
       --shadow-color: rgba(200, 200, 200, 0.18);
-      --menu-bg: rgba(17, 27, 39, 0.85); /* Semi-transparent for blur */
+      --menu-bg: rgba(17, 27, 39, 0.95); 
     }
 
     /* --- Base Layout --- */
@@ -115,7 +116,9 @@
       margin-bottom: 32px;
       gap: 16px;
       position: relative;
-      z-index: 20;
+      /* Ensure controls (especially the menu) are above project cards */
+      z-index: 50; 
+      flex-wrap: wrap; 
     }
 
     .filter-group {
@@ -125,21 +128,25 @@
     }
 
     /* --- Sort Menu (Hamburger) --- */
-    .sort-wrapper { position: relative; }
+    .sort-wrapper { 
+      position: relative;
+      /* FIX: This forces the hamburger to the right side even if the row wraps */
+      margin-left: auto; 
+    }
     
     .sort-menu {
       position: absolute;
       top: 100%; right: 0;
       margin-top: 12px;
       background: var(--menu-bg);
-      /* Improved Visuals: Glassmorphism */
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 6px;
       min-width: 180px;
-      box-shadow: 0 16px 40px var(--shadow-color);
+      /* FIX: Removed large shadow (underglow), kept minimal border/bg */
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
       opacity: 0; visibility: hidden; transform: translateY(-10px) scale(0.98);
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 100;
@@ -175,7 +182,6 @@
       font-weight: 600;
     }
 
-    /* Checkmark for selected state */
     .sort-option.selected::after {
       content: '';
       display: block;
@@ -192,7 +198,6 @@
       background-color: currentColor;
       -webkit-mask: url('icons/menu.svg') no-repeat center / contain;
       mask: url('icons/menu.svg') no-repeat center / contain;
-      /* Fallback SVG */
       -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12H21M3 6H21M3 18H21" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>');
       mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12H21M3 6H21M3 18H21" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>');
     }
@@ -200,7 +205,7 @@
     /* --- Project Grid --- */
     .project-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
       width: 100%;
     }
@@ -226,7 +231,7 @@
     .project-info h2 { font-size: 20px; font-weight: 700; margin: 0; transition: color 0.3s ease; }
     .project-info p { font-size: 15px; color: var(--muted); margin: 0 0 8px 0; line-height: 1.4; }
 
-    /* Metadata Row (Status + Date) */
+    /* Metadata Row */
     .meta-row { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
     
     .date-label {
@@ -245,12 +250,13 @@
       color: var(--muted);
       gap: 6px;
     }
+    /* FIX: Removed box-shadow (underglow) from status dots */
     .status-dot { width: 6px; height: 6px; border-radius: 50%; }
     
-    .card-status[data-status="in-progress"] .status-dot { background-color: #3b82f6; box-shadow: 0 0 6px #3b82f6; }
-    .card-status[data-status="paused"] .status-dot { background-color: #eab308; box-shadow: 0 0 6px #eab308; }
-    .card-status[data-status="dropped"] .status-dot { background-color: #ef4444; box-shadow: 0 0 6px #ef4444; }
-    .card-status[data-status="completed"] .status-dot { background-color: #22c55e; box-shadow: 0 0 6px #22c55e; }
+    .card-status[data-status="in-progress"] .status-dot { background-color: #3b82f6; }
+    .card-status[data-status="on-hold"] .status-dot { background-color: #eab308; }
+    .card-status[data-status="dropped"] .status-dot { background-color: #ef4444; }
+    .card-status[data-status="completed"] .status-dot { background-color: #22c55e; }
 
     /* Arrow Icon */
     .arrow-icon {
@@ -367,13 +373,13 @@
   <div class="content-wrap">
     <div class="container">
       <h1 class="split-flip-text">Featured Projects</h1>
-      <p class="intro">My wardrobe of engineering, design, and creative experiments.</p>
+      <p class="intro reveal-flip">My wardrobe of engineering, design, and creative experiments.</p>
 
       <div class="controls-row reveal-flip" style="transition-delay: 0.1s">
         <div class="filter-group">
           <button class="filter-btn active" data-filter="all">All</button>
           <button class="filter-btn" data-filter="in-progress">In Progress</button>
-          <button class="filter-btn" data-filter="paused">Paused</button>
+          <button class="filter-btn" data-filter="on-hold">On Hold</button>
           <button class="filter-btn" data-filter="completed">Completed</button>
           <button class="filter-btn" data-filter="dropped">Dropped</button>
         </div>

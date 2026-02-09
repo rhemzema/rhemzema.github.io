@@ -132,8 +132,15 @@
 
     /* 2. Center Wipe Entrance (For Pills) */
     @keyframes pill-wipe {
-      0% { clip-path: inset(0 50% 0 50% round 999px); opacity: 0; }
-      100% { clip-path: inset(0 0 0 0 round 999px); opacity: 1; }
+      0% { 
+        clip-path: inset(0 50% 0 50% round 999px);
+        filter : blur(4px); 
+        opacity: 0; 
+      }
+      100% { 
+        clip-path: inset(0 0 0 0 round 999px); 
+        opacity: 1;
+      }
     }
 
     .pill-wipe {
@@ -143,8 +150,9 @@
 
     /* 3. Pop-In Grow (For Social Icons) */
     @keyframes pop-in {
-      0% { opacity: 0; transform: scale(0.5); }
-      100% { opacity: 1; transform: scale(1); }
+      0% { opacity: 0; transform: scale(0.5); filter: blur(4px);}
+      60% { opacity: 1; transform: scale(0.99); }
+      100% { opacity: 1; transform: scale(1); filter: blur(0px);}
     }
 
     .pop-in {
@@ -183,7 +191,6 @@
         background: var(--hover-bg);
         color: var(--accent);
         border-color: var(--accent);
-        transform: translateY(-2px);
         box-shadow: 0 4px 12px var(--shadow-color);
       }
 
@@ -192,11 +199,9 @@
       body.dark .icon-btn:hover img { filter: brightness(0) saturate(100%) invert(70%) sepia(100%) saturate(2878%) hue-rotate(190deg) brightness(104%) contrast(97%); }
       
       .pill-accent:hover {
-        opacity: 0.95; transform: translateY(-3px) scale(1.02);
         box-shadow: 0 6px 18px rgba(11, 95, 255, 0.3);
       }
       .about-section:hover {
-        transform: translateY(-2px);
         box-shadow: 0 8px 24px var(--shadow-color);
         border-color: var(--accent);
       }
