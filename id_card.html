@@ -92,9 +92,14 @@
     }
 
     /* Card Content */
-    .id-header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--accent); padding-bottom: 15px; transform: translateZ(20px); }
-    .id-school-name { font-weight: 800; font-size: 18px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--accent); }
+    .id-header { display: flex; justify-content: flex-start; border-bottom: 2px solid var(--accent); padding-bottom: 15px; transform: translateZ(20px); }
     
+    .id-logo {
+      height: 30px; /* Matches the previous font size */
+      width: auto;
+      display: block;
+    }
+
     .id-body { display: flex; flex-direction: column; align-items: center; gap: 25px; flex-grow: 1; transform: translateZ(10px); }
     .id-photo-box {
       width: 140px; height: 170px; background: #f2f0ef;
@@ -112,7 +117,7 @@
 
     .id-footer { margin-top: auto; padding-top: 10px; transform: translateZ(5px); }
     .barcode {
-      height: 35px; width: 100%; opacity: 0.6;
+      height: 20px; width: 100%; opacity: 0.6;
       background: repeating-linear-gradient(90deg, #111 0, #111 2px, transparent 2px, transparent 5px, #111 5px, #111 7px, transparent 7px, transparent 10px);
     }
 
@@ -178,13 +183,27 @@
       opacity: 1; 
       transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); 
     }
+    
+    /* --- 360 SPIN ANIMATION --- */
+    .spin-360 {
+      /* 0.6s spin with a slight bounce at the end */
+      animation: spin-y 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes spin-y {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
 
 /* --- MOBILE ADJUSTMENTS --- */
     @media (max-width: 768px) {
       body {
-        padding-bottom: 2vh;
-        padding-left: 20px;
-        padding-right: 20px;
+        padding-bottom: 1vh;
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+
+      body.id-field {
+        font-size: 10px;
       }
 
       h3.id-name {
@@ -192,7 +211,7 @@
       }
       
       .barcode {
-        height: 20px;
+        height: 12px;
       }
       
       .id-card-wrapper {
@@ -201,13 +220,13 @@
       }
 
       .student-id {
-        padding: 20px;    /* ADDED: Reduces internal spacing for the smaller size */
+        padding: 15px;    /* ADDED: Reduces internal spacing for the smaller size */
       }
       
       /* Optional: Scale down the photo slightly if it feels too tight */
       .id-photo-box {
-        width: 90px;     /* ADDED: Slightly smaller photo for mobile */
-        height: 105px;
+        width: 100px;     /* ADDED: Slightly smaller photo for mobile */
+        height: 100px;
       }
     }
   </style>
@@ -226,8 +245,11 @@
   <div class="id-card-wrapper reveal-flip" id="id-wrapper">
     <div class="student-id" id="id-card">
       <div class="id-glare" id="id-glare"></div>
-      <div class="id-header"><span class="id-school-name">Virginia Tech</span></div>
       
+      <div class="id-header">
+        <img src="/logos/Virginia_Tech_logo.svg" class="id-logo" alt="Virginia Tech">
+      </div>
+        
       <div class="id-body">
         <div class="id-photo-box"><img src="/Images/Ruiqian.jpg" alt="Profile"></div>
         <div class="id-info">
@@ -235,9 +257,9 @@
           <div class="id-field"><span class="id-label">Major:</span><span class="id-value">Electrical Engineering</span></div>
           <div class="id-field"><span class="id-label">GPA:</span><span class="id-value">3.64 / 4.0</span></div>
           <div class="id-field" style="border-bottom: none;"><span class="id-label">Expected:</span><span class="id-value">May 2028</span></div>
+          <div class="barcode"></div>
         </div>
       </div>
-      <div class="id-footer"><div class="barcode"></div></div>
     </div>
   </div>
 
@@ -316,9 +338,7 @@
       const pctY = Math.max(0, Math.min(1, y / rect.height));
       
       const maxRot = 12;
-      // Tilt calc: 
-      // X-axis rotation comes from Y position (tilt forward/back)
-      // Y-axis rotation comes from X position (tilt left/right)
+      // Tilt calc
       updateCard((pctY - 0.5) * -2 * maxRot, (pctX - 0.5) * 2 * maxRot, pctX, pctY);
     }
 
@@ -328,19 +348,51 @@
     });
     UI.wrapper.addEventListener('mouseleave', resetCard);
 
-    // --- Touch Listeners ---
+    // --- Touch Listeners (Updated for Tap Spin) ---
+    let touchStartData = { x: 0, y: 0, time: 0 };
+
     UI.wrapper.addEventListener('touchstart', e => {
-       // Optional: reset transition for immediate response
        UI.card.style.transition = 'none';
+       // Record start time and position
+       touchStartData.time = Date.now();
+       touchStartData.x = e.touches[0].clientX;
+       touchStartData.y = e.touches[0].clientY;
     }, { passive: true });
 
     UI.wrapper.addEventListener('touchmove', e => {
-       // Prevent default scroll when dragging on the card specifically
+       // Prevent scrolling while dragging the card
        if (e.cancelable) e.preventDefault(); 
        handleInteract(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: false });
 
-    UI.wrapper.addEventListener('touchend', resetCard);
+    UI.wrapper.addEventListener('touchend', e => {
+       const duration = Date.now() - touchStartData.time;
+       const endX = e.changedTouches[0].clientX;
+       const endY = e.changedTouches[0].clientY;
+       
+       // Calculate how far the finger moved
+       const dist = Math.hypot(endX - touchStartData.x, endY - touchStartData.y);
+
+       // If tap was fast (< 250ms) and didn't move much (< 20px)
+       if (duration < 250 && dist < 20) {
+         // 1. Clear any inline transform from the drag
+         UI.card.style.transform = '';
+         UI.card.style.transition = 'none'; // Disable transition so animation takes over instantly
+         
+         // 2. Trigger the CSS animation
+         UI.card.classList.add('spin-360');
+         
+         // 3. Remove class after animation ends
+         setTimeout(() => {
+           UI.card.classList.remove('spin-360');
+           resetCard();
+         }, 600); // Matches animation duration
+       } else {
+         // It was a drag or slow press, just reset normally
+         resetCard();
+       }
+    });
+
     UI.wrapper.addEventListener('touchcancel', resetCard);
 
   </script>

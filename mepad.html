@@ -471,7 +471,7 @@
       position: relative;
       /* Max sizes used for constraint, width/height will be animated by JS */
       max-width: 90vw;
-      max-height: 90vh;
+      max-height: 80vh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -526,9 +526,9 @@
       }
     }
 
-    .image-modal-img {
+.image-modal-img {
       max-width: 100%;
-      max-height: 100%;
+      max-height: 80vh; /* CHANGED: Forces image to leave 15% space top/bottom */
       width: auto; height: auto;
       border-radius: 12px;
       display: block;
@@ -622,7 +622,7 @@
             <h3>Day 1: Layout Design</h3>
             <span class="meta">Jan 3, 2026</span>
             <div class="content-image-grid">
-              <img src="MePad/MePad_Layout.jpg" alt="MePad Layout Design" class="content-image" />
+              <img src="assets/MePad_Layout.jpg" alt="MePad Layout Design" class="content-image" />
             </div>
             <p>Day one was the day I decided to start the project on a whim. I focused on researching and taking inspiration from online resources like Bilibili.</p>
             <p>I set the initial layout for the keypad using <a href="http://keyboard-layout-editor.com" target="_blank">keyboard-layout-editor.com</a>. The plan is to have 9 custom regular switch keys and 2 scroll knobs—one for audio controls and one for scrolling through webpages or Premiere Pro timelines.</p>
@@ -632,8 +632,8 @@
             <h3>Day 2: PCB Schematics & Firmware</h3>
             <span class="meta">Jan 5, 2026</span>
             <div class="content-image-grid">
-              <img src="MePad/MePad_Matrix.jpg" alt="MePad Switch Matrix" class="content-image" />
-              <img src="MePad/MePad_PCB_Day2.png" alt="MePad PCB Day 2" class="content-image" />
+              <img src="assets/MePad_Matrix.jpg" alt="MePad Switch Matrix" class="content-image" />
+              <img src="assets/MePad_PCB_Day2.png" alt="MePad PCB Day 2" class="content-image" />
             </div>
             <p>Today was a big day for learning and design. I dived into the electrical engineering side of keyboards:</p>
             <ul>
@@ -649,7 +649,7 @@
             <h3>Day 3: Component Placement</h3>
             <span class="meta">Jan 6, 2026</span>
             <div class="content-image-grid">
-              <img src="MePad/MePad_PCB_Day3.png" alt="MePad PCB Day 3" class="content-image" />
+              <img src="assets/MePad_PCB_Day3.png" alt="MePad PCB Day 3" class="content-image" />
             </div>
             <p>Continued refining the PCB design, focusing on component placement to ensure components on the board fits within the planned housing constraints.</p>
           </div>
