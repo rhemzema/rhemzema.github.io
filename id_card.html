@@ -179,15 +179,35 @@
       transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); 
     }
 
-    /* --- MOBILE ADJUSTMENTS --- */
+/* --- MOBILE ADJUSTMENTS --- */
     @media (max-width: 768px) {
       body {
         padding-bottom: 2vh;
         padding-left: 20px;
         padding-right: 20px;
       }
+
+      h3.id-name {
+        font-size: 20px;
+      }
+      
+      .barcode {
+        height: 20px;
+      }
+      
       .id-card-wrapper {
-        margin-bottom: 30px; 
+        margin-bottom: 30px;
+        max-width: 240px; /* ADDED: Reduces card width (and height automatically) */
+      }
+
+      .student-id {
+        padding: 20px;    /* ADDED: Reduces internal spacing for the smaller size */
+      }
+      
+      /* Optional: Scale down the photo slightly if it feels too tight */
+      .id-photo-box {
+        width: 90px;     /* ADDED: Slightly smaller photo for mobile */
+        height: 105px;
       }
     }
   </style>
