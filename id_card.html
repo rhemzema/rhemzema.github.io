@@ -109,7 +109,7 @@
     .id-photo-box img { width: 100%; height: 100%; object-fit: cover; opacity: 0.95; }
 
     .id-info { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-    .id-name { font-size: 24px; font-weight: 700; color: #111; text-align: center; margin: 0 0 10px 0; }
+    .id-name { font-size: 22px; font-weight: 700; color: #111; text-align: center; margin: 0 0 10px 0; }
     
     .id-field { display: flex; justify-content: space-between; font-size: 14px; border-bottom: 1px dashed rgba(16,24,40,0.1); padding-bottom: 4px; }
     .id-label { color: #6b7280; font-weight: 500; font-size: 11px; text-transform: uppercase; }
@@ -197,17 +197,21 @@
 /* --- MOBILE ADJUSTMENTS --- */
     @media (max-width: 768px) {
       body {
-        padding-bottom: 1vh;
+        padding-bottom: 4vh;
         padding-left: 15px;
         padding-right: 15px;
+      } 
+
+      body.id-label {
+        font-size: 9px;
       }
 
-      body.id-field {
-        font-size: 10px;
+      body.id-value {
+        font-size: 9px;
       }
 
       h3.id-name {
-        font-size: 20px;
+        font-size: 16px;
       }
       
       .barcode {
@@ -215,18 +219,29 @@
       }
       
       .id-card-wrapper {
-        margin-bottom: 30px;
-        max-width: 240px; /* ADDED: Reduces card width (and height automatically) */
+        margin-bottom: 20px;
+        max-width: 250px; /* ADDED: Reduces card width (and height automatically) */
       }
 
+      .id-header img {
+        width: 70%;
+        height: 70%;
+        transform: translateX(-22px);
+      }
+
+      .id-header {
+        padding-bottom: 10px; /* ADDED: Reduces space below header */
+        justify-content: left;
+      }
+      
       .student-id {
         padding: 15px;    /* ADDED: Reduces internal spacing for the smaller size */
       }
       
       /* Optional: Scale down the photo slightly if it feels too tight */
       .id-photo-box {
-        width: 100px;     /* ADDED: Slightly smaller photo for mobile */
-        height: 100px;
+        width: 95px;     /* ADDED: Slightly smaller photo for mobile */
+        height: 110px;
       }
     }
   </style>
@@ -253,10 +268,10 @@
       <div class="id-body">
         <div class="id-photo-box"><img src="/Images/Ruiqian.jpg" alt="Profile"></div>
         <div class="id-info">
-          <h3 class="id-name">Ruiqian Zhang</h3>
+          <h3 class="id-name">Ruiqian (Rhema) Zhang</h3>
+          <div class="id-field"><span class="id-label">Age:</span><span class="id-value">20</span></div>
           <div class="id-field"><span class="id-label">Major:</span><span class="id-value">Electrical Engineering</span></div>
-          <div class="id-field"><span class="id-label">GPA:</span><span class="id-value">3.64 / 4.0</span></div>
-          <div class="id-field" style="border-bottom: none;"><span class="id-label">Expected:</span><span class="id-value">May 2028</span></div>
+          <div class="id-field" style="border-bottom: none;"><span class="id-label">Hometown:</span><span class="id-value">China</span></div>
           <div class="barcode"></div>
         </div>
       </div>
