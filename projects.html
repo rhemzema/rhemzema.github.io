@@ -78,18 +78,23 @@
 
     .controls-row {
       display: flex;
+      align-items: flex-start;
       justify-content: space-between;
-      align-items: center;
       margin-bottom: 32px;
-      gap: 16px;
+      gap: 12px;
       position: relative;
-      z-index: 50; 
-      flex-wrap: wrap; 
+      z-index: 50;
     }
 
-    .filter-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    /* Pills wrap freely within their flex child, hamburger stays pinned right */
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      flex: 1;
+    }
 
-    .sort-wrapper { position: relative; margin-left: auto; }
+    .sort-wrapper { position: relative; flex-shrink: 0; margin-top: 2px; }
     
     .sort-menu {
       position: absolute;

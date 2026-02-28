@@ -122,6 +122,17 @@
       box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
     }
 
+    /* Mobile adjustments: Increased transparency */
+    @media (max-width: 600px) {
+      .content-backdrop {
+        background: rgba(242, 240, 239, 0.1); /* More transparent */
+        padding: 32px 24px;
+      }
+      body.dark .content-backdrop {
+        background: rgba(7, 18, 33, 0.1); /* More transparent */
+      }
+    }
+
     /* Text sits above the blur pseudo-element */
     .content-inner {
       display: flex;
@@ -323,15 +334,22 @@
       const ctx    = canvas.getContext('2d');
 
       const IMAGE_URL    = "/Images/monkeyThink.png";
-      const ASCII_COLS   = 80;
-      const FONT_SIZE    = 7;
-      const LINE_HEIGHT  = 8;
-      const SPEED        = 3.5;
-      const FRAME_INTERVAL = 1000 / 25;
-      const DENSITY_LIGHT = "@%#*+=-:. ";  // dark→light (for light bg)
-      const DENSITY_DARK  = " .:=-+*#%@";  // light→dark, flipped (for dark bg)
+      
+      // Dynamic mobile scaling constants
+      const isMobile     = () => window.innerWidth < 600;
+      const getCols      = () => isMobile() ? 40 : 80;
+      const getFontSize  = () => isMobile() ? 5 : 7;
+      const getLineH     = () => isMobile() ? 6 : 8;
 
-      // Fixed visible colors for both modes
+      let ASCII_COLS     = getCols();
+      let FONT_SIZE      = getFontSize();
+      let LINE_HEIGHT    = getLineH();
+      
+      const SPEED        = 3;
+      const FRAME_INTERVAL = 1000 / 25;
+      const DENSITY_LIGHT = "@%#*+=-:. ";  
+      const DENSITY_DARK  = " .:=-+*#%@";  
+
       const COLOR_LIGHT  = '#111827';
       const COLOR_DARK   = '#93c5fd';
 
@@ -354,7 +372,6 @@
           for (let c = 0; c < ASCII_COLS; c++) {
             const i   = (r * ASCII_COLS + c) * 4;
             const lum = (0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]) / 255;
-            // Pure white → empty space
             if (lum > 0.85) { line += ' '; continue; }
             line += density[Math.floor(lum * (density.length - 1))];
           }
@@ -370,14 +387,22 @@
       function initPosition() {
         canvas.width  = window.innerWidth;
         canvas.height = window.innerHeight;
+        
+        // Update dimensions based on current state
+        ASCII_COLS  = getCols();
+        FONT_SIZE   = getFontSize();
+        LINE_HEIGHT = getLineH();
+
         spriteW = ASCII_COLS * (FONT_SIZE * 0.62);
         spriteH = lines.length * LINE_HEIGHT;
+        
         x = Math.random() * Math.max(1, canvas.width  - spriteW);
         y = Math.random() * Math.max(1, canvas.height - spriteH);
-        // Guarantee both axes have real velocity (no near-zero vy)
+        
         const sign = () => Math.random() < 0.5 ? 1 : -1;
         vx = sign() * (SPEED * 0.7 + Math.random() * SPEED * 0.3);
         vy = sign() * (SPEED * 0.7 + Math.random() * SPEED * 0.3);
+        
         cacheColors();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
@@ -415,7 +440,15 @@
       img.src = IMAGE_URL;
 
       requestAnimationFrame(draw);
-      window.addEventListener('resize', () => { if (ready) initPosition(); });
+      
+      window.addEventListener('resize', () => { 
+        if (ready) {
+          ASCII_COLS = getCols();
+          lines = imageToAscii(img); // Re-process image for new resolution
+          initPosition();
+        }
+      });
+
       document.getElementById('theme-toggle').addEventListener('click', () => {
         requestAnimationFrame(() => {
           cacheColors();

@@ -265,6 +265,18 @@
     @media (max-width: 768px) { .modal-nav { display: none !important; } }
     @media (max-width: 600px) { .req-grid { grid-template-columns: repeat(2, 1fr); } }
 
+    @media (max-width: 600px) {
+      .content-image,
+      .content-image.square,
+      .content-image-grid .content-image:first-child:last-child,
+      .content-image-grid .content-image:first-child:last-child.square {
+        height: 250px !important;
+        width: auto !important;
+        max-width: none !important;
+        object-fit: fill !important;
+      }
+    }
+
     .theme-transition, .theme-transition * { 
       transition: background-color 0.32s ease, border-color 0.32s ease, color 0s, box-shadow 0.32s ease !important; 
     }
@@ -755,8 +767,37 @@
         const target = document.elementFromPoint(e.clientX, e.clientY);
         const img = target && target.closest('.content-image');
         if (img) setPressedImg(img);
-        // Capture so pointermove/pointerup fire even over child images
-        grid.setPointerCapture(e.pointerId);
+        // Only capture mouse pointers — capturing touch pointers causes
+        // pointercancel to fire on scroll-like gestures, killing the tap
+        if (e.pointerType === 'mouse') grid.setPointerCapture(e.pointerId);
+      });
+
+      // Track touch drag distance so we know if it's a swipe or a tap
+      let touchStartX = 0;
+      grid.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        dragDidMove = false;
+      }, { passive: true });
+
+      grid.addEventListener('touchmove', (e) => {
+        if (Math.abs(e.touches[0].clientX - touchStartX) > DRAG_THRESHOLD) {
+          dragDidMove = true;
+        }
+      }, { passive: true });
+
+      // Native click handler for opening the modal
+      grid.addEventListener('click', (e) => {
+        // If the user was dragging the carousel, ignore the click
+        if (dragDidMove) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        
+        const img = e.target.closest('.content-image');
+        if (img) {
+          openModal(img, grid);
+        }
       });
     });
 
@@ -794,13 +835,6 @@
       if (dragSamples.length > 0) dragVelX = dragSamples.reduce((a, b) => a + b, 0) / dragSamples.length;
       carouselMomentum();
 
-      // Tap → open modal only if pointer is still over the same pressed image
-      if (!dragDidMove && pressedImg) {
-        const target = document.elementFromPoint(e.clientX, e.clientY);
-        const img = target && target.closest('.content-image');
-        const grid = img && img.closest('.content-image-grid');
-        if (img === pressedImg && grid) openModal(img, grid);
-      }
       clearPressedImg();
     });
 
