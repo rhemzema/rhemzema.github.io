@@ -12,20 +12,16 @@
 
   <style>
     :root {
-      /* Colors */
       --bg: #f2f0ef;
       --text: #111;
       --muted: #6b7280;
       --accent: #0b5fff;
-      
-      /* Dynamic UI Colors (Light Mode Defaults) */
       --hover-bg: rgba(11, 95, 255, 0.06);
       --border: rgba(16, 24, 40, 0.06);
       --section-bg: rgba(255, 255, 255, 0.4);
       --shadow-color: rgba(11, 95, 255, 0.08);
-      
-      /* Dimensions */
       --nav-height: 100px;
+      --card-padding: 24px;
     }
 
     body.dark {
@@ -33,15 +29,12 @@
       --text: #f2f0ef;
       --muted: #98a6b3;
       --accent: #7ab7ff;
-      
-      /* Dark Mode Overrides */
       --hover-bg: rgba(255, 255, 255, 0.06);
       --border: rgba(255, 255, 255, 0.06);
       --section-bg: rgba(255, 255, 255, 0.03);
       --shadow-color: rgba(200, 200, 200, 0.18);
     }
 
-    /* --- Base Layout --- */
     body {
       min-height: 100vh;
       margin: 0;
@@ -51,7 +44,6 @@
       overflow-x: hidden;
     }
 
-    /* --- Shared Components --- */
     .icon-btn, .pill, .download-link {
       display: inline-flex;
       align-items: center;
@@ -63,7 +55,6 @@
       user-select: none;
     }
 
-    /* Icon Buttons */
     .icon-btn {
       border-radius: 8px;
       border: 0;
@@ -75,12 +66,10 @@
     
     .icon-btn:active, .pill:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
 
-    /* Slot Animation */
     .slot-scroller { display: flex; flex-direction: column; width: 100%; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     .slot-label { height: 44px; display: flex; align-items: center; justify-content: center; width: 100%; flex-shrink: 0; }
     .icon-btn:hover .slot-scroller { transform: translateY(-44px); }
 
-    /* Icon Masks */
     .icon-mask {
       display: block;
       background-color: currentColor; 
@@ -89,7 +78,6 @@
       -webkit-mask-size: contain; mask-size: contain;
     }
     
-    /* Back Arrow (Rotated Up Arrow to Point Left) */
     .back-icon { 
       width: 16px; height: 16px;
       -webkit-mask-image: url('icons/up_arrow.svg'); 
@@ -97,21 +85,18 @@
       transform: rotate(-90deg); 
     }
 
-    /* Home Icon */
     .home-icon {
       width: 20px; height: 20px;
       -webkit-mask-image: url('icons/home.svg');
       mask-image: url('icons/home.svg');
     }
     
-    /* Footer Arrow */
     .arrow-icon {
       width: 16px; height: 16px;
       -webkit-mask-image: url('icons/up_arrow.svg');
       mask-image: url('icons/up_arrow.svg');
     }
 
-    /* Pills (Tags) */
     .pill {
       padding: 6px 12px; font-size: 13px;
       border-radius: 6px;
@@ -130,19 +115,15 @@
       font-weight: 500;
       display: inline-flex;
       align-items: center;
-      gap: 8px; /* Added gap for the dot spacing */
+      gap: 8px;
     }
 
-    /* --- Status Dot Styling (New) --- */
-    
-    /* 1. Reset the container to match basic pill style */
     .status-in-progress, .status-on-hold, .status-dropped, .status-completed {
         background: var(--section-bg) !important;
         border: 1px solid var(--border) !important;
         color: var(--muted) !important;
     }
 
-    /* 2. Create the Dot using ::before */
     .status-in-progress::before,
     .status-on-hold::before,
     .status-dropped::before,
@@ -155,32 +136,18 @@
         flex-shrink: 0;
     }
 
-    /* 3. Dot Colors & Glow */
-    .status-in-progress::before {
-        background-color: #3b82f6;
-        box-shadow: 0 0 6px #3b82f6;
-    }
-
-    .status-paused::before {
-        background-color: #eab308;
-        box-shadow: 0 0 6px #eab308;
-    }
-
-    .status-dropped::before {
-        background-color: #ef4444;
-        box-shadow: 0 0 6px #ef4444;
-    }
-
-    .status-completed::before {
-        background-color: #22c55e;
-        box-shadow: 0 0 6px #22c55e;
-    }
+    .status-in-progress::before { background-color: #3b82f6; box-shadow: 0 0 6px #3b82f6; }
+    .status-paused::before { background-color: #eab308; box-shadow: 0 0 6px #eab308; }
+    .status-dropped::before { background-color: #ef4444; box-shadow: 0 0 6px #ef4444; }
+    .status-completed::before { background-color: #22c55e; box-shadow: 0 0 6px #22c55e; }
     
-    /* Content Card */
     .content-card {
-      padding: 24px; border-radius: 16px;
-      background: var(--section-bg); border: 1px solid var(--border);
+      padding: var(--card-padding);
+      border-radius: 16px;
+      background: var(--section-bg);
+      border: 1px solid var(--border);
       margin-bottom: 24px;
+      overflow: hidden;
     }
     .content-card h3 { font-size: 18px; color: var(--text); margin: 0 0 4px 0; }
     .content-card .meta { font-size: 13px; color: var(--muted); margin-bottom: 12px; display: block; font-family: 'Inter', monospace; }
@@ -191,10 +158,9 @@
     .content-card a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
     .content-card a:hover { border-bottom-color: var(--accent); }
 
-    /* Requirements Grid */
     .req-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr); /* 2 Columns for sidebar fit */
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
       margin-top: 16px;
       margin-bottom: 24px;
@@ -203,7 +169,7 @@
     .req-item {
       display: flex;
       gap: 10px;
-      padding: 16px 12px; /* Slight padding adjust for compact width */
+      padding: 16px 16px;
       border-radius: 8px;
       background: var(--section-bg);
       border: 1px solid var(--border);
@@ -221,23 +187,13 @@
       }
     }
 
-    .req-item-icon {
-      flex-shrink: 0;
-      width: 16px;
-      height: 16px;
-      margin-top: 1px;
-      color: var(--accent);
-      font-weight: bold;
-    }
-
     .req-item-text {
-      font-size: 14px; /* Slightly smaller text for sidebar */
+      font-size: 14px;
       color: var(--text);
       line-height: 1.4;
       font-weight: 500;
     }
 
-    /* Hover States */
     @media (hover: hover) {
       .icon-btn:hover, .pill:not(.pill-accent):hover {
         background: var(--hover-bg);
@@ -253,13 +209,8 @@
       }
     }
 
-    /* --- Layout --- */
     .nav-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 50; pointer-events: none; }
-    
-    /* Right Group (Home + Theme) */
     .nav-right-group { position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 100; pointer-events: auto; }
-    
-    /* Left Group (Back Button) */
     .nav-left-group { position: fixed; top: 20px; left: 20px; z-index: 100; pointer-events: auto; }
 
     .top-nav-bg {
@@ -272,9 +223,7 @@
     }
 
     .content-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 120px 20px 40px 20px; box-sizing: border-box; }
-    
-    /* Layout Container Logic */
-    .container { width: 100%; max-width: 1100px; } /* Increased slightly for 2-col layout */
+    .container { width: 100%; max-width: 1100px; }
 
     .project-layout {
       display: flex;
@@ -283,104 +232,47 @@
       position: relative;
     }
 
-    /* Left Sidebar (30%) */
     .project-sidebar {
       width: 30%;
       position: sticky;
-      top: 130px; /* Offset for nav */
+      top: 130px;
       flex-shrink: 0;
     }
 
-    /* Right Feed (70%) */
     .project-feed {
       width: 70%;
       flex-grow: 1;
     }
 
-    h1 { 
-      font-size: 32px; 
-      font-weight: 800; 
-      margin-bottom: 24px;
-      margin-top: 0px; 
-      letter-spacing: -0.5px; 
-      line-height: 1.2; 
-    }
+    h1 { font-size: 32px; font-weight: 800; margin-bottom: 24px; margin-top: 0px; letter-spacing: -0.5px; line-height: 1.2; }
     h2 { font-size: 20px; font-weight: 600; color: var(--accent); margin: 0 0 24px 0; }
     p.intro { color: var(--muted); margin-bottom: 24px; line-height: 1.6; font-size: 16px; }
 
-    .tag-row { 
-        display: flex; 
-        flex-wrap: wrap; 
-        gap: 8px; 
-        margin-bottom: 32px; 
-        margin-top: 8px; /* Added slight top margin for spacing */
-    }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; margin-top: 8px; }
 
-    /* --- Footer --- */
     .site-footer-container { text-align: center; padding-bottom: 30px; }
     .site-footer { color: var(--muted); font-size: 14px; padding: 8px 16px; }
     
-    /* Scroll to top - DESKTOP DEFAULT (Fixed Bottom Right) */
     .scroll-to-top { 
-      position: fixed; 
-      bottom: 20px; 
-      right: 20px; 
-      z-index: 100; 
-      margin: 0;
-      overflow: hidden; 
-      align-items: flex-start !important; 
-      padding: 0; 
-      opacity: 0; /* Hidden by default */
-      pointer-events: none; /* Not clickable when hidden */
+      position: fixed; bottom: 20px; right: 20px; z-index: 100; margin: 0;
+      overflow: hidden; align-items: flex-start !important; padding: 0; 
+      opacity: 0; pointer-events: none;
       transition: opacity 0.3s ease, transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     }
-    .scroll-to-top.visible {
-        opacity: 1;
-        pointer-events: auto;
-    }
-    
+    .scroll-to-top.visible { opacity: 1; pointer-events: auto; }
     .scroll-to-top .slot-label { height: 44px; width: 44px; }
     .scroll-to-top:hover .slot-scroller { transform: translateY(-44px); }
 
-    /* Mobile / Tablet Responsiveness */
     @media (max-width: 900px) {
-      .project-layout {
-        flex-direction: column;
-        gap: 40px;
-      }
-      .project-sidebar, .project-feed {
-        width: 100%;
-        position: static;
-      }
-      .req-grid {
-        grid-template-columns: repeat(3, 1fr); /* Revert to 3 cols on mobile stack */
-      }
-      
-      /* Mobile override for Scroll Button: Static center above footer */
-      .scroll-to-top {
-        position: relative;
-        bottom: auto;
-        right: auto;
-        opacity: 1 !important; /* Always visible */
-        pointer-events: auto;
-        margin: 0 auto 20px auto; /* Centered */
-      }
+      .project-layout { flex-direction: column; gap: 40px; }
+      .project-sidebar, .project-feed { width: 100%; position: static; }
+      .req-grid { grid-template-columns: repeat(3, 1fr); }
+      .scroll-to-top { position: relative; bottom: auto; right: auto; opacity: 1 !important; pointer-events: auto; margin: 0 auto 20px auto; }
     }
 
-    /* Hide Modal Navigation Arrows on Small Screens (Mobile/Tablet) */
-    @media (max-width: 768px) {
-      .modal-nav {
-        display: none !important;
-      }
-    }
+    @media (max-width: 768px) { .modal-nav { display: none !important; } }
+    @media (max-width: 600px) { .req-grid { grid-template-columns: repeat(2, 1fr); } }
 
-    @media (max-width: 600px) {
-      .req-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    /* --- Animations --- */
     .theme-transition, .theme-transition * { 
       transition: background-color 0.32s ease, border-color 0.32s ease, color 0s, box-shadow 0.32s ease !important; 
     }
@@ -400,87 +292,90 @@
     }
     .char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
 
-    /* --- Image Preview & Modal --- */
+    /* IMAGE CAROUSEL */
     .content-image-grid {
       display: flex;
-      gap: 12px;
-      /* Adjusted spacing to prevent shadow clipping */
-      padding: 20px; 
-      margin: -20px; 
-      margin-bottom: -4px; /* Counteract padding to keep visual flow */
-      overflow: hidden;
-      scroll-behavior: smooth;
+      gap: 8px;
+      margin: 16px calc(-1 * var(--card-padding)) 20px;
+      padding: 4px 0;
+      overflow-x: auto;
+      overflow-y: visible;
+      scroll-snap-type: x mandatory;
+      scroll-padding-left: var(--card-padding);
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
       cursor: grab;
       user-select: none;
-      
-      /* Ensure touch action allows horizontal pan but doesn't block vertical scroll */
       touch-action: pan-y;
     }
+    .content-image-grid::-webkit-scrollbar { display: none; }
 
-    .content-image-grid.dragging {
-      cursor: grabbing;
-      scroll-behavior: auto; /* Remove smooth scroll during drag */
-    }
+    .content-image-grid .content-image:first-child { margin-left: var(--card-padding); }
+    .content-image-grid .content-image:last-child { margin-right: var(--card-padding); }
+
+    .content-image-grid.dragging { cursor: grabbing; scroll-behavior: auto; }
 
     .content-image {
       flex-shrink: 0;
-      max-height: 250px;
+      height: 300px;
+      width: auto;
+      max-width: 90%;
       border-radius: 12px;
       cursor: pointer;
-      object-fit: contain;
-      transition: box-shadow 0.3s ease;
+      object-fit: cover;
+      scroll-snap-align: start;
       border: 1px solid var(--border);
       display: block;
+      /* Prevent the image itself from intercepting pointer events during drag */
+      -webkit-user-drag: none;
     }
 
-    .content-image.square {
-      width: 250px;
-      height: 250px;
+    .content-image.square { width: 300px; height: 300px; }
+
+    /* Single image: taller display */
+    .content-image-grid .content-image:first-child:last-child { height: 350px; }
+    .content-image-grid .content-image:first-child:last-child.square { width: 350px; height: 350px; }
+
+    .image-grid-wrapper { position: relative; }
+
+    /* Prevent browser's native image drag (shows ghost + opens in new tab) */
+    .content-image-grid .content-image {
+      -webkit-user-drag: none;
+      user-drag: none;
+      transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    @media (hover: hover) {
-      .content-image:hover {
-        box-shadow: 0 4px 12px var(--shadow-color);
-      }
+    /* Pressed/held state — shrinks the image */
+    .content-image-grid .content-image.pressing {
+      transform: scale(0.94);
+      transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    /* Modal Overlay */
     .image-modal {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.85); /* Slightly darker for better focus */
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
       z-index: 1000;
       opacity: 0;
       transition: opacity 0.3s ease;
       backdrop-filter: blur(8px);
-      cursor: zoom-out; /* Indicates clicking anywhere closes it */
+      cursor: zoom-out;
     }
 
-    .image-modal.active {
-      display: flex;
-      opacity: 1;
-      align-items: center;
-      justify-content: center;
-    }
+    .image-modal.active { display: flex; opacity: 1; align-items: center; justify-content: center; }
 
     .image-modal-content {
       position: relative;
-      /* Max sizes used for constraint, width/height will be animated by JS */
       max-width: 90vw;
       max-height: 80vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: default; /* Reset cursor on the image itself */
-      /* Smooth container resize transition */
+      cursor: default;
       transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
-    /* Nav Arrows */
     .modal-nav {
       position: absolute;
       top: 50%;
@@ -503,7 +398,6 @@
     .modal-nav.prev { left: 24px; }
     .modal-nav.next { right: 24px; }
     
-    /* Arrow Icons (Masked) */
     .modal-arrow-icon {
       width: 20px; height: 20px; background: white;
       -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain;
@@ -512,34 +406,21 @@
     .modal-nav.prev .modal-arrow-icon { transform: rotate(-90deg); }
     .modal-nav.next .modal-arrow-icon { transform: rotate(90deg); }
 
-    /* Keyframes for Image Wipe (Expand/Decrease Mask) */
     @keyframes wipe-enter {
-      0% {
-        clip-path: circle(0% at 50% 50%);
-        transform: scale(0.95);
-        opacity: 0.5;
-      }
-      100% {
-        clip-path: circle(150% at 50% 50%);
-        transform: scale(1);
-        opacity: 1;
-      }
+      0%   { clip-path: circle(0% at 50% 50%); transform: scale(0.95); opacity: 0.5; }
+      100% { clip-path: circle(150% at 50% 50%); transform: scale(1); opacity: 1; }
     }
 
-.image-modal-img {
+    .image-modal-img {
       max-width: 100%;
-      max-height: 80vh; /* CHANGED: Forces image to leave 15% space top/bottom */
+      max-height: 80vh;
       width: auto; height: auto;
       border-radius: 12px;
       display: block;
       box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
 
-    /* Helper class to trigger animation on source change */
-    .animate-wipe {
-      animation: wipe-enter 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-    }
-
+    .animate-wipe { animation: wipe-enter 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
   </style>
 </head>
 <body>
@@ -561,12 +442,10 @@
         <div class="icon-mask back-icon"></div>
       </a>
     </div>
-
     <div class="nav-right-group">
       <a href="https://rhemzema.github.io" class="icon-btn square" aria-label="Go to Home">
         <div class="icon-mask home-icon"></div>
       </a>
-      
       <button id="theme-toggle" class="icon-btn square" aria-label="Toggle dark mode">
         <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5373 21.3065 11.4608 21.0672 11.8568C19.9289 13.7406 17.8615 15 15.5 15C11.9101 15 9 12.0899 9 8.5C9 6.13845 10.2594 4.07105 12.1432 2.93276C12.5392 2.69347 12.4627 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor"/>
@@ -577,40 +456,24 @@
 
   <div class="content-wrap">
     <div class="container">
-      
       <div class="project-layout">
         <aside class="project-sidebar">
           <h1 class="split-flip-text">MePad V1</h1>
-          
           <div class="tag-row reveal-flip">
             <span class="pill-medicine no-hover status-in-progress">In Progress</span>
             <span class="pill-medicine no-hover">Start Date: Jan 3, 2026</span>
           </div>
-
-            <p class="intro reveal-flip">Welcome to my personal project, MePad! My take on the macro keypad.</p>
-            <p class="intro reveal-flip">My primary objective is to explore the entire process of product development from identifying user needs to hardware design and software implementation.</p>
-            
+          <p class="intro reveal-flip">Welcome to my personal project, MePad! My take on the macro keypad.</p>
+          <p class="intro reveal-flip">My primary objective is to explore the entire process of product development from identifying user needs to hardware design and software implementation.</p>
           <div class="reveal-flip">
             <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--text);">Basic Requirements</h3>
             <div class="req-grid">
-              <div class="req-item">
-                <span class="req-item-text">Compact Design</span>
-              </div>
-              <div class="req-item">
-                <span class="req-item-text">Hotswap Switches</span>
-              </div>
-              <div class="req-item">
-                <span class="req-item-text">Audio Controls</span>
-              </div>
-              <div class="req-item">
-                <span class="req-item-text">2 USB Ports</span>
-              </div>
-              <div class="req-item">
-                <span class="req-item-text">Multiple Switches</span>
-              </div>
-              <div class="req-item">
-                <span class="req-item-text">Cheap</span>
-              </div>
+              <div class="req-item"><span class="req-item-text">Compact Design</span></div>
+              <div class="req-item"><span class="req-item-text">Hotswap Switches</span></div>
+              <div class="req-item"><span class="req-item-text">Audio Controls</span></div>
+              <div class="req-item"><span class="req-item-text">2 USB Ports</span></div>
+              <div class="req-item"><span class="req-item-text">Multiple Switches</span></div>
+              <div class="req-item"><span class="req-item-text">Cheap</span></div>
             </div>
           </div>
         </aside>
@@ -621,8 +484,10 @@
           <div class="content-card reveal-flip">
             <h3>Day 1: Layout Design</h3>
             <span class="meta">Jan 3, 2026</span>
-            <div class="content-image-grid">
-              <img src="assets/MePad_Layout.jpg" alt="MePad Layout Design" class="content-image" />
+            <div class="image-grid-wrapper">
+              <div class="content-image-grid">
+                <img src="assets/MePad_Layout.jpg" alt="MePad Layout Design" class="content-image" draggable="false" />
+              </div>
             </div>
             <p>Day one was the day I decided to start the project on a whim. I focused on researching and taking inspiration from online resources like Bilibili.</p>
             <p>I set the initial layout for the keypad using <a href="http://keyboard-layout-editor.com" target="_blank">keyboard-layout-editor.com</a>. The plan is to have 9 custom regular switch keys and 2 scroll knobs—one for audio controls and one for scrolling through webpages or Premiere Pro timelines.</p>
@@ -631,25 +496,29 @@
           <div class="content-card reveal-flip">
             <h3>Day 2: PCB Schematics & Firmware</h3>
             <span class="meta">Jan 5, 2026</span>
-            <div class="content-image-grid">
-              <img src="assets/MePad_Matrix.jpg" alt="MePad Switch Matrix" class="content-image" />
-              <img src="assets/MePad_Schematic.png" alt="MePad PCB Day 2" class="content-image" />
+            <div class="image-grid-wrapper">
+              <div class="content-image-grid">
+                <img src="assets/MePad_Matrix.jpg" alt="MePad Switch Matrix" class="content-image" draggable="false" />
+                <img src="assets/MePad_Schematic.png" alt="MePad PCB Day 2" class="content-image" draggable="false" />
+              </div>
             </div>
             <p>Today was a big day for learning and design. I dived into the electrical engineering side of keyboards:</p>
             <ul>
-                <li>Learned how to optimize microcontroller connections using a switch matrix.</li>
-                <li>Implemented diodes to avoid input ghosting.</li>
-                <li>Built initial keyboard firmware with <a href="https://kbfirmware.com" target="_blank">kbfirmware.com</a>.</li>
-                <li>Designed the PCB footprint using Autodesk Fusion 360 (Knobs: Top 15mm, Bottom 32mm).</li>
-                <li>Finished PCB schematics with EasyEDA using a 32U4 main control board.</li>
+              <li>Learned how to optimize microcontroller connections using a switch matrix.</li>
+              <li>Implemented diodes to avoid input ghosting.</li>
+              <li>Built initial keyboard firmware with <a href="https://kbfirmware.com" target="_blank">kbfirmware.com</a>.</li>
+              <li>Designed the PCB footprint using Autodesk Fusion 360 (Knobs: Top 15mm, Bottom 32mm).</li>
+              <li>Finished PCB schematics with EasyEDA centered on the ATmega32U4 microcontroller.</li>
             </ul>
           </div>
 
           <div class="content-card reveal-flip">
             <h3>Day 3: Component Placement</h3>
             <span class="meta">Jan 6, 2026</span>
-            <div class="content-image-grid">
-              <img src="assets/MePad_PCB_Day2.png" alt="MePad PCB Day 3" class="content-image" />
+            <div class="image-grid-wrapper">
+              <div class="content-image-grid">
+                <img src="assets/MePad_PCB_Day2.png" alt="MePad PCB Day 3" class="content-image" draggable="false" />
+              </div>
             </div>
             <p>Started work on component placement and ensuring components on the board fits within the planned housing constraints.</p>
           </div>
@@ -657,8 +526,10 @@
           <div class="content-card reveal-flip">
             <h3>Day 4: PCB Wiring</h3>
             <span class="meta">Jan 9, 2026</span>
-            <div class="content-image-grid">
-              <img src="assets/MePad_PCB_Day3.png" alt="MePad PCB Day 4" class="content-image" />
+            <div class="image-grid-wrapper">
+              <div class="content-image-grid">
+                <img src="assets/MePad_PCB_Day3.png" alt="MePad PCB Day 4" class="content-image" draggable="false" />
+              </div>
             </div>
             <p>Started work on the wiring and routing of the PCB.</p>
           </div>
@@ -669,19 +540,12 @@
           </div>
         </section>
       </div>
-
     </div>
   </div>
 
   <div class="image-modal" id="image-modal">
-    
-    <div class="modal-nav prev" id="modal-prev" style="display: none;">
-      <div class="modal-arrow-icon"></div>
-    </div>
-    <div class="modal-nav next" id="modal-next" style="display: none;">
-      <div class="modal-arrow-icon"></div>
-    </div>
-
+    <div class="modal-nav prev" id="modal-prev" style="display: none;"><div class="modal-arrow-icon"></div></div>
+    <div class="modal-nav next" id="modal-next" style="display: none;"><div class="modal-arrow-icon"></div></div>
     <div class="image-modal-content" id="modal-content">
       <img id="modal-image" class="image-modal-img animate-wipe" src="" alt="" />
     </div>
@@ -689,34 +553,29 @@
 
   <div class="site-footer-container">
     <button class="icon-btn square scroll-to-top" id="scroll-to-top" aria-label="Scroll to top">
-        <span class="slot-scroller">
-            <span class="slot-label"><div class="icon-mask arrow-icon"></div></span>
-            <span class="slot-label"><div class="icon-mask arrow-icon"></div></span>
-        </span>
+      <span class="slot-scroller">
+        <span class="slot-label"><div class="icon-mask arrow-icon"></div></span>
+        <span class="slot-label"><div class="icon-mask arrow-icon"></div></span>
+      </span>
     </button>
     <footer class="site-footer">&copy; 2026 Ruiqian Zhang</footer>
   </div>
 
   <script>
-    // --- UI Logic ---
     const UI = {
       body: document.body,
       toggleBtn: document.getElementById('theme-toggle'),
       scrollBtn: document.getElementById('scroll-to-top')
     };
 
-    // --- 1. Load Animation ---
     window.addEventListener('load', () => {
       setTimeout(() => UI.body.style.transition = '', 100);
-      
       const chars = document.querySelectorAll('.char-flip');
       chars.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 30));
-      
       setTimeout(() => {
         const sidebarItems = document.querySelectorAll('.project-sidebar .reveal-flip');
         const feedItems = document.querySelectorAll('.project-feed .reveal-flip');
         const maxLen = Math.max(sidebarItems.length, feedItems.length);
-
         for (let i = 0; i < maxLen; i++) {
           const delay = i * 150;
           if (sidebarItems[i]) setTimeout(() => sidebarItems[i].classList.add('visible'), delay);
@@ -725,7 +584,6 @@
       }, 300);
     });
 
-    // --- 2. Theme Toggle ---
     UI.toggleBtn.addEventListener('click', () => {
       UI.body.classList.add('theme-transition');
       const isDark = UI.body.classList.toggle('dark');
@@ -733,41 +591,33 @@
       setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
     });
 
-    // --- 3. Scroll to Top Logic ---
     function smoothScrollToTop() {
-        const duration = 800;
-        const startY = window.scrollY;
-        const distance = -startY;
-        let startTime = null;
-
-        function animation(currentTime) {
-            if (startTime === null) startTime = currentTime;
-            const timeElapsed = currentTime - startTime;
-            const progress = Math.min(timeElapsed / duration, 1);
-            const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
-            window.scrollTo(0, startY + (distance * ease));
-            if (timeElapsed < duration) requestAnimationFrame(animation);
-        }
-        requestAnimationFrame(animation);
+      const duration = 800;
+      const startY = window.scrollY;
+      const distance = -startY;
+      let startTime = null;
+      function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        window.scrollTo(0, startY + (distance * ease));
+        if (timeElapsed < duration) requestAnimationFrame(animation);
+      }
+      requestAnimationFrame(animation);
     }
     UI.scrollBtn.addEventListener('click', smoothScrollToTop);
 
     window.addEventListener('scroll', () => {
-        const scrollPosition = window.innerHeight + window.scrollY;
-        const bottomPosition = document.body.offsetHeight - 100;
-        if (scrollPosition >= bottomPosition) {
-            UI.scrollBtn.classList.add('visible');
-        } else {
-            UI.scrollBtn.classList.remove('visible');
-        }
+      const scrollPosition = window.innerHeight + window.scrollY;
+      const bottomPosition = document.body.offsetHeight - 100;
+      UI.scrollBtn.classList.toggle('visible', scrollPosition >= bottomPosition);
     });
 
-    // --- 4. Split Text Init ---
     document.querySelectorAll('.split-flip-text').forEach(el => {
       const text = el.textContent;
       el.setAttribute('aria-label', text);
-      el.innerHTML = ''; 
+      el.innerHTML = '';
       text.split('').forEach(char => {
         const span = document.createElement('span');
         span.className = 'char-flip';
@@ -776,243 +626,198 @@
       });
     });
 
-    // --- 5. Image Grid Drag Logic (Mouse & Touch + Momentum) ---
-    const imageGrids = document.querySelectorAll('.content-image-grid');
-    
-    imageGrids.forEach(grid => {
-      let isDown = false;
-      let startX;
-      let scrollLeft;
-      let velX = 0;
-      let lastX = 0;
-      let momentumID;
-
-      function momentumLoop() {
-        // Apply velocity
-        grid.scrollLeft += velX;
-        velX *= 0.95; // Friction factor (0.95 creates a smooth ease-out)
-
-        // Continue loop if velocity is significant
-        if (Math.abs(velX) > 0.5) {
-          momentumID = requestAnimationFrame(momentumLoop);
-        } else {
-          // Stop momentum and restore CSS smooth scrolling (for arrow navigation)
-          grid.style.scrollBehavior = ''; 
-        }
-      }
-
-      const handleStart = (x) => {
-        isDown = true;
-        grid.classList.add('dragging');
-        // Force 'auto' to make drag responsive (disable CSS smooth scroll)
-        grid.style.scrollBehavior = 'auto'; 
-        
-        startX = x - grid.offsetLeft;
-        scrollLeft = grid.scrollLeft;
-        lastX = x;
-        velX = 0;
-        cancelAnimationFrame(momentumID);
-      };
-
-      const handleEnd = () => {
-        isDown = false;
-        grid.classList.remove('dragging');
-        // Start momentum loop (keeps scrollBehavior: auto until stopped)
-        momentumLoop();
-      };
-
-      const handleMove = (x) => {
-        if (!isDown) return;
-        const xPos = x - grid.offsetLeft;
-        // Reduced multiplier from 1.5 to 1.1 for tighter control
-        const walk = (xPos - startX) * 1.1; 
-        grid.scrollLeft = scrollLeft - walk;
-        
-        // Reduced velocity multiplier from 0.9 to 0.7 so it doesn't "fly" as fast
-        velX = (lastX - x) * 0.7; 
-        lastX = x;
-      };
-
-      // Mouse Events
-      grid.addEventListener('mousedown', (e) => {
-        e.preventDefault(); // Stop text selection
-        handleStart(e.pageX);
-      });
-      grid.addEventListener('mouseleave', () => {
-        if(isDown) handleEnd();
-      });
-      grid.addEventListener('mouseup', handleEnd);
-      grid.addEventListener('mousemove', (e) => {
-        e.preventDefault();
-        handleMove(e.pageX);
-      });
-
-      // Touch Events
-      grid.addEventListener('touchstart', (e) => {
-        handleStart(e.touches[0].pageX);
-      }, { passive: true });
-      grid.addEventListener('touchend', handleEnd);
-      grid.addEventListener('touchmove', (e) => {
-        handleMove(e.touches[0].pageX);
-      }, { passive: false });
-    });
-
-    // --- 6. Enhanced Image Modal Logic (Arrows + Animation) ---
+    // ── Image Modal state ────────────────────────────────────────────────
     const imageModal = document.getElementById('image-modal');
     const modalImage = document.getElementById('modal-image');
     const modalContent = document.getElementById('modal-content');
     const prevBtn = document.getElementById('modal-prev');
     const nextBtn = document.getElementById('modal-next');
-    
-    // Global State for Gallery Navigation
-    let currentGalleryImages = [];
-    let currentImageIndex = 0;
+    let currentGalleryImages = [], currentImageIndex = 0;
 
-    const contentImages = document.querySelectorAll('.content-image');
-    contentImages.forEach(img => {
-        // Detect Squares
-        const checkSquare = () => {
-            if (img.naturalWidth === img.naturalHeight && img.naturalWidth > 0) img.classList.add('square');
-        };
-        if (img.complete) checkSquare();
-        else img.addEventListener('load', checkSquare);
-        
-        // Interaction Logic
-        let clickStartScrollLeft = 0;
-        const grid = img.closest('.content-image-grid');
-        if (grid) {
-            grid.addEventListener('mousedown', () => { clickStartScrollLeft = grid.scrollLeft; });
-        }
-
-        img.addEventListener('click', (e) => {
-            // Prevent opening if dragged
-            if (grid && Math.abs(grid.scrollLeft - clickStartScrollLeft) > 5) return;
-            
-            // 1. Identify Siblings (Create Gallery)
-            if (grid) {
-                currentGalleryImages = Array.from(grid.querySelectorAll('.content-image'));
-                currentImageIndex = currentGalleryImages.indexOf(img);
-            } else {
-                // Standalone image
-                currentGalleryImages = [img];
-                currentImageIndex = 0;
-            }
-
-            // 2. Open Modal
-            updateModalContent(currentImageIndex);
-            imageModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
-            // 3. Show/Hide Arrows
-            updateArrowVisibility();
-        });
-    });
-
-    // --- Navigation Functions (No Cycling + Swipe) ---
+    function openModal(img, grid) {
+      currentGalleryImages = grid ? Array.from(grid.querySelectorAll('.content-image')) : [img];
+      currentImageIndex = currentGalleryImages.indexOf(img);
+      updateModalContent(currentImageIndex);
+      imageModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      updateArrowVisibility();
+    }
     function updateModalContent(index) {
-        const sourceImg = currentGalleryImages[index];
-        
-        modalImage.classList.remove('animate-wipe');
-        void modalImage.offsetWidth; // Trigger reflow
-        
-        modalImage.src = sourceImg.src;
-        modalImage.alt = sourceImg.alt;
-        
-        modalImage.classList.add('animate-wipe');
+      const src = currentGalleryImages[index];
+      modalImage.classList.remove('animate-wipe');
+      void modalImage.offsetWidth;
+      modalImage.src = src.src;
+      modalImage.alt = src.alt;
+      modalImage.classList.add('animate-wipe');
     }
-
     function updateArrowVisibility() {
-        // Hide arrows if single image, or based on position (No Cycling)
-        if (currentGalleryImages.length <= 1) {
-            prevBtn.style.display = 'none';
-            nextBtn.style.display = 'none';
-            return;
-        }
-
-        // Left Arrow: Show only if NOT at the start
-        if (currentImageIndex > 0) {
-            prevBtn.style.display = 'flex';
-        } else {
-            prevBtn.style.display = 'none';
-        }
-
-        // Right Arrow: Show only if NOT at the end
-        if (currentImageIndex < currentGalleryImages.length - 1) {
-            nextBtn.style.display = 'flex';
-        } else {
-            nextBtn.style.display = 'none';
-        }
+      if (currentGalleryImages.length <= 1) { prevBtn.style.display = nextBtn.style.display = 'none'; return; }
+      prevBtn.style.display = currentImageIndex > 0 ? 'flex' : 'none';
+      nextBtn.style.display = currentImageIndex < currentGalleryImages.length - 1 ? 'flex' : 'none';
     }
+    function nextImage(e) { if (e) e.stopPropagation(); if (currentImageIndex < currentGalleryImages.length - 1) { currentImageIndex++; updateModalContent(currentImageIndex); updateArrowVisibility(); } }
+    function prevImage(e) { if (e) e.stopPropagation(); if (currentImageIndex > 0) { currentImageIndex--; updateModalContent(currentImageIndex); updateArrowVisibility(); } }
+    function closeModal() { imageModal.classList.remove('active'); document.body.style.overflow = ''; }
 
-    function nextImage(e) {
-        if (e) e.stopPropagation();
-        // Check bounds: Do not cycle if at last image
-        if (currentImageIndex < currentGalleryImages.length - 1) {
-            currentImageIndex++;
-            updateModalContent(currentImageIndex);
-            updateArrowVisibility();
-        }
-    }
-
-    function prevImage(e) {
-        if (e) e.stopPropagation();
-        // Check bounds: Do not cycle if at first image
-        if (currentImageIndex > 0) {
-            currentImageIndex--;
-            updateModalContent(currentImageIndex);
-            updateArrowVisibility();
-        }
-    }
-
-    // Event Listeners for Nav
     nextBtn.addEventListener('click', nextImage);
     prevBtn.addEventListener('click', prevImage);
-
-    // Keyboard Navigation
     document.addEventListener('keydown', (e) => {
-        if (!imageModal.classList.contains('active')) return;
-        if (e.key === 'ArrowRight') nextImage(e);
-        if (e.key === 'ArrowLeft') prevImage(e);
-        if (e.key === 'Escape') closeModal();
+      if (!imageModal.classList.contains('active')) return;
+      if (e.key === 'ArrowRight') nextImage(e);
+      if (e.key === 'ArrowLeft') prevImage(e);
+      if (e.key === 'Escape') closeModal();
+    });
+    let touchStartX = 0, touchEndX = 0;
+    imageModal.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+    imageModal.addEventListener('touchend', (e) => { touchEndX = e.changedTouches[0].screenX; if (touchEndX < touchStartX - 50) nextImage(); if (touchEndX > touchStartX + 50) prevImage(); }, { passive: true });
+    imageModal.addEventListener('click', (e) => { if (e.target === imageModal || e.target === modalContent) closeModal(); });
+
+    // Prevent native browser image drag (would show ghost + allow open-in-new-tab)
+    document.querySelectorAll('.content-image-grid .content-image').forEach(img => {
+      img.addEventListener('dragstart', (e) => e.preventDefault());
     });
 
-    // --- Modal Swipe Logic (Mobile) ---
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    imageModal.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    imageModal.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, { passive: true });
-
-    function handleSwipe() {
-        // Threshold for swipe detection
-        if (touchEndX < touchStartX - 50) {
-            // Swiped Left -> Next Image
-            nextImage(); 
-        }
-        if (touchEndX > touchStartX + 50) {
-            // Swiped Right -> Prev Image
-            prevImage();
-        }
-    }
-
-    // Close Modal
-    function closeModal() {
-        imageModal.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    imageModal.addEventListener('click', (e) => {
-        // Only close if clicking the background, not the image or arrows
-        if (e.target === imageModal || e.target === modalContent) closeModal();
+    // ── Square image detection ───────────────────────────────────────────
+    document.querySelectorAll('.content-image').forEach(img => {
+      const check = () => { if (img.naturalWidth === img.naturalHeight && img.naturalWidth > 0) img.classList.add('square'); };
+      if (img.complete) check(); else img.addEventListener('load', check);
     });
 
+    // ── Carousel drag — single window-level handler ──────────────────────
+    // One active drag at a time; drag can start from anywhere inside the grid
+    // (including on top of images). A tap (< DRAG_THRESHOLD px) opens the modal.
+    const DRAG_THRESHOLD = 6;
+    let dragGrid = null;   // which grid is being dragged
+    let dragDown = false;
+    let dragDidMove = false;
+    let dragStartX = 0, dragScrollStart = 0;
+    let dragLastX = 0, dragLastT = 0;
+    let dragVelX = 0, dragMomentumID;
+    const dragSamples = [];
+    let snapTimer;
+    let pressedImg = null; // image currently being held down
+
+    function setPressedImg(img) {
+      if (pressedImg && pressedImg !== img) pressedImg.classList.remove('pressing');
+      pressedImg = img;
+      if (pressedImg) pressedImg.classList.add('pressing');
+    }
+    function clearPressedImg() {
+      if (pressedImg) pressedImg.classList.remove('pressing');
+      pressedImg = null;
+    }
+
+    function carouselDisableSnap() {
+      if (!dragGrid) return;
+      dragGrid.style.scrollSnapType = 'none';
+      clearTimeout(snapTimer);
+    }
+    function carouselRestoreSnap() {
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(() => { if (dragGrid) dragGrid.style.scrollSnapType = ''; }, 150);
+    }
+    function carouselMomentum() {
+      if (!dragGrid || Math.abs(dragVelX) < 0.3) {
+        dragVelX = 0;
+        carouselRestoreSnap();
+        dragGrid = null;
+        return;
+      }
+      dragGrid.scrollLeft += dragVelX;
+      dragVelX *= 0.88;
+      dragMomentumID = requestAnimationFrame(carouselMomentum);
+    }
+
+    // Pointerdown: start drag on any grid (or image inside it)
+    document.querySelectorAll('.content-image-grid').forEach(grid => {
+      // Wheel / touchpad
+      let snapDebounce;
+      grid.addEventListener('wheel', (e) => {
+        if (Math.abs(e.deltaX) > 2) {
+          e.preventDefault();
+          cancelAnimationFrame(dragMomentumID);
+          grid.style.scrollBehavior = 'auto';
+          grid.style.scrollSnapType = 'none';
+          grid.scrollLeft += e.deltaX * 0.5;
+          clearTimeout(snapDebounce);
+          snapDebounce = setTimeout(() => { grid.style.scrollSnapType = ''; }, 150);
+        }
+      }, { passive: false });
+
+      grid.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0 && e.pointerType === 'mouse') return;
+        cancelAnimationFrame(dragMomentumID);
+        dragGrid = grid;
+        dragDown = true;
+        dragDidMove = false;
+        dragStartX = e.clientX;
+        dragScrollStart = grid.scrollLeft;
+        dragLastX = e.clientX;
+        dragLastT = e.timeStamp;
+        dragVelX = 0;
+        dragSamples.length = 0;
+        grid.style.scrollBehavior = 'auto';
+        carouselDisableSnap();
+        grid.classList.add('dragging');
+        // Press animation: shrink the image under the pointer
+        const target = document.elementFromPoint(e.clientX, e.clientY);
+        const img = target && target.closest('.content-image');
+        if (img) setPressedImg(img);
+        // Capture so pointermove/pointerup fire even over child images
+        grid.setPointerCapture(e.pointerId);
+      });
+    });
+
+    // Single window-level move + up
+    window.addEventListener('pointermove', (e) => {
+      if (!dragDown || !dragGrid) return;
+      const dx = e.clientX - dragStartX;
+      if (Math.abs(dx) > DRAG_THRESHOLD) {
+        dragDidMove = true;
+        clearPressedImg(); // moved too far — release the press visual
+      }
+      if (!dragDidMove) {
+        // Still within tap threshold — check if pointer left the pressed image
+        if (pressedImg) {
+          const target = document.elementFromPoint(e.clientX, e.clientY);
+          const stillOn = target && target.closest('.content-image') === pressedImg;
+          if (!stillOn) clearPressedImg(); // pointer slid off image — cancel press + modal
+        }
+        return;
+      }
+      e.preventDefault();
+      dragGrid.scrollLeft = dragScrollStart - dx * 0.65;
+      const dt = Math.max(e.timeStamp - dragLastT, 1);
+      dragSamples.push(((dragLastX - e.clientX) / dt) * 16 * 0.5);
+      if (dragSamples.length > 6) dragSamples.shift();
+      dragLastX = e.clientX;
+      dragLastT = e.timeStamp;
+    }, { passive: false });
+
+    window.addEventListener('pointerup', (e) => {
+      if (!dragDown) return;
+      dragDown = false;
+      if (dragGrid) dragGrid.classList.remove('dragging');
+
+      if (dragSamples.length > 0) dragVelX = dragSamples.reduce((a, b) => a + b, 0) / dragSamples.length;
+      carouselMomentum();
+
+      // Tap → open modal only if pointer is still over the same pressed image
+      if (!dragDidMove && pressedImg) {
+        const target = document.elementFromPoint(e.clientX, e.clientY);
+        const img = target && target.closest('.content-image');
+        const grid = img && img.closest('.content-image-grid');
+        if (img === pressedImg && grid) openModal(img, grid);
+      }
+      clearPressedImg();
+    });
+
+    window.addEventListener('pointercancel', () => {
+      if (!dragDown) return;
+      dragDown = false;
+      clearPressedImg();
+      if (dragGrid) { dragGrid.classList.remove('dragging'); carouselRestoreSnap(); }
+    });
   </script>
-
 </body>
 </html>
