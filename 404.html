@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>404 | Ruiqian Zhang</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="icon" href="icons/face.svg" type="image/svg+xml">
+
+  <style>
+    :root {
+      --bg: #f2f0ef;
+      --text: #111;
+      --muted: #6b7280;
+      --accent: #0b5fff;
+      --hover-bg: rgba(11, 95, 255, 0.06);
+      --border: rgba(16, 24, 40, 0.06);
+      --card-bg: #f7f6f5;
+      --shadow-color: rgba(11, 95, 255, 0.08);
+      --nav-height: 100px;
+    }
+
+    body.dark {
+      --bg: #071221;
+      --text: #f2f0ef;
+      --muted: #98a6b3;
+      --accent: #7ab7ff;
+      --hover-bg: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.06);
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --shadow-color: rgba(200, 200, 200, 0.18);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .top-nav-bg {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height); z-index: 29; pointer-events: none;
+      background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+      transition: background-color 0.32s ease;
+    }
+
+    .nav-right-group { position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 100; }
+    .nav-left-group  { position: fixed; top: 20px; left: 20px; z-index: 100; }
+
+    .icon-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 8px; border: 0; background: transparent; color: var(--muted);
+      text-decoration: none; cursor: pointer; user-select: none;
+      width: 44px; height: 44px;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+    }
+    .icon-btn:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
+
+    @media (hover: hover) {
+      .icon-btn:hover {
+        background: var(--hover-bg); color: var(--accent);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 6px 18px var(--shadow-color);
+      }
+    }
+
+    .home-icon {
+      width: 20px; height: 20px; display: block;
+      background-color: currentColor;
+      -webkit-mask: url('icons/home.svg') no-repeat center / contain;
+      mask: url('icons/home.svg') no-repeat center / contain;
+    }
+
+    .content-wrap {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
+      box-sizing: border-box;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Frosted glass card behind text */
+    .content-backdrop {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 56px;
+      border-radius: 32px;
+      position: relative;
+      isolation: isolate;
+      background: rgba(242, 240, 239, 0.3);
+      box-shadow: 0 0 0 1px rgba(16, 24, 40, 0.05);
+    }
+
+    /* The blur layer sits behind everything inside the card */
+    .content-backdrop::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 32px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: -1;
+    }
+
+    body.dark .content-backdrop {
+      background: rgba(7, 18, 33, 0.3);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+
+    /* Text sits above the blur pseudo-element */
+    .content-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .error-code {
+      font-size: clamp(100px, 20vw, 180px);
+      font-weight: 900;
+      letter-spacing: -6px;
+      line-height: 1;
+      margin: 0 0 8px 0;
+      color: transparent;
+      -webkit-text-stroke: 3px rgba(107, 114, 128, 0.5);
+      transition: -webkit-text-stroke-color 0.32s ease, filter 0.32s ease;
+      position: relative;
+      user-select: none;
+      filter: drop-shadow(0 0 40px rgba(107, 114, 128, 0.1));
+    }
+
+    body.dark .error-code {
+      -webkit-text-stroke-color: rgba(122, 183, 255, 0.6);
+      filter: drop-shadow(0 0 50px rgba(122, 183, 255, 0.2));
+    }
+
+    .error-heading {
+      font-size: clamp(24px, 5vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin: 0 0 12px 0;
+      opacity: 0;
+      transform: perspective(500px) rotateX(90deg) translateY(10px);
+      transform-origin: bottom center;
+      transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .error-heading.visible {
+      opacity: 1;
+      transform: perspective(500px) rotateX(0deg) translateY(0);
+    }
+
+    .error-sub {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 360px;
+      line-height: 1.6;
+      margin: 0 0 40px 0;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .error-sub.visible { opacity: 1; transform: translateY(0); }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-row.visible { opacity: 1; transform: translateY(0); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 0;
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease, background-color 0.3s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-primary { background: var(--accent); color: #fff; }
+    body.dark .btn-primary { color: var(--bg); }
+
+    .btn-secondary {
+      background: var(--card-bg);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    @media (hover: hover) {
+      .btn-secondary:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+        background: var(--hover-bg);
+      }
+    }
+
+    .btn:active { transform: scale(0.97); transition-duration: 0.1s; }
+
+    .btn-arrow-wrap {
+      width: 14px; height: 14px;
+      overflow: hidden; flex-shrink: 0; position: relative;
+    }
+    .btn-arrow-wrap svg {
+      display: block; width: 14px; height: 14px;
+      position: absolute; top: 0; left: 0;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    }
+    .btn-arrow-out { transform: translateX(0);    opacity: 1; }
+    .btn-arrow-in  { transform: translateX(120%); opacity: 0; }
+
+    @media (hover: hover) {
+      .btn-primary:hover .btn-arrow-out { transform: translateX(-120%); opacity: 0; }
+      .btn-primary:hover .btn-arrow-in  { transform: translateX(0);     opacity: 1; }
+    }
+
+    .theme-transition, .theme-transition * {
+      transition: background-color 0.32s ease, border-color 0.32s ease, color 0s, box-shadow 0.32s ease !important;
+    }
+
+    #ascii-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    (function() {
+      const saved = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.body.style.transition = 'none';
+      if (saved === 'dark' || (!saved && prefersDark)) document.body.classList.add('dark');
+    })();
+  </script>
+
+  <div class="top-nav-bg"></div>
+  <canvas id="ascii-canvas"></canvas>
+
+  <div class="nav-left-group">
+    <a href="https://rhemzema.github.io" class="icon-btn" aria-label="Go to Home">
+      <div class="home-icon"></div>
+    </a>
+  </div>
+
+  <div class="nav-right-group">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark mode">
+      <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5373 21.3065 11.4608 21.0672 11.8568C19.9289 13.7406 17.8615 15 15.5 15C11.9101 15 9 12.0899 9 8.5C9 6.13845 10.2594 4.07105 12.1432 2.93276C12.5392 2.69347 12.4627 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="content-wrap">
+    <div class="content-backdrop">
+      <div class="content-inner">
+        <p class="error-code" aria-hidden="true">404</p>
+        <h1 class="error-heading">Page not found.</h1>
+        <p class="error-sub">Looks like this page got lost somewhere between commits. Let's get you back on track.</p>
+        <div class="btn-row">
+          <a href="https://rhemzema.github.io" class="btn btn-primary">
+            <div class="btn-arrow-wrap">
+              <svg class="btn-arrow-out" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 1L1 7L7 13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <svg class="btn-arrow-in" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 1L1 7L7 13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            Go home
+          </a>
+          <a href="https://rhemzema.github.io/projects.html" class="btn btn-secondary">
+            View projects
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Theme toggle ---
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      document.body.classList.add('theme-transition');
+      const isDark = document.body.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      setTimeout(() => document.body.classList.remove('theme-transition'), 420);
+    });
+
+    // --- Entrance animations ---
+    window.addEventListener('load', () => {
+      setTimeout(() => document.body.style.transition = '', 100);
+      setTimeout(() => document.querySelector('.error-heading').classList.add('visible'), 200);
+      setTimeout(() => document.querySelector('.error-sub').classList.add('visible'),     400);
+      setTimeout(() => document.querySelector('.btn-row').classList.add('visible'),       550);
+    });
+
+    // --- DVD Bounce: Image to ASCII ---
+    (function() {
+      const canvas = document.getElementById('ascii-canvas');
+      const ctx    = canvas.getContext('2d');
+
+      const IMAGE_URL    = '/images/monkeyThink.png';
+      const ASCII_COLS   = 80;
+      const FONT_SIZE    = 7;
+      const LINE_HEIGHT  = 8;
+      const SPEED        = 3.5;
+      const FRAME_INTERVAL = 1000 / 25;
+      const DENSITY_LIGHT = "@%#*+=-:. ";  // dark→light (for light bg)
+      const DENSITY_DARK  = " .:=-+*#%@";  // light→dark, flipped (for dark bg)
+
+      // Fixed visible colors for both modes
+      const COLOR_LIGHT  = '#111827';
+      const COLOR_DARK   = '#93c5fd';
+
+      let lines = [], spriteW = 0, spriteH = 0;
+      let x, y, vx, vy, asciiColor;
+      let lastTime = 0, ready = false;
+
+      function imageToAscii(img) {
+        const density = document.body.classList.contains('dark') ? DENSITY_DARK : DENSITY_LIGHT;
+        const rows = Math.round(ASCII_COLS * (img.naturalHeight / img.naturalWidth) * 0.5);
+        const off  = document.createElement('canvas');
+        off.width  = ASCII_COLS;
+        off.height = rows;
+        const octx = off.getContext('2d');
+        octx.drawImage(img, 0, 0, ASCII_COLS, rows);
+        const data = octx.getImageData(0, 0, ASCII_COLS, rows).data;
+        const out  = [];
+        for (let r = 0; r < rows; r++) {
+          let line = '';
+          for (let c = 0; c < ASCII_COLS; c++) {
+            const i   = (r * ASCII_COLS + c) * 4;
+            const lum = (0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]) / 255;
+            // Pure white → empty space
+            if (lum > 0.85) { line += ' '; continue; }
+            line += density[Math.floor(lum * (density.length - 1))];
+          }
+          out.push(line);
+        }
+        return out;
+      }
+
+      function cacheColors() {
+        asciiColor = document.body.classList.contains('dark') ? COLOR_DARK : COLOR_LIGHT;
+      }
+
+      function initPosition() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+        spriteW = ASCII_COLS * (FONT_SIZE * 0.62);
+        spriteH = lines.length * LINE_HEIGHT;
+        x = Math.random() * Math.max(1, canvas.width  - spriteW);
+        y = Math.random() * Math.max(1, canvas.height - spriteH);
+        // Guarantee both axes have real velocity (no near-zero vy)
+        const sign = () => Math.random() < 0.5 ? 1 : -1;
+        vx = sign() * (SPEED * 0.7 + Math.random() * SPEED * 0.3);
+        vy = sign() * (SPEED * 0.7 + Math.random() * SPEED * 0.3);
+        cacheColors();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      function draw(timestamp) {
+        requestAnimationFrame(draw);
+        if (!ready || timestamp - lastTime < FRAME_INTERVAL) return;
+        lastTime = timestamp;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        x += vx; y += vy;
+
+        if (x <= 0)                       { x = 0;                       vx =  Math.abs(vx); }
+        if (x + spriteW >= canvas.width)  { x = canvas.width  - spriteW; vx = -Math.abs(vx); }
+        if (y <= 0)                       { y = 0;                       vy =  Math.abs(vy); }
+        if (y + spriteH >= canvas.height) { y = canvas.height - spriteH; vy = -Math.abs(vy); }
+
+        ctx.font        = FONT_SIZE + 'px "JetBrains Mono","Courier New",monospace';
+        ctx.fillStyle   = asciiColor;
+        for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], x, y + i * LINE_HEIGHT);
+      }
+
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        lines = imageToAscii(img);
+        initPosition();
+        ready = true;
+      };
+      img.onerror = () => {
+        lines = ['image not found', 'check IMAGE_URL', 'in 404.html'];
+        initPosition();
+        ready = true;
+      };
+      img.src = IMAGE_URL;
+
+      requestAnimationFrame(draw);
+      window.addEventListener('resize', () => { if (ready) initPosition(); });
+      document.getElementById('theme-toggle').addEventListener('click', () => {
+        requestAnimationFrame(() => {
+          cacheColors();
+          if (ready) lines = imageToAscii(img);
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>
