@@ -12,21 +12,15 @@
 
   <style>
     :root {
-      /* Colors */
       --bg: #f2f0ef;
       --text: #111;
       --muted: #6b7280;
       --accent: #0b5fff;
-      
-      /* Dynamic UI Colors (Light Mode Defaults) */
       --hover-bg: rgba(11, 95, 255, 0.06);
       --border: rgba(16, 24, 40, 0.06);
       --card-bg: #f7f6f5;
-      /* Removed shadow-color usage for menu underglow, keeping for hover lifts */
       --shadow-color: rgba(11, 95, 255, 0.08);
-      --menu-bg: rgba(255, 255, 255, 0.95); /* Increased opacity for cleaner look */
-      
-      /* Dimensions */
+      --menu-bg: rgba(255, 255, 255, 0.95);
       --nav-height: 100px;
     }
 
@@ -35,8 +29,6 @@
       --text: #f2f0ef;
       --muted: #98a6b3;
       --accent: #7ab7ff;
-      
-      /* Dark Mode Overrides */
       --hover-bg: rgba(255, 255, 255, 0.06);
       --border: rgba(255, 255, 255, 0.06);
       --card-bg: rgba(255, 255, 255, 0.03);
@@ -44,7 +36,6 @@
       --menu-bg: rgba(17, 27, 39, 0.95); 
     }
 
-    /* --- Base Layout --- */
     body {
       min-height: 100vh;
       margin: 0;
@@ -54,7 +45,6 @@
       overflow-x: hidden;
     }
 
-    /* --- Shared Components --- */
     .icon-btn, .project-card {
       text-decoration: none;
       -webkit-tap-highlight-color: transparent;
@@ -63,21 +53,12 @@
       transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
     }
 
-    /* Icon Buttons */
     .icon-btn {
       display: inline-flex; align-items: center; justify-content: center;
       border-radius: 8px; border: 0; background: transparent; color: var(--muted);
     }
     .icon-btn.square { width: 44px; height: 44px; }
     .icon-btn:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
-
-    /* --- Filter Styles --- */
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 32px;
-    }
 
     .filter-btn {
       font-family: 'Inter', sans-serif;
@@ -91,24 +72,10 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--hover-bg); }
+    .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+    body.dark .filter-btn.active { color: var(--bg); }
 
-    .filter-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--hover-bg);
-    }
-
-    .filter-btn.active {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
-    
-    body.dark .filter-btn.active {
-        color: var(--bg); /* Dark mode text contrast on accent */
-    }
-
-    /* --- Control Bar (Filters + Sort) --- */
     .controls-row {
       display: flex;
       justify-content: space-between;
@@ -116,23 +83,13 @@
       margin-bottom: 32px;
       gap: 16px;
       position: relative;
-      /* Ensure controls (especially the menu) are above project cards */
       z-index: 50; 
       flex-wrap: wrap; 
     }
 
-    .filter-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .filter-group { display: flex; flex-wrap: wrap; gap: 8px; }
 
-    /* --- Sort Menu (Hamburger) --- */
-    .sort-wrapper { 
-      position: relative;
-      /* FIX: This forces the hamburger to the right side even if the row wraps */
-      margin-left: auto; 
-    }
+    .sort-wrapper { position: relative; margin-left: auto; }
     
     .sort-menu {
       position: absolute;
@@ -145,16 +102,12 @@
       border-radius: 16px;
       padding: 6px;
       min-width: 180px;
-      /* FIX: Removed large shadow (underglow), kept minimal border/bg */
       box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
       opacity: 0; visibility: hidden; transform: translateY(-10px) scale(0.98);
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 100;
     }
-    
-    .sort-menu.open {
-      opacity: 1; visibility: visible; transform: translateY(0) scale(1);
-    }
+    .sort-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
 
     .sort-option {
       display: flex;
@@ -173,15 +126,8 @@
       cursor: pointer;
       transition: background 0.2s ease, color 0.2s ease;
     }
-
     .sort-option:hover { background: var(--hover-bg); color: var(--text); }
-    
-    .sort-option.selected { 
-      color: var(--accent); 
-      background: var(--hover-bg); 
-      font-weight: 600;
-    }
-
+    .sort-option.selected { color: var(--accent); background: var(--hover-bg); font-weight: 600; }
     .sort-option.selected::after {
       content: '';
       display: block;
@@ -192,75 +138,88 @@
       margin-left: 8px;
     }
 
-    /* Hamburger Icon */
     .menu-icon {
       width: 20px; height: 20px;
       background-color: currentColor;
-      -webkit-mask: url('icons/menu.svg') no-repeat center / contain;
-      mask: url('icons/menu.svg') no-repeat center / contain;
       -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12H21M3 6H21M3 18H21" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>');
       mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12H21M3 6H21M3 18H21" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>');
     }
 
-    /* --- Project Grid --- */
     .project-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px;
       width: 100%;
     }
 
-    /* Project Card */
     .project-card {
-      display: flex; align-items: center; justify-content: space-between;
-      width: 100%; 
-      padding: 24px 28px; 
-      box-sizing: border-box; 
-      background: var(--card-bg); 
-      border: 1px solid var(--border); 
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      box-sizing: border-box;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
       border-radius: 24px;
-      color: var(--text); 
-      position: relative; 
+      color: var(--text);
+      position: relative;
       overflow: hidden;
     }
     .project-card.hidden { display: none; }
-    .project-card:active { transform: scale(0.98); background: var(--hover-bg); transition-duration: 0.1s; }
+    .project-card:active { transform: scale(0.98); transition-duration: 0.1s; }
 
-    /* Project Info */
-    .project-info { display: flex; flex-direction: column; gap: 4px; }
-    .project-info h2 { font-size: 20px; font-weight: 700; margin: 0; transition: color 0.3s ease; }
-    .project-info p { font-size: 15px; color: var(--muted); margin: 0 0 8px 0; line-height: 1.4; }
-
-    /* Metadata Row */
-    .meta-row { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
-    
-    .date-label {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 500;
-      opacity: 0.8;
+    .card-image {
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+      border-radius: 24px 24px 0 0;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, var(--bg)), color-mix(in srgb, var(--accent) 3%, var(--bg)));
+      position: relative;
     }
 
-    /* Status Dot Inside Card */
-    .card-status {
-      display: inline-flex;
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .card-image-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
       align-items: center;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--muted);
-      gap: 6px;
+      justify-content: center;
     }
-    /* FIX: Removed box-shadow (underglow) from status dots */
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .card-image-placeholder svg { width: 32px; height: 32px; color: var(--muted); opacity: 0.3; }
+
+    .card-body {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 20px 24px;
+      gap: 12px;
+    }
+
+    .project-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+    .project-info h2 { font-size: 18px; font-weight: 700; margin: 0; transition: color 0.3s ease; }
+    .project-info p { font-size: 14px; color: var(--muted); margin: 0 0 8px 0; line-height: 1.4; }
+
+    .meta-row { display: flex; align-items: center; gap: 12px; margin-top: 4px; flex-wrap: wrap; }
+    
+    .date-label { font-size: 12px; color: var(--muted); font-weight: 500; opacity: 0.8; }
+
+    .card-status { display: inline-flex; align-items: center; font-size: 12px; font-weight: 500; color: var(--muted); gap: 6px; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
     
     .card-status[data-status="in-progress"] .status-dot { background-color: #3b82f6; }
     .card-status[data-status="on-hold"] .status-dot { background-color: #eab308; }
     .card-status[data-status="dropped"] .status-dot { background-color: #ef4444; }
     .card-status[data-status="completed"] .status-dot { background-color: #22c55e; }
 
-    /* Arrow Icon */
     .arrow-icon {
-      width: 18px; height: 18px; flex-shrink: 0; margin-left: 16px;
+      width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;
       background-color: var(--muted);
       -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain;
       mask: url('icons/up_arrow.svg') no-repeat center / contain;
@@ -268,7 +227,6 @@
       transform: rotate(90deg);
     }
 
-    /* Home Icon */
     .home-icon {
       width: 20px; height: 20px; display: block;
       background-color: currentColor;
@@ -276,28 +234,24 @@
       mask: url('icons/home.svg') no-repeat center / contain;
     }
 
-    /* Hover States */
     @media (hover: hover) {
       .icon-btn:hover {
         background: var(--hover-bg); color: var(--accent);
         transform: translateY(-3px) scale(1.02);
         box-shadow: 0 6px 18px var(--shadow-color);
       }
-      
       .project-card:hover {
         transform: translateY(-5px) scale(1.01);
         border-color: var(--accent);
         box-shadow: 0 12px 32px var(--shadow-color);
       }
       .project-card:hover h2 { color: var(--accent); }
-      
       .project-card:hover .arrow-icon {
         background-color: var(--accent);
         transform: rotate(90deg) translateY(-4px); 
       }
     }
 
-    /* --- Layout --- */
     .nav-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 50; pointer-events: none; }
     .nav-right-group { position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 100; pointer-events: auto; }
     .nav-left-group { position: fixed; top: 20px; left: 20px; z-index: 100; pointer-events: auto; }
@@ -317,7 +271,6 @@
     h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
     p.intro { color: var(--muted); margin-bottom: 32px; line-height: 1.5; max-width: 600px; }
 
-    /* --- Animations --- */
     .theme-transition, .theme-transition * { 
       transition: background-color 0.32s ease, border-color 0.32s ease, color 0s, box-shadow 0.32s ease !important; 
     }
@@ -335,7 +288,6 @@
       transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
-
   </style>
 </head>
 <body>
@@ -357,7 +309,6 @@
         <div class="icon-mask back-icon"></div>
       </a>
     </div>
-
     <div class="nav-right-group">
       <a href="https://rhemzema.github.io" class="icon-btn square" aria-label="Go to Home">
         <div class="home-icon"></div>
@@ -383,7 +334,6 @@
           <button class="filter-btn" data-filter="completed">Completed</button>
           <button class="filter-btn" data-filter="dropped">Dropped</button>
         </div>
-
         <div class="sort-wrapper">
           <button class="icon-btn square" id="sort-toggle" aria-label="Sort Options">
             <div class="menu-icon"></div>
@@ -397,41 +347,57 @@
       </div>
 
       <div class="project-grid" id="project-grid">
-        
-        <a href="mepad.html" class="project-card reveal-flip" data-status="in-progress" data-date="2026-01-03">
-          <div class="project-info">
-            <h2>MePad V1</h2>
-            <p>Custom programmable USB macro keypad</p>
-            <div class="meta-row">
-              <div class="card-status" data-status="in-progress">
-                <span class="status-dot"></span> In Progress
+
+        <!-- Image path goes in data-image. Must be a valid relative or absolute URL. -->
+        <a href="mepad.html" class="project-card reveal-flip" data-status="in-progress" data-date="2026-01-03" data-image="https://rhemzema.github.io/assets/MePad_PCB_Day3.png">
+          <div class="card-image"></div>
+          <div class="card-body">
+            <div class="project-info">
+              <h2>MePad V1</h2>
+              <p>Custom programmable USB macro keypad</p>
+              <div class="meta-row">
+                <div class="card-status" data-status="in-progress">
+                  <span class="status-dot"></span> In Progress
+                </div>
+                <span class="date-label">Jan 3, 2026</span>
               </div>
-              <span class="date-label">Jan 3, 2026</span>
             </div>
+            <div class="arrow-icon"></div>
           </div>
-          <div class="arrow-icon"></div>
         </a>
 
-        <a href="id_card.html" class="project-card reveal-flip" data-status="completed" data-date="2025-12-28">
-          <div class="project-info">
-            <h2>The ID</h2>
-            <p>Interactive card with motion and light physics</p>
-            <div class="meta-row">
-              <div class="card-status" data-status="completed">
-                <span class="status-dot"></span> Completed
+        <a href="id_card.html" class="project-card reveal-flip" data-status="completed" data-date="2025-12-28" data-image="">
+          <div class="card-image"></div>
+          <div class="card-body">
+            <div class="project-info">
+              <h2>The ID</h2>
+              <p>Interactive card with motion and light physics</p>
+              <div class="meta-row">
+                <div class="card-status" data-status="completed">
+                  <span class="status-dot"></span> Completed
+                </div>
+                <span class="date-label">Dec 28, 2025</span>
               </div>
-              <span class="date-label">Dec 28, 2025</span>
             </div>
+            <div class="arrow-icon"></div>
           </div>
-          <div class="arrow-icon"></div>
         </a>
 
       </div>
-      </div>
+    </div>
   </div>
 
+  <footer style="
+    text-align: center;
+    padding-bottom: 30px;
+    font-size: 14px;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+  ">
+    &copy; 2026 Ruiqian Zhang
+  </footer>
+
   <script>
-    // --- UI Logic ---
     const UI = {
       body: document.body,
       toggleBtn: document.getElementById('theme-toggle'),
@@ -442,20 +408,40 @@
       sortOptions: document.querySelectorAll('.sort-option')
     };
 
-    // --- 1. Load Animation ---
+    // --- 1. Populate Card Images ---
+    document.querySelectorAll('.project-card').forEach(card => {
+      const imgSrc = card.getAttribute('data-image');
+      const imageContainer = card.querySelector('.card-image');
+      
+      if (imgSrc && imgSrc.trim() !== '') {
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.alt = card.querySelector('h2').textContent + ' preview';
+        imageContainer.appendChild(img);
+      } else {
+        imageContainer.innerHTML = `
+          <div class="card-image-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="3"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="M21 15l-5-5L5 21"/>
+            </svg>
+          </div>`;
+      }
+    });
+
+    // --- 2. Load Animation ---
     window.addEventListener('load', () => {
       setTimeout(() => UI.body.style.transition = '', 100);
-      
       const chars = document.querySelectorAll('.char-flip');
       chars.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 30));
-      
       const cards = document.querySelectorAll('.reveal-flip');
       setTimeout(() => {
         cards.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 150));
       }, 300);
     });
 
-    // --- 2. Theme Toggle ---
+    // --- 3. Theme Toggle ---
     UI.toggleBtn.addEventListener('click', () => {
       UI.body.classList.add('theme-transition');
       const isDark = UI.body.classList.toggle('dark');
@@ -463,74 +449,53 @@
       setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
     });
 
-    // --- 3. Filtering Logic ---
+    // --- 4. Filtering ---
     UI.filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         UI.filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-
         const filterValue = btn.getAttribute('data-filter');
-        const cards = UI.grid.querySelectorAll('.project-card');
-
-        cards.forEach(card => {
-          const cardStatus = card.getAttribute('data-status');
-          if (filterValue === 'all' || cardStatus === filterValue) {
-            card.classList.remove('hidden');
-          } else {
-            card.classList.add('hidden');
-          }
+        UI.grid.querySelectorAll('.project-card').forEach(card => {
+          const match = filterValue === 'all' || card.getAttribute('data-status') === filterValue;
+          card.classList.toggle('hidden', !match);
         });
       });
     });
 
-    // --- 4. Sorting Logic ---
-    
-    // Toggle Menu
+    // --- 5. Sorting ---
     UI.sortToggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        UI.sortMenu.classList.toggle('open');
+      e.stopPropagation();
+      UI.sortMenu.classList.toggle('open');
     });
-
-    // Close menu when clicking outside
     document.addEventListener('click', (e) => {
-        if (!UI.sortMenu.contains(e.target) && !UI.sortToggle.contains(e.target)) {
-            UI.sortMenu.classList.remove('open');
-        }
+      if (!UI.sortMenu.contains(e.target) && !UI.sortToggle.contains(e.target)) {
+        UI.sortMenu.classList.remove('open');
+      }
     });
-
-    // Sort Function
     UI.sortOptions.forEach(opt => {
-        opt.addEventListener('click', () => {
-            // Update UI
-            UI.sortOptions.forEach(o => o.classList.remove('selected'));
-            opt.classList.add('selected');
-            UI.sortMenu.classList.remove('open');
-
-            const sortType = opt.getAttribute('data-sort');
-            const cards = Array.from(UI.grid.querySelectorAll('.project-card'));
-
-            cards.sort((a, b) => {
-                if (sortType === 'alphabetical') {
-                    const titleA = a.querySelector('h2').textContent.trim().toLowerCase();
-                    const titleB = b.querySelector('h2').textContent.trim().toLowerCase();
-                    return titleA.localeCompare(titleB);
-                } else {
-                    const dateA = new Date(a.getAttribute('data-date'));
-                    const dateB = new Date(b.getAttribute('data-date'));
-                    return sortType === 'newest' ? dateB - dateA : dateA - dateB;
-                }
-            });
-
-            // Re-append in new order
-            cards.forEach(card => UI.grid.appendChild(card));
+      opt.addEventListener('click', () => {
+        UI.sortOptions.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        UI.sortMenu.classList.remove('open');
+        const sortType = opt.getAttribute('data-sort');
+        const cards = Array.from(UI.grid.querySelectorAll('.project-card'));
+        cards.sort((a, b) => {
+          if (sortType === 'alphabetical') {
+            return a.querySelector('h2').textContent.trim().localeCompare(b.querySelector('h2').textContent.trim());
+          }
+          const dateA = new Date(a.getAttribute('data-date'));
+          const dateB = new Date(b.getAttribute('data-date'));
+          return sortType === 'newest' ? dateB - dateA : dateA - dateB;
         });
+        cards.forEach(card => UI.grid.appendChild(card));
+      });
     });
 
-    // --- 5. Split Text Init ---
+    // --- 6. Split Text ---
     document.querySelectorAll('.split-flip-text').forEach(el => {
       const text = el.textContent;
       el.setAttribute('aria-label', text);
-      el.innerHTML = ''; 
+      el.innerHTML = '';
       text.split('').forEach(char => {
         const span = document.createElement('span');
         span.className = 'char-flip';
