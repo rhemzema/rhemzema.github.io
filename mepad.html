@@ -44,20 +44,6 @@
       overflow-x: hidden;
     }
 
-    .content-image {
-      flex-shrink: 0;
-      height: 300px;
-      width: auto;
-      max-width: 90%;
-      border-radius: 12px;
-      cursor: inherit; /* Inherits 'grab' and 'grabbing' from the grid */
-      object-fit: cover;
-      scroll-snap-align: start;
-      border: 1px solid var(--border);
-      display: block;
-      -webkit-user-drag: none;
-    }
-
     .icon-btn, .pill, .download-link {
       display: inline-flex;
       align-items: center;
@@ -279,18 +265,6 @@
     @media (max-width: 768px) { .modal-nav { display: none !important; } }
     @media (max-width: 600px) { .req-grid { grid-template-columns: repeat(2, 1fr); } }
 
-    @media (max-width: 600px) {
-      .content-image,
-      .content-image.square,
-      .content-image-grid .content-image:first-child:last-child,
-      .content-image-grid .content-image:first-child:last-child.square {
-        height: 250px !important;
-        width: auto !important;
-        max-width: none !important;
-        object-fit: fill !important;
-      }
-    }
-
     .theme-transition, .theme-transition * { 
       transition: background-color 0.32s ease, border-color 0.32s ease, color 0s, box-shadow 0.32s ease !important; 
     }
@@ -310,36 +284,29 @@
     }
     .char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
 
-    /* IMAGE CAROUSEL */
+    /* NATIVE CSS IMAGE CAROUSEL */
     .content-image-grid {
       display: flex;
-      gap: 8px;
+      gap: 12px;
       margin: 16px calc(-1 * var(--card-padding)) 20px;
       padding: 4px 0;
       overflow-x: auto;
-      overflow-y: visible;
+      overflow-y: hidden;
       scroll-snap-type: x mandatory;
       scroll-padding-left: var(--card-padding);
-      -webkit-overflow-scrolling: touch;
+      -webkit-overflow-scrolling: touch; /* Forces hardware acceleration and momentum scrolling on mobile */
       scrollbar-width: none;
-      cursor: grab;
-      user-select: none;
-      touch-action: pan-y;
-      /* Add back transition property to animate the bounce back */
-      transition: transform 0s; 
     }
     .content-image-grid::-webkit-scrollbar { display: none; }
 
     .content-image-grid .content-image:first-child { margin-left: var(--card-padding); }
     .content-image-grid .content-image:last-child { margin-right: var(--card-padding); }
 
-    .content-image-grid.dragging { cursor: grabbing; scroll-behavior: auto; }
-
     .content-image {
       flex-shrink: 0;
       height: 300px;
       width: auto;
-      max-width: 90%;
+      max-width: none; /* Allows images to stretch their natural length relative to height */
       border-radius: 12px;
       cursor: pointer;
       object-fit: cover;
@@ -347,23 +314,29 @@
       border: 1px solid var(--border);
       display: block;
       -webkit-user-drag: none;
-    }
-
-    .content-image.square { width: 300px; height: 300px; }
-
-    .content-image-grid .content-image:first-child:last-child { height: 350px; }
-    .content-image-grid .content-image:first-child:last-child.square { width: 350px; height: 350px; }
-
-    .image-grid-wrapper { position: relative; }
-
-    .content-image-grid .content-image {
-      -webkit-user-drag: none;
-      -user-drag: none;
       transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    .content-image-grid .content-image.pressing {
-      transform: scale(0.94);
+    .content-image.square { width: 300px; height: 300px; }
+    .content-image-grid .content-image:first-child:last-child { height: 350px; }
+    .content-image-grid .content-image:first-child:last-child.square { width: 350px; height: 350px; }
+
+    @media (max-width: 600px) {
+      .content-image,
+      .content-image.square,
+      .content-image-grid .content-image:first-child:last-child,
+      .content-image-grid .content-image:first-child:last-child.square {
+        height: 250px !important;
+        width: auto !important;
+        max-width: none !important; /* Preserves horizontal stretch on mobile */
+        object-fit: cover !important;
+      }
+    }
+
+    .image-grid-wrapper { position: relative; }
+
+    .content-image:active {
+      transform: scale(0.98);
       transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
@@ -697,175 +670,14 @@
       if (img.complete) check(); else img.addEventListener('load', check);
     });
 
-    // ── Carousel drag with LERP + Exponential Boundary Stretch ───────────────
-
-    const DRAG_THRESHOLD = 6;
-    const LERP_ALPHA = 0.18;        // Lower = smoother
-    const MAX_STRETCH = 140;
-    const STRETCH_FACTOR = 0.008;
-
-    let activeGrid = null;
-    let isDragging = false;
-    let dragDidMove = false;
-    let dragStartX = 0;
-    let startScrollLeft = 0;
-
-    let targetScrollLeft = 0;
-    let currentScrollLeft = 0;
-    let overscrollX = 0;
-    let animationID = null;
-
-    function lerp(a, b, t) {
-      return a + (b - a) * t;
-    }
-
-    function boundaryStretch(delta) {
-      return Math.sign(delta) *
-        MAX_STRETCH *
-        (1 - Math.exp(-Math.abs(delta) * STRETCH_FACTOR));
-    }
-
-    function animate() {
-      if (!activeGrid) return;
-
-      currentScrollLeft = lerp(currentScrollLeft, targetScrollLeft, LERP_ALPHA);
-      activeGrid.scrollLeft = currentScrollLeft;
-
-      animationID = requestAnimationFrame(animate);
-    }
-
-    function stopAnimation() {
-      cancelAnimationFrame(animationID);
-      animationID = null;
-    }
-
-    function resetStretch(grid) {
-      grid.style.transition = 'transform 0.35s cubic-bezier(.2,.8,.2,1)';
-      grid.style.transform = 'translateX(0px)';
-      overscrollX = 0;
-      setTimeout(() => grid.style.transition = '', 350);
-    }
-
+    // ── Open Modal on Image Click ──────────────────────────────────────────
     document.querySelectorAll('.content-image-grid').forEach(grid => {
-
-      const images = grid.querySelectorAll('.content-image');
-
-      // Disable drag & stretch if only one image
-      if (images.length <= 1) {
-
-        // Keep modal functionality
-        grid.style.cursor = 'pointer';
-
-        grid.addEventListener('click', (e) => {
-          const img = e.target.closest('.content-image');
-          if (img) openModal(img, grid);
-        });
-
-        return; // Skip drag logic only
-      }
-
-      // Pointer Down
-      grid.addEventListener('pointerdown', (e) => {
-        if (e.button !== 0) return;
-
-        activeGrid = grid;
-        isDragging = true;
-        dragDidMove = false;
-
-        dragStartX = e.clientX;
-        startScrollLeft = grid.scrollLeft;
-
-        currentScrollLeft = grid.scrollLeft;
-        targetScrollLeft = grid.scrollLeft;
-
-        grid.style.scrollSnapType = 'none';
-        grid.classList.add('dragging');
-
-        stopAnimation();
-        animate();
-      });
-
-      // Pointer Move
-      window.addEventListener('pointermove', (e) => {
-        if (!isDragging || !activeGrid) return;
-
-        const dx = e.clientX - dragStartX;
-        const maxScroll = activeGrid.scrollWidth - activeGrid.clientWidth;
-
-        if (Math.abs(dx) > DRAG_THRESHOLD) {
-          dragDidMove = true;
-        }
-
-        const rawTarget = startScrollLeft - dx;
-
-        if (rawTarget < 0) {
-          targetScrollLeft = 0;
-
-          // Stretch right on first image
-          overscrollX = boundaryStretch(-rawTarget);
-          activeGrid.style.transform = `translateX(${overscrollX}px)`;
-        }
-        else if (rawTarget > maxScroll) {
-          targetScrollLeft = maxScroll;
-
-          // Stretch left on last image
-          overscrollX = -boundaryStretch(rawTarget - maxScroll);
-          activeGrid.style.transform = `translateX(${overscrollX}px)`;
-        }
-        else {
-          targetScrollLeft = rawTarget;
-
-          if (overscrollX !== 0) {
-            overscrollX = 0;
-            activeGrid.style.transform = '';
-          }
-        }
-      });
-
-      // Pointer Up
-      window.addEventListener('pointerup', () => {
-        if (!isDragging || !activeGrid) return;
-
-        isDragging = false;
-        activeGrid.classList.remove('dragging');
-        activeGrid.style.scrollSnapType = '';
-
-        if (overscrollX !== 0) {
-          resetStretch(activeGrid);
-        }
-
-        stopAnimation();
-        activeGrid = null;
-      });
-
-      window.addEventListener('pointercancel', () => {
-        if (!isDragging || !activeGrid) return;
-
-        isDragging = false;
-        activeGrid.classList.remove('dragging');
-        activeGrid.style.scrollSnapType = '';
-
-        if (overscrollX !== 0) {
-          resetStretch(activeGrid);
-        }
-
-        stopAnimation();
-        activeGrid = null;
-      });
-
-      // Click handler (restores modal functionality)
       grid.addEventListener('click', (e) => {
-        if (dragDidMove) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
-
         const img = e.target.closest('.content-image');
         if (img) openModal(img, grid);
       });
-
     });
+
   </script>
 </body>
 </html>

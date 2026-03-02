@@ -149,59 +149,54 @@
     }
 
     .content-wrap { padding: 0 20px; }
-    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+    html {
+      scroll-snap-type: y proximity;
+      scroll-behavior: smooth;
+    }
+    
     .page { display: block; }
     .page .inner { min-height: 100svh; display: flex; align-items: center; justify-content: center; padding: 28px; box-sizing: border-box; }
-    #home { scroll-snap-align: start; margin-bottom: 5vh; }
-    #about { scroll-snap-align: center; scroll-margin-top: 0; }
-    #home-projects-section { scroll-snap-align: start; scroll-margin-top: 120px; }
-    .site-footer-container { scroll-snap-align: end; }
+    #home { scroll-snap-align: start; scroll-snap-stop: always; margin-bottom: 5vh; }
+    #about {
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+    #home-projects-section {
+      scroll-snap-align: end; /* Changed from start */
+      scroll-snap-stop: always;
+      /* Add some bottom padding to ensure it doesn't feel cramped against the screen edge */
+    }
+    .site-footer-container { 
+      text-align: center; 
+      padding-bottom: 30px; 
+      margin-top: 60px; 
+      scroll-snap-align: end;
+    }
 
     .about-layout, #home-projects-section { max-width: 900px; width: 100%; margin-left: auto; margin-right: auto; }
     .about-layout { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 60px; margin-bottom: 140px; }
 
-    @media (max-width: 900px) {
-      .about-layout { flex-direction: column; align-items: center; text-align: center; gap: 40px; margin-bottom: 100px; }
-      .id-card-wrapper { margin: 0 auto; max-width: 280px; }
-      .download-link { margin: 12px auto 0 auto !important; }
-    }
-
     .intro-text { flex: 1; }
 
-    /* ID Card Styles */
+    /* Updated Card Styles */
     .id-card-wrapper { perspective: 2500px; width: 100%; max-width: 300px; flex-shrink: 0; transform-style: preserve-3d; z-index: 10; touch-action: none; cursor: pointer; }
-    .student-id { --rx: 0deg; --ry: 0deg; --px: 50%; --py: 50%; position: relative; width: 100%; aspect-ratio: 0.63; background: #fff; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1); padding: 30px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; overflow: hidden; transform-style: preserve-3d; transform: rotateX(var(--rx)) rotateY(var(--ry)); transition: transform 0.6s cubic-bezier(0.25,1,0.5,1), box-shadow 0.6s ease; }
+    .student-id { --rx: 0deg; --ry: 0deg; --px: 50%; --py: 50%; position: relative; width: 100%; aspect-ratio: 149 / 208; background: transparent; border-radius: 20px; border: none; padding: 0; box-sizing: border-box; overflow: hidden; transform-style: preserve-3d; transform: rotateX(var(--rx)) rotateY(var(--ry)); transition: transform 0.6s cubic-bezier(0.25,1,0.5,1), box-shadow 0.6s ease; }
     .student-id.interacting { transition: none; }
-    body.dark .student-id { border-color: rgba(255,255,255,0.2); background-color: #fff; }
+    body.dark .student-id { border-color: rgba(255,255,255,0.2); background-color: transparent; }
+    .student-id img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; display: block; border-radius: 20px; }
+    
     .id-glare { position: absolute; inset: 0; border-radius: 20px; z-index: 20; pointer-events: none; background: radial-gradient(farthest-corner circle at var(--px) var(--py), rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.15) 50%, transparent 90%); mix-blend-mode: overlay; opacity: 0; transition: opacity 0.4s ease; }
     .holo-foil { position: absolute; inset: 0; border-radius: 20px; z-index: 21; pointer-events: none; background-image: linear-gradient(115deg, transparent 15%, rgba(255,115,0,0.6) 25%, rgba(255,215,0,0.6) 35%, rgba(0,255,150,0.6) 45%, rgba(0,150,255,0.6) 55%, rgba(150,0,255,0.6) 65%, transparent 75%); background-size: 300% 300%; background-position: calc(100% - var(--px)) calc(100% - var(--py)); mix-blend-mode: color-dodge; opacity: 0; transition: opacity 0.4s ease; filter: brightness(0.8) contrast(1.5); }
     body.dark .holo-foil { mix-blend-mode: color-dodge; filter: brightness(0.7) contrast(1.8); }
     .student-id.interacting .id-glare { opacity: 0.4; }
     .student-id.interacting .holo-foil { opacity: 0.25; }
-    .id-header { display: flex; justify-content: flex-start; border-bottom: 2px solid var(--card-accent); padding-bottom: 15px; transform: translateZ(20px); }
-    .id-logo { height: 30px; width: auto; display: block; }
-    .id-body { display: flex; flex-direction: column; align-items: center; gap: 25px; flex-grow: 1; transform: translateZ(10px); }
-    .id-photo-box { width: 140px; height: 170px; background: #f2f0ef; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; justify-content: center; }
-    .id-photo-box img { width: 100%; height: 100%; object-fit: cover; opacity: 0.95; }
-    .id-info { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-    .id-name { font-size: 22px; font-weight: 700; color: #111; text-align: center; margin: 0 0 10px 0; }
-    .id-field { display: flex; justify-content: space-between; font-size: 14px; border-bottom: 1px dashed rgba(16,24,40,0.1); padding-bottom: 4px; }
-    .id-label { color: #6b7280; font-weight: 500; font-size: 12px; text-transform: uppercase; }
-    .id-value { color: #111; font-weight: 600; text-align: right; }
-    .barcode { height: 20px; width: 100%; opacity: 0.6; margin-top: auto; background: repeating-linear-gradient(90deg, #111 0, #111 2px, transparent 2px, transparent 5px, #111 5px, #111 7px, transparent 7px, transparent 10px); }
     .spin-360 { animation: spin-y 0.6s cubic-bezier(0.175,0.885,0.32,1.275); }
     @keyframes spin-y { 0% { transform: rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)); } 100% { transform: rotateX(var(--rx,0deg)) rotateY(calc(var(--ry,0deg) + 360deg)); } }
 
     @media (max-width: 900px) {
-      .about-layout { flex-direction: column-reverse; align-items: center; text-align: center; margin-bottom: 100px; }
+      .about-layout { flex-direction: column-reverse; align-items: center; gap: 40px; text-align: center; margin-bottom: 100px; }
       .id-card-wrapper { margin: 0 auto; max-width: 250px; }
-      .id-label, .id-value { font-size: 12px; }
-      h3.id-name { font-size: 16px; }
-      .barcode { height: 12px; }
-      .id-header img { width: 70%; height: 70%; transform: translateX(-22px); }
-      .id-header { padding-bottom: 10px; justify-content: left; }
-      .student-id { padding: 15px; }
-      .id-photo-box { width: 95px; height: 110px; }
+      .download-link { margin: 12px auto 0 auto !important; }
     }
 
     .about-title-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 40px; }
@@ -225,7 +220,7 @@
       width: 100%;
       height: 380px;
       margin-top: 24px;
-      margin-bottom: 80px;
+      margin-bottom: 10px; /* Reduced from 80px */
       overflow: hidden;
       -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
       mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
@@ -233,6 +228,7 @@
       transform: translateY(16px);
       transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
     }
+    
     .arc-deck-outer.deck-visible { opacity: 1; transform: translateY(0); }
     .arc-deck-stage { position: absolute; inset: 0; pointer-events: none; }
 
@@ -326,7 +322,13 @@
     .viewall-label { font-size: 15px; font-weight: 700; text-align: center; line-height: 1.35; }
     .viewall-count { font-size: 13px; color: var(--muted); font-weight: 500; }
 
-    .arc-indicators { display: flex; justify-content: center; margin-top: -10px; margin-bottom: 20px; pointer-events: none; }
+    .arc-indicators { 
+      display: flex; 
+      justify-content: center; 
+      margin-top: 0px; /* Changed from -10px to prevent overlapping */
+      margin-bottom: 40px; /* Increased slightly to maintain distance from the footer */
+      pointer-events: none; 
+    }
     #arc-dots-svg { width: 220px; height: 44px; overflow: visible; }
     .arc-dot { transition: r 0.35s ease, fill 0.35s ease, opacity 0.35s ease; }
 
@@ -390,17 +392,7 @@
       <section id="about" class="about-layout">
         <div class="id-card-wrapper reveal-flip" id="id-wrapper" data-delay="200">
           <div class="student-id" id="id-card">
-            <div class="id-header"><img src="/logos/Virginia_Tech_logo.svg" class="id-logo" alt="Virginia Tech"></div>
-            <div class="id-body">
-              <div class="id-photo-box"><img src="/Images/Ruiqian.jpg" alt="Profile"></div>
-              <div class="id-info">
-                <h3 class="id-name">Ruiqian (Rhema) Zhang</h3>
-                <div class="id-field"><span class="id-label">Age:</span><span class="id-value">20</span></div>
-                <div class="id-field"><span class="id-label">Major:</span><span class="id-value">Electrical Engineering</span></div>
-                <div class="id-field" style="border-bottom:none"><span class="id-label">Hometown:</span><span class="id-value">China</span></div>
-                <div class="barcode"></div>
-              </div>
-            </div>
+            <img src="/Images/Ruiqian_Card.png" alt="Ruiqian Zhang">
             <div class="id-glare" id="id-glare"></div>
             <div class="holo-foil" id="holo-foil"></div>
           </div>
@@ -516,7 +508,7 @@
         circle.classList.add('arc-dot');
         
         // Active coloring logic
-        if (activeMix > 0.5) circle.setAttribute('fill', accent);
+        if (activeMix > 0.5) circle.setAttribute('fill', isDark ? '#98a6b3' : '#6b7280');
         else circle.setAttribute('fill', isDark ? '#98a6b3' : '#6b7280');
         
         circle.setAttribute('opacity', 0.2 + 0.8 * activeMix);
@@ -596,17 +588,34 @@
     }
 
     function attachDragGuard(el) {
-      let downX = 0, downY = 0, wasDrag = false, isDown = false;
-      el.addEventListener('pointerdown', e => {
-        isDown = true; downX = e.clientX; downY = e.clientY; wasDrag = false;
+      let startX, startY, startTime;
+
+      el.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        startTime = Date.now();
+      }, { passive: true });
+
+      el.addEventListener('touchend', e => {
+        const endX = e.changedTouches[0].clientX;
+        const endY = e.changedTouches[0].clientY;
+        const duration = Date.now() - startTime;
+        const distance = Math.hypot(endX - startX, endY - startY);
+
+        // If it's a quick tap (less than 250ms) and hasn't moved much (less than 10px)
+        // Manually trigger the navigation because the browser might eat the click event.
+        if (distance < 10 && duration < 250) {
+          const href = el.getAttribute('href');
+          if (href) window.location.href = href;
+        }
       });
-      window.addEventListener('pointerup', () => isDown = false);
-      el.addEventListener('pointermove', e => {
-        if (!isDown) return;
-        if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) wasDrag = true;
-      });
+
+      // Keep this to prevent the card from firing when just dragging/swiping
       el.addEventListener('click', e => {
-        if (wasDrag) { e.preventDefault(); e.stopPropagation(); }
+        if (dragging || dragMoved) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
       });
     }
 
