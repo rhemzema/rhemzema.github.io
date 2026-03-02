@@ -87,14 +87,14 @@
 
     .slot-scroller { display: flex; flex-direction: column; width: 100%; transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
     .slot-label { height: 42px; display: flex; align-items: center; justify-content: center; width: 100%; flex-shrink: 0; }
-    .pill-accent:hover .slot-scroller { transform: translateY(-42px); }
+    .pill-accent:hover .slot-scroller { transform: translateY(-50%); }
 
     .scroll-to-top {
       position: relative; margin: 0 auto 20px auto; z-index: 10;
       overflow: hidden; align-items: flex-start !important; padding: 0;
     }
     .scroll-to-top .slot-label { height: 44px; width: 44px; }
-    .scroll-to-top:hover .slot-scroller { transform: translateY(-44px); }
+    .scroll-to-top:hover .slot-scroller { transform: translateY(-50%); }
 
     .theme-transition, .theme-transition * { 
       transition: background-color 0.32s ease, background 0.32s ease, color 0s, box-shadow 0.32s ease, border-color 0.32s ease !important; 
@@ -150,38 +150,98 @@
 
     .content-wrap { padding: 0 20px; }
     html {
-      scroll-snap-type: y proximity;
+      scroll-snap-type: y mandatory;
       scroll-behavior: smooth;
     }
     
     .page { display: block; }
     .page .inner { min-height: 100svh; display: flex; align-items: center; justify-content: center; padding: 28px; box-sizing: border-box; }
-    #home { scroll-snap-align: start; scroll-snap-stop: always; margin-bottom: 5vh; }
+    
+    #home { 
+      scroll-snap-align: center; 
+      scroll-snap-stop: always; 
+      margin-bottom: 5vh; 
+    }
     #about {
-      scroll-snap-align: start;
+      scroll-snap-align: center;
       scroll-snap-stop: always;
     }
+
+    .projects-footer-group {
+      scroll-snap-align: end;
+      scroll-snap-stop: always;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .about-layout, #home-projects-section { max-width: 900px; width: 100%; margin-left: auto; margin-right: auto; }
+    
+    .about-layout { 
+      position: relative; 
+      z-index: 20; /* Default stacking to sit above projects */
+      display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 60px; margin-bottom: 140px; 
+    }
+    body.card-expanded .about-layout {
+      z-index: 950;
+    }
+
     #home-projects-section {
-      scroll-snap-align: end; /* Changed from start */
-      scroll-snap-stop: always;
-      /* Add some bottom padding to ensure it doesn't feel cramped against the screen edge */
+      margin-top: auto;
+      margin-bottom: auto;
     }
+
     .site-footer-container { 
       text-align: center; 
       padding-bottom: 30px; 
       margin-top: 60px; 
-      scroll-snap-align: end;
     }
 
-    .about-layout, #home-projects-section { max-width: 900px; width: 100%; margin-left: auto; margin-right: auto; }
-    .about-layout { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 60px; margin-bottom: 140px; }
+    .intro-text { flex: 1; transition: opacity 0.4s ease; }
+    body.card-expanded .intro-text { opacity: 0; pointer-events: none; }
 
-    .intro-text { flex: 1; }
+    /* Updated Card & Overlay Styles */
+    #card-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      z-index: 900; opacity: 0; pointer-events: none;
+      transition: opacity 0.5s ease;
+      touch-action: none;
+    }
+    #card-backdrop.visible { opacity: 1; pointer-events: auto; }
 
-    /* Updated Card Styles */
-    .id-card-wrapper { perspective: 2500px; width: 100%; max-width: 300px; flex-shrink: 0; transform-style: preserve-3d; z-index: 10; touch-action: none; cursor: pointer; }
+    #card-close-btn {
+      position: fixed; top: 24px; left: 24px;
+      z-index: 1000; opacity: 0; pointer-events: none;
+      background: rgba(255,255,255,0.1); border-radius: 50%;
+      color: white; border: 1px solid rgba(255,255,255,0.2);
+      width: 44px; height: 44px; padding: 0;
+      backdrop-filter: blur(4px);
+      transition: opacity 0.5s ease, transform 0.2s ease, background 0.2s ease;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    #card-close-btn.visible { opacity: 1; pointer-events: auto; }
+    #card-close-btn:active { transform: scale(0.9); }
+    @media(hover:hover) {
+      #card-close-btn:hover { background: rgba(255,255,255,0.25); }
+    }
+
+    .id-card-wrapper { 
+      --tx: 0px; --ty: 0px; --s: 1;
+      transform: translate3d(var(--tx), var(--ty), 0) scale(var(--s));
+      transition: transform 0.6s cubic-bezier(0.25,1,0.5,1);
+      perspective: 2500px; width: 100%; max-width: 300px; flex-shrink: 0; transform-style: preserve-3d; z-index: 10; touch-action: none; cursor: pointer; 
+    }
+    .id-card-wrapper.expanded {
+      z-index: 1000;
+    }
+
     .student-id { --rx: 0deg; --ry: 0deg; --px: 50%; --py: 50%; position: relative; width: 100%; aspect-ratio: 149 / 208; background: transparent; border-radius: 20px; border: none; padding: 0; box-sizing: border-box; overflow: hidden; transform-style: preserve-3d; transform: rotateX(var(--rx)) rotateY(var(--ry)); transition: transform 0.6s cubic-bezier(0.25,1,0.5,1), box-shadow 0.6s ease; }
-    .student-id.interacting { transition: none; }
+    .student-id { will-change: transform; }
+    .student-id.interacting { transition: transform 0.15s ease-out, box-shadow 0.15s ease-out; }
     body.dark .student-id { border-color: rgba(255,255,255,0.2); background-color: transparent; }
     .student-id img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; display: block; border-radius: 20px; }
     
@@ -192,6 +252,32 @@
     .student-id.interacting .holo-foil { opacity: 0.25; }
     .spin-360 { animation: spin-y 0.6s cubic-bezier(0.175,0.885,0.32,1.275); }
     @keyframes spin-y { 0% { transform: rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)); } 100% { transform: rotateX(var(--rx,0deg)) rotateY(calc(var(--ry,0deg) + 360deg)); } }
+
+     Gemini said
+
+This happens because the introduction text next to the card forms its own visual layer (stacking context). Because it comes after the card in the HTML, when you rotate the card toward the right, the card slips underneath the invisible bounding box of the text and gets sliced off.
+
+To fix this, we just need to bring the card container's z-index to the front and preserve its 3D space.
+
+Find this block in your CSS (around line 235):
+CSS
+
+    .id-card-container { width: 100%; display: flex; justify-content: center; }
+    @media (min-width: 901px) {
+      .id-card-container { width: auto; display: block; }
+    }
+
+    .id-card-container { 
+      width: 100%; 
+      display: flex; 
+      justify-content: center; 
+      position: relative; 
+      z-index: 100; 
+      transform-style: preserve-3d; 
+    }
+    @media (min-width: 901px) {
+      .id-card-container { width: auto; display: block; }
+    }
 
     @media (max-width: 900px) {
       .about-layout { flex-direction: column-reverse; align-items: center; gap: 40px; text-align: center; margin-bottom: 100px; }
@@ -208,19 +294,14 @@
 
     .social-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
     .pill-row { margin-top: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-    .site-footer-container { text-align: center; padding-bottom: 30px; margin-top: 60px; }
     .site-footer { color: var(--muted); font-size: 14px; }
-
-    /* =====================================================
-       ARC CARD DECK
-       ===================================================== */
 
     .arc-deck-outer {
       position: relative;
       width: 100%;
       height: 380px;
       margin-top: 24px;
-      margin-bottom: 10px; /* Reduced from 80px */
+      margin-bottom: 10px;
       overflow: hidden;
       -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
       mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
@@ -247,7 +328,6 @@
       flex-direction: column;
       transform-origin: bottom center;
       will-change: transform, opacity, top, left;
-      /* Physics handled purely by layoutCards now, CSS handles scale/rotate */
       transition: box-shadow 0.35s ease, border-color 0.25s ease, opacity 0.5s ease;
       opacity: 0;
     }
@@ -269,7 +349,7 @@
         border-color: var(--accent) !important;
         box-shadow: 0 16px 44px var(--shadow-color), 0 3px 10px rgba(11,95,255,0.12) !important;
         z-index: 200 !important;
-        translate: 0 -20px; /* Replaces the transform override */
+        translate: 0 -20px;
       }
       .arc-card:hover .arc-card-title { color: var(--accent); }
       .arc-card:hover .arc-card-thumb img { transform: scale(1.05); }
@@ -325,8 +405,8 @@
     .arc-indicators { 
       display: flex; 
       justify-content: center; 
-      margin-top: 0px; /* Changed from -10px to prevent overlapping */
-      margin-bottom: 40px; /* Increased slightly to maintain distance from the footer */
+      margin-top: 0px;
+      margin-bottom: 40px; 
       pointer-events: none; 
     }
     #arc-dots-svg { width: 220px; height: 44px; overflow: visible; }
@@ -340,6 +420,14 @@
   </style>
 </head>
 <body>
+  <div id="card-backdrop"></div>
+  <button id="card-close-btn" aria-label="Close card">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+
   <script>
     (function() {
       const saved = localStorage.getItem('theme');
@@ -390,11 +478,13 @@
       </section>
 
       <section id="about" class="about-layout">
-        <div class="id-card-wrapper reveal-flip" id="id-wrapper" data-delay="200">
-          <div class="student-id" id="id-card">
-            <img src="/Images/Ruiqian_Card.png" alt="Ruiqian Zhang">
-            <div class="id-glare" id="id-glare"></div>
-            <div class="holo-foil" id="holo-foil"></div>
+        <div class="reveal-flip id-card-container" data-delay="200">
+          <div class="id-card-wrapper" id="id-wrapper">
+            <div class="student-id" id="id-card">
+              <img src="/Images/Ruiqian_Card.png" alt="Ruiqian Zhang">
+              <div class="id-glare" id="id-glare"></div>
+              <div class="holo-foil" id="holo-foil"></div>
+            </div>
           </div>
         </div>
         <div class="intro-text">
@@ -410,26 +500,28 @@
         </div>
       </section>
 
-      <section id="home-projects-section">
-        <h2 class="reveal-flip">Projects</h2>
-        <div class="arc-deck-outer" id="arc-deck-outer">
-          <div class="arc-deck-stage" id="arc-deck-stage"></div>
-        </div>
-        <div class="arc-indicators" id="arc-indicators" aria-hidden="true">
-          <svg id="arc-dots-svg" viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet"></svg>
-        </div>
-      </section>
-    </main>
-  </div>
+      <div class="projects-footer-group">
+        <section id="home-projects-section">
+          <h2 class="reveal-flip">Projects</h2>
+          <div class="arc-deck-outer" id="arc-deck-outer">
+            <div class="arc-deck-stage" id="arc-deck-stage"></div>
+          </div>
+          <div class="arc-indicators" id="arc-indicators" aria-hidden="true">
+            <svg id="arc-dots-svg" viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet"></svg>
+          </div>
+        </section>
 
-  <div class="site-footer-container">
-    <button class="icon-btn square scroll-to-top arrow" id="scroll-to-top" aria-label="Scroll to top">
-      <span class="slot-scroller">
-        <span class="slot-label"><div class="arrow-icon"></div></span>
-        <span class="slot-label"><div class="arrow-icon"></div></span>
-      </span>
-    </button>
-    <footer class="site-footer">&copy; 2026 Ruiqian Zhang</footer>
+        <div class="site-footer-container">
+          <button class="icon-btn square scroll-to-top arrow" id="scroll-to-top" aria-label="Scroll to top">
+            <span class="slot-scroller">
+              <span class="slot-label"><div class="arrow-icon"></div></span>
+              <span class="slot-label"><div class="arrow-icon"></div></span>
+            </span>
+          </button>
+          <footer class="site-footer">&copy; 2026 Ruiqian Zhang</footer>
+        </div>
+      </div>
+    </main>
   </div>
 
   <script>
@@ -445,8 +537,8 @@
     let allProjects    = [];
     let totalCount     = 0;
     let cards          = [];
-    let offset         = 0; // Current rendered float index
-    let targetOffset   = 0; // Target index we are animating to
+    let offset         = 0; 
+    let targetOffset   = 0; 
     let animRaf        = null;
     let dragging       = false;
     let dragStartX     = 0;
@@ -467,10 +559,9 @@
       return { min: 0, max: Math.max(0, cards.length - 1) };
     }
 
-    // Threads-style exponential limit for over-dragging
     function applyStretch(val) {
       const { min, max } = getBounds();
-      const limit = 0.55; // visual maximum stretch amount (indices)
+      const limit = 0.55; 
       if (val < min) return min - limit * (1 - Math.exp(-(min - val) / limit));
       if (val > max) return max + limit * (1 - Math.exp(-(val - max) / limit));
       return val;
@@ -484,8 +575,8 @@
       }
 
       const n       = cards.length;
-      const GAP     = 22; // Boosted dot spacing
-      const DOT_R   = 4.5; // Boosted dot size
+      const GAP     = 22; 
+      const DOT_R   = 4.5; 
       const IH      = 10;
       const totalW  = (n - 1) * GAP;
       const CY      = IH + DOT_R + 2;
@@ -499,15 +590,14 @@
         const x  = i * GAP;
         const y  = CY - 4 * IH * t * (1 - t);
         const distFromActive = Math.abs(i - offset);
-        const activeMix = Math.max(0, 1 - distFromActive); // Smoothly fade active state
+        const activeMix = Math.max(0, 1 - distFromActive); 
 
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', x);
         circle.setAttribute('cy', y);
-        circle.setAttribute('r', DOT_R + (activeMix * 0.5)); // slightly larger when active
+        circle.setAttribute('r', DOT_R + (activeMix * 0.5)); 
         circle.classList.add('arc-dot');
         
-        // Active coloring logic
         if (activeMix > 0.5) circle.setAttribute('fill', isDark ? '#98a6b3' : '#6b7280');
         else circle.setAttribute('fill', isDark ? '#98a6b3' : '#6b7280');
         
@@ -547,7 +637,6 @@
       const cw = getCardW();
       const W  = Math.min(outer.clientWidth * 0.9, 860);
       
-      // Fixed angular distribution means 1-3 cards stay perfectly centered
       const step = outer.clientWidth < 600 ? 0.32 : 0.24; 
 
       cards.forEach((card, i) => {
@@ -559,7 +648,6 @@
         
         const scale = Math.max(0.75, 1 - dist * 0.08);
         const zi    = Math.round(100 - dist * 10);
-        // Clean fade out before edges
         const alpha = t < 0 ? Math.max(0, 1 + t * 4) : (t > 1 ? Math.max(0, 1 - (t - 1) * 4) : 1);
         
         placeCard(card.el, TOP_PAD + (ARC_H - y), `calc(50% + ${x}px - ${cw / 2}px)`, tilt, scale, zi, alpha, noTrans);
@@ -569,7 +657,6 @@
       updateIndicators();
     }
 
-    // Smooth LERP physics (No post-travel bounce)
     function tick() {
       const diff = targetOffset - offset;
       if (Math.abs(diff) < 0.001) {
@@ -602,15 +689,12 @@
         const duration = Date.now() - startTime;
         const distance = Math.hypot(endX - startX, endY - startY);
 
-        // If it's a quick tap (less than 250ms) and hasn't moved much (less than 10px)
-        // Manually trigger the navigation because the browser might eat the click event.
         if (distance < 10 && duration < 250) {
           const href = el.getAttribute('href');
           if (href) window.location.href = href;
         }
       });
 
-      // Keep this to prevent the card from firing when just dragging/swiping
       el.addEventListener('click', e => {
         if (dragging || dragMoved) {
           e.preventDefault();
@@ -682,15 +766,13 @@
         cards.push({ el });
       });
       
-      // Only append "View All" if there is at least 1 project, max 4 items total layout
       if (allProjects.length > 0) {
         const vaEl = buildViewAllCard(totalCount);
         stage.appendChild(vaEl);
         cards.push({ el: vaEl });
       }
 
-      // Start at the mathematical center to display all cleanly on initialization
-      const startIdx = 0; // Starts focus on the first project card
+      const startIdx = 0; 
       offset = startIdx; targetOffset = startIdx;
 
       if (animate) {
@@ -784,7 +866,6 @@
           targetOffset = applyStretch(rawOffset);
           startAnim();
 
-          // Debounced snap to int for scroll wheels
           clearTimeout(wheelTimer);
           wheelTimer = setTimeout(() => {
              const { min, max } = getBounds();
@@ -823,7 +904,6 @@
         const allCards = doc.querySelectorAll('.project-card');
         totalCount = allCards.length;
         
-        // Take a maximum of 3 projects (allows 1 appended View All to reach 4 total limit)
         const take = Math.min(3, allCards.length);
         
         for (let i = 0; i < take; i++) {
@@ -879,12 +959,6 @@
       setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
     });
 
-    document.querySelectorAll('.smooth-scroll-link').forEach(link =>
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        document.querySelector(link.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
-      })
-    );
     UI.scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
     const revealObserver = new IntersectionObserver(entries => {
@@ -909,11 +983,17 @@
     });
     document.querySelectorAll('.reveal-flip').forEach(el => revealObserver.observe(el));
 
+    // ID CARD INTERACTION OVERHAUL
     (() => {
       const wrap = document.getElementById('id-wrapper');
       const card = document.getElementById('id-card');
+      const backdrop = document.getElementById('card-backdrop');
+      const closeBtn = document.getElementById('card-close-btn');
       if (!wrap || !card) return;
+
       let spinning = false, recovering = false, rt;
+      let isExpanded = false;
+
       const reset = () => {
         if (spinning) { rt = setTimeout(reset, 100); return; }
         card.classList.remove('interacting');
@@ -921,37 +1001,142 @@
         card.style.setProperty('--px','50%'); card.style.setProperty('--py','50%');
         card.style.boxShadow = 'none';
       };
+
       const spin = () => {
         if (spinning) return;
-        spinning = true; card.classList.remove('interacting'); card.classList.add('spin-360');
-        setTimeout(() => { card.classList.remove('spin-360'); spinning = false; recovering = true; setTimeout(() => recovering = false, 300); }, 600);
+        spinning = true; 
+        card.classList.remove('interacting'); 
+        card.classList.add('spin-360');
+        setTimeout(() => { 
+          card.classList.remove('spin-360'); 
+          spinning = false; 
+          recovering = true; 
+          setTimeout(() => recovering = false, 300); 
+        }, 600);
       };
+
+      const expandCard = () => {
+        if (isExpanded) return;
+        const rect = wrap.getBoundingClientRect();
+        
+        // Calculate offset from original center to viewport center
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const vCenterX = window.innerWidth / 2;
+        const vCenterY = window.innerHeight / 2;
+        
+        const tx = vCenterX - centerX;
+        const ty = vCenterY - centerY;
+        
+        // Dynamically scale but limit to 1.8x original size
+        const s = Math.min(1.8, (window.innerWidth * 0.85) / rect.width, (window.innerHeight * 0.8) / rect.height);
+
+        wrap.style.setProperty('--tx', `${tx}px`);
+        wrap.style.setProperty('--ty', `${ty}px`);
+        wrap.style.setProperty('--s', `${s}`);
+        
+        wrap.classList.add('expanded');
+        document.body.classList.add('card-expanded');
+        backdrop.classList.add('visible');
+        closeBtn.classList.add('visible');
+        document.documentElement.style.overflow = 'hidden';
+        
+        isExpanded = true;
+      };
+
+      const shrinkCard = () => {
+        if (!isExpanded) return;
+        
+        wrap.style.setProperty('--tx', `0px`);
+        wrap.style.setProperty('--ty', `0px`);
+        wrap.style.setProperty('--s', `1`);
+        
+        document.body.classList.remove('card-expanded');
+        backdrop.classList.remove('visible');
+        closeBtn.classList.remove('visible');
+        document.documentElement.style.overflow = '';
+        
+        isExpanded = false;
+        
+        // Let the transform transition finish before un-layering
+        setTimeout(() => {
+          if (!isExpanded) wrap.classList.remove('expanded');
+        }, 600);
+        
+        rt = setTimeout(reset, 500);
+      };
+
+      const handleCardAction = (e) => {
+        if (e && e.cancelable) e.preventDefault();
+        if (isExpanded) {
+          spin();
+          rt = setTimeout(reset, 600);
+        } else {
+          expandCard();
+        }
+      };
+
       const interact = (cx, cy) => {
         if (spinning) return;
         clearTimeout(rt);
         const r = wrap.getBoundingClientRect();
+        
+        // Even when scaled and translated, bounding client rect correctly bridges math 
         const px = Math.max(0, Math.min(100, ((cx-r.left)/r.width)*100));
         const py = Math.max(0, Math.min(100, ((cy-r.top)/r.height)*100));
         const nx = Math.max(-1,Math.min(1,((cx-r.left)/r.width)*2-1));
         const ny = Math.max(-1,Math.min(1,((cy-r.top)/r.height)*2-1));
+        
         const rx = Math.sin(ny*(Math.PI/2))*-16;
         const ry = Math.sin(nx*(Math.PI/2))*16;
+        
         if (!recovering) card.classList.add('interacting');
         card.style.setProperty('--rx',`${rx}deg`); card.style.setProperty('--ry',`${ry}deg`);
         card.style.setProperty('--px',`${px}%`); card.style.setProperty('--py',`${py}%`);
         card.style.boxShadow = `${-ry*1.5}px ${rx*1.5}px 30px ${getComputedStyle(document.body).getPropertyValue('--card-shadow')}`;
       };
-      wrap.addEventListener('click', spin);
-      wrap.addEventListener('mousemove', e => interact(e.clientX, e.clientY));
-      wrap.addEventListener('mouseleave', () => { rt = setTimeout(reset, 500); });
-      let ts = {};
-      wrap.addEventListener('touchstart', e => { clearTimeout(rt); ts = { t: Date.now(), x: e.touches[0].clientX, y: e.touches[0].clientY }; }, { passive: true });
-      wrap.addEventListener('touchmove', e => { if (e.cancelable) e.preventDefault(); interact(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
-      wrap.addEventListener('touchend', e => {
-        const d = Date.now() - ts.t, dist = Math.hypot(e.changedTouches[0].clientX - ts.x, e.changedTouches[0].clientY - ts.y);
-        if (d < 250 && dist < 20) { spin(); rt = setTimeout(reset, 600); } else { rt = setTimeout(reset, 500); }
+
+      wrap.addEventListener('click', handleCardAction);
+      let ticking = false;
+      wrap.addEventListener('mousemove', e => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            interact(e.clientX, e.clientY);
+            ticking = false;
+          });
+          ticking = true;
+        }
       });
+      wrap.addEventListener('mouseleave', () => { rt = setTimeout(reset, 500); });
+      
+      let ts = {};
+      wrap.addEventListener('touchstart', e => { 
+        clearTimeout(rt); 
+        ts = { t: Date.now(), x: e.touches[0].clientX, y: e.touches[0].clientY }; 
+      }, { passive: true });
+      
+      wrap.addEventListener('touchmove', e => { 
+        if (e.cancelable) e.preventDefault(); 
+        interact(e.touches[0].clientX, e.touches[0].clientY); 
+      }, { passive: false });
+      
+      wrap.addEventListener('touchend', e => {
+        const d = Date.now() - ts.t;
+        const dist = Math.hypot(e.changedTouches[0].clientX - ts.x, e.changedTouches[0].clientY - ts.y);
+        
+        if (d < 250 && dist < 20) { 
+          handleCardAction(e); 
+        } else { 
+          rt = setTimeout(reset, 500); 
+        }
+      });
+      
       wrap.addEventListener('touchcancel', () => { rt = setTimeout(reset, 500); });
+
+      closeBtn.addEventListener('click', shrinkCard);
+      backdrop.addEventListener('click', shrinkCard);
+      window.addEventListener('resize', shrinkCard);
+      window.addEventListener('keydown', e => { if (e.key === 'Escape') shrinkCard(); });
     })();
   </script>
 </body>
