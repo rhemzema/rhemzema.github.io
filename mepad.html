@@ -44,6 +44,20 @@
       overflow-x: hidden;
     }
 
+    .content-image {
+      flex-shrink: 0;
+      height: 300px;
+      width: auto;
+      max-width: 90%;
+      border-radius: 12px;
+      cursor: inherit; /* Inherits 'grab' and 'grabbing' from the grid */
+      object-fit: cover;
+      scroll-snap-align: start;
+      border: 1px solid var(--border);
+      display: block;
+      -webkit-user-drag: none;
+    }
+
     .icon-btn, .pill, .download-link {
       display: inline-flex;
       align-items: center;
@@ -311,6 +325,8 @@
       cursor: grab;
       user-select: none;
       touch-action: pan-y;
+      /* Add back transition property to animate the bounce back */
+      transition: transform 0s; 
     }
     .content-image-grid::-webkit-scrollbar { display: none; }
 
@@ -330,26 +346,22 @@
       scroll-snap-align: start;
       border: 1px solid var(--border);
       display: block;
-      /* Prevent the image itself from intercepting pointer events during drag */
       -webkit-user-drag: none;
     }
 
     .content-image.square { width: 300px; height: 300px; }
 
-    /* Single image: taller display */
     .content-image-grid .content-image:first-child:last-child { height: 350px; }
     .content-image-grid .content-image:first-child:last-child.square { width: 350px; height: 350px; }
 
     .image-grid-wrapper { position: relative; }
 
-    /* Prevent browser's native image drag (shows ghost + opens in new tab) */
     .content-image-grid .content-image {
       -webkit-user-drag: none;
       -user-drag: none;
       transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    /* Pressed/held state — shrinks the image */
     .content-image-grid .content-image.pressing {
       transform: scale(0.94);
       transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1);
@@ -671,178 +683,188 @@
       if (e.key === 'ArrowLeft') prevImage(e);
       if (e.key === 'Escape') closeModal();
     });
-    let touchStartX = 0, touchEndX = 0;
-    imageModal.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-    imageModal.addEventListener('touchend', (e) => { touchEndX = e.changedTouches[0].screenX; if (touchEndX < touchStartX - 50) nextImage(); if (touchEndX > touchStartX + 50) prevImage(); }, { passive: true });
+    let modalTouchStartX = 0, modalTouchEndX = 0;
+    imageModal.addEventListener('touchstart', (e) => { modalTouchStartX = e.changedTouches[0].screenX; }, { passive: true });
+    imageModal.addEventListener('touchend', (e) => { modalTouchEndX = e.changedTouches[0].screenX; if (modalTouchEndX < modalTouchStartX - 50) nextImage(); if (modalTouchEndX > modalTouchStartX + 50) prevImage(); }, { passive: true });
     imageModal.addEventListener('click', (e) => { if (e.target === imageModal || e.target === modalContent) closeModal(); });
 
-    // Prevent native browser image drag (would show ghost + allow open-in-new-tab)
     document.querySelectorAll('.content-image-grid .content-image').forEach(img => {
       img.addEventListener('dragstart', (e) => e.preventDefault());
     });
 
-    // ── Square image detection ───────────────────────────────────────────
     document.querySelectorAll('.content-image').forEach(img => {
       const check = () => { if (img.naturalWidth === img.naturalHeight && img.naturalWidth > 0) img.classList.add('square'); };
       if (img.complete) check(); else img.addEventListener('load', check);
     });
 
-    // ── Carousel drag — single window-level handler ──────────────────────
-    // One active drag at a time; drag can start from anywhere inside the grid
-    // (including on top of images). A tap (< DRAG_THRESHOLD px) opens the modal.
+    // ── Carousel drag with LERP + Exponential Boundary Stretch ───────────────
+
     const DRAG_THRESHOLD = 6;
-    let dragGrid = null;   // which grid is being dragged
-    let dragDown = false;
+    const LERP_ALPHA = 0.18;        // Lower = smoother
+    const MAX_STRETCH = 140;
+    const STRETCH_FACTOR = 0.008;
+
+    let activeGrid = null;
+    let isDragging = false;
     let dragDidMove = false;
-    let dragStartX = 0, dragScrollStart = 0;
-    let dragLastX = 0, dragLastT = 0;
-    let dragVelX = 0, dragMomentumID;
-    const dragSamples = [];
-    let snapTimer;
-    let pressedImg = null; // image currently being held down
+    let dragStartX = 0;
+    let startScrollLeft = 0;
 
-    function setPressedImg(img) {
-      if (pressedImg && pressedImg !== img) pressedImg.classList.remove('pressing');
-      pressedImg = img;
-      if (pressedImg) pressedImg.classList.add('pressing');
-    }
-    function clearPressedImg() {
-      if (pressedImg) pressedImg.classList.remove('pressing');
-      pressedImg = null;
+    let targetScrollLeft = 0;
+    let currentScrollLeft = 0;
+    let overscrollX = 0;
+    let animationID = null;
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
     }
 
-    function carouselDisableSnap() {
-      if (!dragGrid) return;
-      dragGrid.style.scrollSnapType = 'none';
-      clearTimeout(snapTimer);
-    }
-    function carouselRestoreSnap() {
-      clearTimeout(snapTimer);
-      snapTimer = setTimeout(() => { if (dragGrid) dragGrid.style.scrollSnapType = ''; }, 150);
-    }
-    function carouselMomentum() {
-      if (!dragGrid || Math.abs(dragVelX) < 0.3) {
-        dragVelX = 0;
-        carouselRestoreSnap();
-        dragGrid = null;
-        return;
-      }
-      dragGrid.scrollLeft += dragVelX;
-      dragVelX *= 0.88;
-      dragMomentumID = requestAnimationFrame(carouselMomentum);
+    function boundaryStretch(delta) {
+      return Math.sign(delta) *
+        MAX_STRETCH *
+        (1 - Math.exp(-Math.abs(delta) * STRETCH_FACTOR));
     }
 
-    // Pointerdown: start drag on any grid (or image inside it)
+    function animate() {
+      if (!activeGrid) return;
+
+      currentScrollLeft = lerp(currentScrollLeft, targetScrollLeft, LERP_ALPHA);
+      activeGrid.scrollLeft = currentScrollLeft;
+
+      animationID = requestAnimationFrame(animate);
+    }
+
+    function stopAnimation() {
+      cancelAnimationFrame(animationID);
+      animationID = null;
+    }
+
+    function resetStretch(grid) {
+      grid.style.transition = 'transform 0.35s cubic-bezier(.2,.8,.2,1)';
+      grid.style.transform = 'translateX(0px)';
+      overscrollX = 0;
+      setTimeout(() => grid.style.transition = '', 350);
+    }
+
     document.querySelectorAll('.content-image-grid').forEach(grid => {
-      // Wheel / touchpad
-      let snapDebounce;
-      grid.addEventListener('wheel', (e) => {
-        if (Math.abs(e.deltaX) > 2) {
-          e.preventDefault();
-          cancelAnimationFrame(dragMomentumID);
-          grid.style.scrollBehavior = 'auto';
-          grid.style.scrollSnapType = 'none';
-          grid.scrollLeft += e.deltaX * 0.5;
-          clearTimeout(snapDebounce);
-          snapDebounce = setTimeout(() => { grid.style.scrollSnapType = ''; }, 150);
-        }
-      }, { passive: false });
 
+      const images = grid.querySelectorAll('.content-image');
+
+      // Disable drag & stretch if only one image
+      if (images.length <= 1) {
+
+        // Keep modal functionality
+        grid.style.cursor = 'pointer';
+
+        grid.addEventListener('click', (e) => {
+          const img = e.target.closest('.content-image');
+          if (img) openModal(img, grid);
+        });
+
+        return; // Skip drag logic only
+      }
+
+      // Pointer Down
       grid.addEventListener('pointerdown', (e) => {
-        if (e.button !== 0 && e.pointerType === 'mouse') return;
-        cancelAnimationFrame(dragMomentumID);
-        dragGrid = grid;
-        dragDown = true;
+        if (e.button !== 0) return;
+
+        activeGrid = grid;
+        isDragging = true;
         dragDidMove = false;
+
         dragStartX = e.clientX;
-        dragScrollStart = grid.scrollLeft;
-        dragLastX = e.clientX;
-        dragLastT = e.timeStamp;
-        dragVelX = 0;
-        dragSamples.length = 0;
-        grid.style.scrollBehavior = 'auto';
-        carouselDisableSnap();
+        startScrollLeft = grid.scrollLeft;
+
+        currentScrollLeft = grid.scrollLeft;
+        targetScrollLeft = grid.scrollLeft;
+
+        grid.style.scrollSnapType = 'none';
         grid.classList.add('dragging');
-        // Press animation: shrink the image under the pointer
-        const target = document.elementFromPoint(e.clientX, e.clientY);
-        const img = target && target.closest('.content-image');
-        if (img) setPressedImg(img);
-        // Only capture mouse pointers — capturing touch pointers causes
-        // pointercancel to fire on scroll-like gestures, killing the tap
-        if (e.pointerType === 'mouse') grid.setPointerCapture(e.pointerId);
+
+        stopAnimation();
+        animate();
       });
 
-      // Track touch drag distance so we know if it's a swipe or a tap
-      let touchStartX = 0;
-      grid.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        dragDidMove = false;
-      }, { passive: true });
+      // Pointer Move
+      window.addEventListener('pointermove', (e) => {
+        if (!isDragging || !activeGrid) return;
 
-      grid.addEventListener('touchmove', (e) => {
-        if (Math.abs(e.touches[0].clientX - touchStartX) > DRAG_THRESHOLD) {
+        const dx = e.clientX - dragStartX;
+        const maxScroll = activeGrid.scrollWidth - activeGrid.clientWidth;
+
+        if (Math.abs(dx) > DRAG_THRESHOLD) {
           dragDidMove = true;
         }
-      }, { passive: true });
 
-      // Native click handler for opening the modal
+        const rawTarget = startScrollLeft - dx;
+
+        if (rawTarget < 0) {
+          targetScrollLeft = 0;
+
+          // Stretch right on first image
+          overscrollX = boundaryStretch(-rawTarget);
+          activeGrid.style.transform = `translateX(${overscrollX}px)`;
+        }
+        else if (rawTarget > maxScroll) {
+          targetScrollLeft = maxScroll;
+
+          // Stretch left on last image
+          overscrollX = -boundaryStretch(rawTarget - maxScroll);
+          activeGrid.style.transform = `translateX(${overscrollX}px)`;
+        }
+        else {
+          targetScrollLeft = rawTarget;
+
+          if (overscrollX !== 0) {
+            overscrollX = 0;
+            activeGrid.style.transform = '';
+          }
+        }
+      });
+
+      // Pointer Up
+      window.addEventListener('pointerup', () => {
+        if (!isDragging || !activeGrid) return;
+
+        isDragging = false;
+        activeGrid.classList.remove('dragging');
+        activeGrid.style.scrollSnapType = '';
+
+        if (overscrollX !== 0) {
+          resetStretch(activeGrid);
+        }
+
+        stopAnimation();
+        activeGrid = null;
+      });
+
+      window.addEventListener('pointercancel', () => {
+        if (!isDragging || !activeGrid) return;
+
+        isDragging = false;
+        activeGrid.classList.remove('dragging');
+        activeGrid.style.scrollSnapType = '';
+
+        if (overscrollX !== 0) {
+          resetStretch(activeGrid);
+        }
+
+        stopAnimation();
+        activeGrid = null;
+      });
+
+      // Click handler (restores modal functionality)
       grid.addEventListener('click', (e) => {
-        // If the user was dragging the carousel, ignore the click
         if (dragDidMove) {
           e.preventDefault();
           e.stopPropagation();
           return;
         }
-        
+
         const img = e.target.closest('.content-image');
-        if (img) {
-          openModal(img, grid);
-        }
+        if (img) openModal(img, grid);
       });
-    });
 
-    // Single window-level move + up
-    window.addEventListener('pointermove', (e) => {
-      if (!dragDown || !dragGrid) return;
-      const dx = e.clientX - dragStartX;
-      if (Math.abs(dx) > DRAG_THRESHOLD) {
-        dragDidMove = true;
-        clearPressedImg(); // moved too far — release the press visual
-      }
-      if (!dragDidMove) {
-        // Still within tap threshold — check if pointer left the pressed image
-        if (pressedImg) {
-          const target = document.elementFromPoint(e.clientX, e.clientY);
-          const stillOn = target && target.closest('.content-image') === pressedImg;
-          if (!stillOn) clearPressedImg(); // pointer slid off image — cancel press + modal
-        }
-        return;
-      }
-      e.preventDefault();
-      dragGrid.scrollLeft = dragScrollStart - dx * 0.65;
-      const dt = Math.max(e.timeStamp - dragLastT, 1);
-      dragSamples.push(((dragLastX - e.clientX) / dt) * 16 * 0.5);
-      if (dragSamples.length > 6) dragSamples.shift();
-      dragLastX = e.clientX;
-      dragLastT = e.timeStamp;
-    }, { passive: false });
-
-    window.addEventListener('pointerup', (e) => {
-      if (!dragDown) return;
-      dragDown = false;
-      if (dragGrid) dragGrid.classList.remove('dragging');
-
-      if (dragSamples.length > 0) dragVelX = dragSamples.reduce((a, b) => a + b, 0) / dragSamples.length;
-      carouselMomentum();
-
-      clearPressedImg();
-    });
-
-    window.addEventListener('pointercancel', () => {
-      if (!dragDown) return;
-      dragDown = false;
-      clearPressedImg();
-      if (dragGrid) { dragGrid.classList.remove('dragging'); carouselRestoreSnap(); }
     });
   </script>
 </body>

@@ -53,7 +53,6 @@
     }
 
     .nav-right-group { position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 100; }
-    .nav-left-group  { position: fixed; top: 20px; left: 20px; z-index: 100; }
 
     .icon-btn {
       display: inline-flex; align-items: center; justify-content: center;
@@ -73,13 +72,6 @@
       }
     }
 
-    .home-icon {
-      width: 20px; height: 20px; display: block;
-      background-color: currentColor;
-      -webkit-mask: url('icons/home.svg') no-repeat center / contain;
-      mask: url('icons/home.svg') no-repeat center / contain;
-    }
-
     .content-wrap {
       min-height: 100vh;
       display: flex;
@@ -93,7 +85,6 @@
       z-index: 1;
     }
 
-    /* Frosted glass card behind text */
     .content-backdrop {
       display: flex;
       flex-direction: column;
@@ -106,7 +97,6 @@
       box-shadow: 0 0 0 1px rgba(16, 24, 40, 0.05);
     }
 
-    /* The blur layer sits behind everything inside the card */
     .content-backdrop::before {
       content: '';
       position: absolute;
@@ -122,38 +112,22 @@
       box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
     }
 
-    /* Mobile adjustments: Increased transparency */
     @media (max-width: 600px) {
       .content-backdrop {
-        background: rgba(242, 240, 239, 0.1); /* More transparent */
+        background: rgba(242, 240, 239, 0.1);
         padding: 32px 24px;
       }
       body.dark .content-backdrop {
-        background: rgba(7, 18, 33, 0.1); /* More transparent */
+        background: rgba(7, 18, 33, 0.1);
       }
     }
 
-    /* Text sits above the blur pseudo-element */
     .content-inner {
       display: flex;
       flex-direction: column;
       align-items: center;
       position: relative;
       z-index: 1;
-    }
-
-    .error-code {
-      font-size: clamp(100px, 20vw, 180px);
-      font-weight: 900;
-      letter-spacing: -6px;
-      line-height: 1;
-      margin: 0 0 8px 0;
-      color: transparent;
-      -webkit-text-stroke: 3px rgba(107, 114, 128, 0.5);
-      transition: -webkit-text-stroke-color 0.32s ease, filter 0.32s ease;
-      position: relative;
-      user-select: none;
-      filter: drop-shadow(0 0 40px rgba(107, 114, 128, 0.1));
     }
 
     body.dark .error-code {
@@ -215,12 +189,25 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .btn-primary { background: var(--accent); color: #fff; }
+    /* Primary button uses padding shifts to push text */
+    .btn-primary { 
+      background: var(--accent); 
+      color: #fff; 
+      position: relative;
+      padding: 12px 44px 12px 22px; /* Extra padding on right to fit the arrow */
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease, background-color 0.3s ease, padding 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
     body.dark .btn-primary { color: var(--bg); }
+
+    @media (hover: hover) {
+      .btn-primary:hover {
+        padding: 12px 22px 12px 44px; /* Shift padding to left */
+      }
+    }
 
     .btn-secondary {
       background: var(--card-bg);
-      color: var(--muted);
+      color: var(--text);
       border: 1px solid var(--border);
     }
 
@@ -234,21 +221,48 @@
 
     .btn:active { transform: scale(0.97); transition-duration: 0.1s; }
 
-    .btn-arrow-wrap {
-      width: 14px; height: 14px;
-      overflow: hidden; flex-shrink: 0; position: relative;
-    }
-    .btn-arrow-wrap svg {
-      display: block; width: 14px; height: 14px;
-      position: absolute; top: 0; left: 0;
+    /* Absolute positioned arrows for the swapping effect */
+    .btn-arrow {
+      position: absolute;
+      top: 50%;
+      width: 14px; 
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+      pointer-events: none;
     }
-    .btn-arrow-out { transform: translateX(0);    opacity: 1; }
-    .btn-arrow-in  { transform: translateX(120%); opacity: 0; }
+
+    .btn-arrow svg {
+      display: block; 
+      width: 14px; 
+      height: 14px;
+    }
+
+    .arrow-right {
+      right: 22px; /* Position matches standard padding */
+      transform: translateY(-50%) translateX(0);
+      opacity: 1;
+    }
+
+    .arrow-left {
+      left: 22px; /* Position matches standard padding */
+      transform: translateY(-50%) translateX(-15px);
+      opacity: 0;
+    }
 
     @media (hover: hover) {
-      .btn-primary:hover .btn-arrow-out { transform: translateX(-120%); opacity: 0; }
-      .btn-primary:hover .btn-arrow-in  { transform: translateX(0);     opacity: 1; }
+      /* Exit right */
+      .btn-primary:hover .arrow-right {
+        transform: translateY(-50%) translateX(15px);
+        opacity: 0;
+      }
+      /* Enter left */
+      .btn-primary:hover .arrow-left {
+        transform: translateY(-50%) translateX(0);
+        opacity: 1;
+      }
     }
 
     .theme-transition, .theme-transition * {
@@ -288,22 +302,27 @@
   <div class="content-wrap">
     <div class="content-backdrop">
       <div class="content-inner">
-        <p class="error-code" aria-hidden="true">404</p>
         <h1 class="error-heading">Erm...</h1>
-        <p class="error-sub">I didn't code what you're looking. Let's head back?</p>
+        <p class="error-sub">I didn't code what you're looking for. <br> Let's head back?</p>
         <div class="btn-row">
           <a href="https://rhemzema.github.io" class="btn btn-primary">
-            <div class="btn-arrow-wrap">
-              <svg class="btn-arrow-out" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 1L1 7L7 13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <svg class="btn-arrow-in" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            
+            <div class="btn-arrow arrow-left">
+              <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 1L1 7L7 13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            Go home
+            
+            <span class="btn-text">Go home</span>
+            
+            <div class="btn-arrow arrow-right">
+              <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 1L1 7L7 13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+
           </a>
-          <a href="https://rhemzema.github.io/projects.html" class="btn btn-secondary">
+          <a href="projects.html" class="btn btn-secondary">
             View projects
           </a>
         </div>

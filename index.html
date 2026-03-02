@@ -7,24 +7,29 @@
     
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-  <link rel="icon" href="icons/face.svg" type="image/svg+xml">
 
+  <link rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+        as="style"
+        onload="this.rel='stylesheet'">
+
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  </noscript>
+  <link rel="icon" href="icons/face.svg" type="image/svg+xml">
+  
   <style>
     :root {
-      /* Colors */
       --bg: #f2f0ef;
       --text: #111;
       --muted: #6b7280;
       --accent: #0b5fff;
-      
-      /* Dynamic UI Colors (Light Mode Defaults) */
+      --card-accent: #861F41; 
+      --card-shadow: rgba(134, 31, 65, 0.3);
       --hover-bg: rgba(11, 95, 255, 0.06);
       --border: rgba(16, 24, 40, 0.06);
       --section-bg: rgba(255, 255, 255, 0.4);
       --shadow-color: rgba(11, 95, 255, 0.08);
-      
-      /* Dimensions */
       --nav-height: 100px;
     }
 
@@ -33,56 +38,35 @@
       --text: #f2f0ef;
       --muted: #98a6b3;
       --accent: #7ab7ff;
-      
-      /* Dark Mode Overrides */
+      --card-accent: #E5751F; 
+      --card-shadow: rgba(229, 117, 31, 0.75);
       --hover-bg: rgba(255, 255, 255, 0.06);
       --border: rgba(255, 255, 255, 0.06);
       --section-bg: rgba(255, 255, 255, 0.03);
       --shadow-color: rgba(200, 200, 200, 0.18);
     }
 
-    /* --- Base Layout --- */
     body {
-      min-height: 100vh;
-      margin: 0;
+      min-height: 100vh; margin: 0;
       font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--bg); color: var(--text);
       overflow-x: hidden;
     }
 
-    /* --- Shared Components --- */
     .icon-btn, .pill, .download-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-      cursor: pointer;
-      user-select: none;
+      display: inline-flex; align-items: center; justify-content: center;
+      text-decoration: none; -webkit-tap-highlight-color: transparent;
+      transition: transform 0.6s cubic-bezier(0.25,1,0.5,1), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      cursor: pointer; user-select: none;
     }
-
-    /* Icon Buttons */
-    .icon-btn {
-      border-radius: 8px;
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-    }
+    .icon-btn { border-radius: 8px; border: 0; background: transparent; color: var(--muted); }
     .icon-btn.square { width: 44px; height: 44px; }
-    
     .icon-btn:active, .pill:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
-
-    /* Icons inside buttons (Socials) */
     .icon-btn img { height: 20px; width: auto; }
     .icon-btn.linkedin img { height: 21px; }
     .icon-btn.x img { height: 17px; }
-    
-    /* Social Icons: Invert to white in Dark Mode only */
     body.dark .icon-btn img { filter: brightness(0) invert(1); }
 
-    /* Footer Arrow Icon (Mask Method) */
     .arrow-icon {
       width: 16px; height: 16px; display: block;
       background-color: currentColor;
@@ -90,32 +74,21 @@
       mask: url('icons/up_arrow.svg') no-repeat center / contain;
     }
 
-    /* Pills */
     .pill {
-      gap: 8px; padding: 8px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-weight: 600;
+      gap: 8px; padding: 8px 14px; border-radius: 999px;
+      border: 1px solid var(--border); color: var(--text); font-weight: 600;
     }
-
-    /* Accent Pill (Slot Machine) */
     .pill-accent {
-      padding: 0 20px; height: 42px;
-      background: var(--accent); color: white;
-      border: none; overflow: hidden;
-      align-items: flex-start !important;
-      position: relative;
+      padding: 0 20px; height: 42px; background: var(--accent); color: white;
+      border: none; overflow: hidden; align-items: flex-start !important; position: relative;
     }
     body.dark .pill-accent { color: var(--bg); }
     .pill-accent:active { opacity: 0.8; background: var(--accent) !important; }
 
-    /* Slot Animation */
-    .slot-scroller { display: flex; flex-direction: column; width: 100%; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .slot-scroller { display: flex; flex-direction: column; width: 100%; transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
     .slot-label { height: 42px; display: flex; align-items: center; justify-content: center; width: 100%; flex-shrink: 0; }
     .pill-accent:hover .slot-scroller { transform: translateY(-42px); }
 
-    /* Scroll To Top (Slot Style) */
     .scroll-to-top {
       position: relative; margin: 0 auto 20px auto; z-index: 10;
       overflow: hidden; align-items: flex-start !important; padding: 0;
@@ -123,96 +96,49 @@
     .scroll-to-top .slot-label { height: 44px; width: 44px; }
     .scroll-to-top:hover .slot-scroller { transform: translateY(-44px); }
 
-    /* --- Animations --- */
-    
-    /* 1. Theme Transitions */
     .theme-transition, .theme-transition * { 
       transition: background-color 0.32s ease, background 0.32s ease, color 0s, box-shadow 0.32s ease, border-color 0.32s ease !important; 
     }
 
-    /* 2. Center Wipe Entrance (For Pills) */
     @keyframes pill-wipe {
-      0% { 
-        clip-path: inset(0 50% 0 50% round 999px);
-        filter : blur(4px); 
-        opacity: 0; 
-      }
-      100% { 
-        clip-path: inset(0 0 0 0 round 999px); 
-        opacity: 1;
-      }
+      0% { clip-path: inset(0 50% 0 50% round 999px); filter: blur(4px); opacity: 0; }
+      100% { clip-path: inset(0 0 0 0 round 999px); opacity: 1; }
     }
+    .pill-wipe { opacity: 0; animation: pill-wipe 0.9s cubic-bezier(0.19,1,0.22,1) forwards; }
 
-    .pill-wipe {
-      opacity: 0; 
-      animation: pill-wipe 0.9s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-    }
-
-    /* 3. Pop-In Grow (For Social Icons) */
     @keyframes pop-in {
-      0% { opacity: 0; transform: scale(0.5); filter: blur(4px);}
+      0% { opacity: 0; transform: scale(0.5); filter: blur(4px); }
       60% { opacity: 1; transform: scale(0.99); }
-      100% { opacity: 1; transform: scale(1); filter: blur(0px);}
+      100% { opacity: 1; transform: scale(1); filter: blur(0px); }
     }
+    .pop-in { animation: pop-in 0.6s cubic-bezier(0.175,0.885,0.32,1.275) backwards; }
 
-    .pop-in {
-      /* 'backwards' ensures opacity:0 is applied during the delay period, 
-         but allows the element to return to default CSS state (for hover) after animation ends */
-      animation: pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
-    }
-
-    /* 4. Flip Reveals (For Text/Blocks) */
     .reveal-flip {
       opacity: 0; transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
-      transform-origin: top center;
-      transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: top center; transition: 0.8s cubic-bezier(0.16,1,0.3,1);
     }
     .reveal-flip.visible { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); }
 
     .char-flip {
       display: inline-block; opacity: 0; white-space: pre;
       transform: perspective(500px) rotateX(90deg) translateY(10px); transform-origin: bottom center;
-      transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: 0.6s cubic-bezier(0.16,1,0.3,1);
     }
     .char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
 
-    /* Hover States */
+    .resume-arrow { width: 16px; height: 16px; margin-left: 2px; transition: transform 0.4s cubic-bezier(0.25,1,0.5,1); }
+
     @media (hover: hover) {
-      /* Icon Buttons */
-      .icon-btn:hover {
-        background: var(--hover-bg);
-        color: var(--accent);
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 6px 18px var(--shadow-color);
-      }
-
-      /* Pills (Standard Hover) */
-      .pill:not(.pill-accent):hover {
-        background: var(--hover-bg);
-        color: var(--accent);
-        border-color: var(--accent);
-        box-shadow: 0 4px 12px var(--shadow-color);
-      }
-
-      /* Hover Logic for Social Icons (Filters) */
+      .icon-btn:hover { background: var(--hover-bg); color: var(--accent); transform: translateY(-3px) scale(1.02); box-shadow: 0 6px 18px var(--shadow-color); }
+      .pill:not(.pill-accent):hover { background: var(--hover-bg); color: var(--accent); border-color: var(--accent); box-shadow: 0 4px 12px var(--shadow-color); }
+      .download-link:hover .resume-arrow { transform: translate(3px,-3px) !important; }
       .icon-btn:hover img { filter: brightness(0) saturate(100%) invert(27%) sepia(100%) saturate(2878%) hue-rotate(210deg) brightness(104%) contrast(97%); }
       body.dark .icon-btn:hover img { filter: brightness(0) saturate(100%) invert(70%) sepia(100%) saturate(2878%) hue-rotate(190deg) brightness(104%) contrast(97%); }
-      
-      .pill-accent:hover {
-        box-shadow: 0 6px 18px rgba(11, 95, 255, 0.3);
-      }
-      .about-section:hover {
-        box-shadow: 0 8px 24px var(--shadow-color);
-        border-color: var(--accent);
-      }
+      .pill-accent:hover { box-shadow: 0 6px 18px rgba(11,95,255,0.3); }
     }
 
-    /* --- Layout & Sections --- */
     .nav-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 50; pointer-events: none; }
-    
-    /* Navigation Group */
     .nav-right-group { position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 100; pointer-events: auto; }
-
     .top-nav-bg {
       position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height); z-index: 29; pointer-events: none;
       background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
@@ -222,64 +148,197 @@
       transition: background-color 0.32s ease;
     }
 
-    .page { display: block; scroll-snap-align: start; }
+    .content-wrap { padding: 0 20px; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+    .page { display: block; }
     .page .inner { min-height: 100svh; display: flex; align-items: center; justify-content: center; padding: 28px; box-sizing: border-box; }
-    #home { margin-bottom: 20vh; }
-    #about { scroll-margin-top: 120px; }
-    #about .inner { display: block; height: auto; min-height: auto; padding-top: 40px; }
+    #home { scroll-snap-align: start; margin-bottom: 5vh; }
+    #about { scroll-snap-align: center; scroll-margin-top: 0; }
+    #home-projects-section { scroll-snap-align: start; scroll-margin-top: 120px; }
+    .site-footer-container { scroll-snap-align: end; }
 
-    /* About Section Specifics */
-    .about-section { 
-      margin-bottom: 32px; padding: 24px; border-radius: 16px;
-      background: var(--section-bg); border: 1px solid var(--border);
-    }
-    .about-section h2 { font-size: 20px; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px; color: var(--accent); }
-    .about-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 4px; }
-    .about-header h3 { font-size: 16px; font-weight: 600; margin: 0; color: var(--text); }
-    .about-header .date, .about-item .subtitle, .about-section li { font-size: 14px; color: var(--muted); }
-    .about-item .subtitle { font-style: italic; margin-bottom: 8px; }
-    .about-section ul { margin: 0; padding-left: 20px; }
-    .about-section li { margin-bottom: 6px; line-height: 1.5; }
+    .about-layout, #home-projects-section { max-width: 900px; width: 100%; margin-left: auto; margin-right: auto; }
+    .about-layout { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 60px; margin-bottom: 140px; }
 
-    .download-link {
-      gap: 4px; font-size: 14px; font-weight: 500; color: var(--muted);
-      border-bottom: 1px solid currentColor; padding-bottom: 1px;
+    @media (max-width: 900px) {
+      .about-layout { flex-direction: column; align-items: center; text-align: center; gap: 40px; margin-bottom: 100px; }
+      .id-card-wrapper { margin: 0 auto; max-width: 280px; }
+      .download-link { margin: 12px auto 0 auto !important; }
     }
-    .download-link:hover { color: var(--accent); border-color: var(--accent); }
-    .download-link svg { width: 10px; stroke: currentColor; stroke-width: 2; transition: transform 0.2s; }
-    .download-link:hover svg { transform: translate(2px, -2px); }
+
+    .intro-text { flex: 1; }
+
+    /* ID Card Styles */
+    .id-card-wrapper { perspective: 2500px; width: 100%; max-width: 300px; flex-shrink: 0; transform-style: preserve-3d; z-index: 10; touch-action: none; cursor: pointer; }
+    .student-id { --rx: 0deg; --ry: 0deg; --px: 50%; --py: 50%; position: relative; width: 100%; aspect-ratio: 0.63; background: #fff; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1); padding: 30px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; overflow: hidden; transform-style: preserve-3d; transform: rotateX(var(--rx)) rotateY(var(--ry)); transition: transform 0.6s cubic-bezier(0.25,1,0.5,1), box-shadow 0.6s ease; }
+    .student-id.interacting { transition: none; }
+    body.dark .student-id { border-color: rgba(255,255,255,0.2); background-color: #fff; }
+    .id-glare { position: absolute; inset: 0; border-radius: 20px; z-index: 20; pointer-events: none; background: radial-gradient(farthest-corner circle at var(--px) var(--py), rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.15) 50%, transparent 90%); mix-blend-mode: overlay; opacity: 0; transition: opacity 0.4s ease; }
+    .holo-foil { position: absolute; inset: 0; border-radius: 20px; z-index: 21; pointer-events: none; background-image: linear-gradient(115deg, transparent 15%, rgba(255,115,0,0.6) 25%, rgba(255,215,0,0.6) 35%, rgba(0,255,150,0.6) 45%, rgba(0,150,255,0.6) 55%, rgba(150,0,255,0.6) 65%, transparent 75%); background-size: 300% 300%; background-position: calc(100% - var(--px)) calc(100% - var(--py)); mix-blend-mode: color-dodge; opacity: 0; transition: opacity 0.4s ease; filter: brightness(0.8) contrast(1.5); }
+    body.dark .holo-foil { mix-blend-mode: color-dodge; filter: brightness(0.7) contrast(1.8); }
+    .student-id.interacting .id-glare { opacity: 0.4; }
+    .student-id.interacting .holo-foil { opacity: 0.25; }
+    .id-header { display: flex; justify-content: flex-start; border-bottom: 2px solid var(--card-accent); padding-bottom: 15px; transform: translateZ(20px); }
+    .id-logo { height: 30px; width: auto; display: block; }
+    .id-body { display: flex; flex-direction: column; align-items: center; gap: 25px; flex-grow: 1; transform: translateZ(10px); }
+    .id-photo-box { width: 140px; height: 170px; background: #f2f0ef; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; justify-content: center; }
+    .id-photo-box img { width: 100%; height: 100%; object-fit: cover; opacity: 0.95; }
+    .id-info { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+    .id-name { font-size: 22px; font-weight: 700; color: #111; text-align: center; margin: 0 0 10px 0; }
+    .id-field { display: flex; justify-content: space-between; font-size: 14px; border-bottom: 1px dashed rgba(16,24,40,0.1); padding-bottom: 4px; }
+    .id-label { color: #6b7280; font-weight: 500; font-size: 12px; text-transform: uppercase; }
+    .id-value { color: #111; font-weight: 600; text-align: right; }
+    .barcode { height: 20px; width: 100%; opacity: 0.6; margin-top: auto; background: repeating-linear-gradient(90deg, #111 0, #111 2px, transparent 2px, transparent 5px, #111 5px, #111 7px, transparent 7px, transparent 10px); }
+    .spin-360 { animation: spin-y 0.6s cubic-bezier(0.175,0.885,0.32,1.275); }
+    @keyframes spin-y { 0% { transform: rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)); } 100% { transform: rotateX(var(--rx,0deg)) rotateY(calc(var(--ry,0deg) + 360deg)); } }
+
+    @media (max-width: 900px) {
+      .about-layout { flex-direction: column-reverse; align-items: center; text-align: center; margin-bottom: 100px; }
+      .id-card-wrapper { margin: 0 auto; max-width: 250px; }
+      .id-label, .id-value { font-size: 12px; }
+      h3.id-name { font-size: 16px; }
+      .barcode { height: 12px; }
+      .id-header img { width: 70%; height: 70%; transform: translateX(-22px); }
+      .id-header { padding-bottom: 10px; justify-content: left; }
+      .student-id { padding: 15px; }
+      .id-photo-box { width: 95px; height: 110px; }
+    }
 
     .about-title-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 40px; }
-    h1 { 
-    font-size: 84px; 
-    font-weight: 600; 
-    margin: 0 0 16px 0; 
-    color: var(--text); 
-    line-height: 1.1; 
-    }
-    h2 { font-size: 28px; margin: 0 0 8px 0; color: var(--text); line-height: 1.2; }
-    p { margin: 0 0 18px; color: var(--muted); }
-
-    /* Mobile Adjustment */
-    @media (max-width: 768px) {
-      h1 { font-size: 42px !important; }
-    }
+    h1 { font-size: 84px; font-weight: 600; margin: 0 0 16px 0; color: var(--text); line-height: 1.1; }
+    h2 { font-size: 28px; margin: 0 0 12px 0; color: var(--text); line-height: 1.2; }
+    p { margin: 0 0 18px; color: var(--muted); line-height: 1.6; }
+    @media (max-width: 768px) { h1 { font-size: 42px !important; } }
+    @media (max-width: 480px) { h1 { font-size: 32px !important; } }
 
     .social-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
     .pill-row { margin-top: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-    .site-footer-container { text-align: center; padding-bottom: 30px; }
+    .site-footer-container { text-align: center; padding-bottom: 30px; margin-top: 60px; }
     .site-footer { color: var(--muted); font-size: 14px; }
 
-    @media (max-width: 480px) {
-      #about .inner { padding-top: 20px; }
-      .about-header { flex-direction: column; gap: 2px; }
-      h1 { font-size: 24px; }
+    /* =====================================================
+       ARC CARD DECK
+       ===================================================== */
+
+    .arc-deck-outer {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      margin-top: 24px;
+      margin-bottom: 80px;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .arc-deck-outer.deck-visible { opacity: 1; transform: translateY(0); }
+    .arc-deck-stage { position: absolute; inset: 0; pointer-events: none; }
+
+    .arc-card {
+      position: absolute;
+      width: 220px;
+      height: 280px;
+      border-radius: 18px;
+      box-sizing: border-box;
+      text-decoration: none;
+      color: var(--text);
+      pointer-events: auto;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transform-origin: bottom center;
+      will-change: transform, opacity, top, left;
+      /* Physics handled purely by layoutCards now, CSS handles scale/rotate */
+      transition: box-shadow 0.35s ease, border-color 0.25s ease, opacity 0.5s ease;
+      opacity: 0;
+    }
+    .arc-card.card-in { opacity: 1; }
+
+    body:not(.dark) .arc-card {
+      background: #ffffff;
+      border: 1px solid rgba(16, 24, 40, 0.09);
+      box-shadow: 0 4px 20px rgba(11, 95, 255, 0.07), 0 1px 3px rgba(0,0,0,0.05);
+    }
+    body.dark .arc-card {
+      background: #0f1e30;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    @media (hover: hover) {
+      .arc-card:hover {
+        border-color: var(--accent) !important;
+        box-shadow: 0 16px 44px var(--shadow-color), 0 3px 10px rgba(11,95,255,0.12) !important;
+        z-index: 200 !important;
+        translate: 0 -20px; /* Replaces the transform override */
+      }
+      .arc-card:hover .arc-card-title { color: var(--accent); }
+      .arc-card:hover .arc-card-thumb img { transform: scale(1.05); }
+    }
+    .arc-card:active { opacity: 0.85 !important; }
+
+    .arc-card-thumb {
+      width: 100%; height: 130px; flex-shrink: 0;
+      background: linear-gradient(135deg,
+        color-mix(in srgb, var(--accent) 10%, var(--bg)),
+        color-mix(in srgb, var(--accent) 4%, var(--bg))
+      );
+      overflow: hidden;
+    }
+    .arc-card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s cubic-bezier(0.25,1,0.5,1); }
+    .arc-card-thumb-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .arc-card-thumb-placeholder svg { width: 26px; height: 26px; color: var(--muted); opacity: 0.22; }
+
+    .arc-card-body { padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .arc-card-title { font-size: 15px; font-weight: 700; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.25s ease; }
+    .arc-card-desc { 
+      font-size: 12px; 
+      color: var(--muted); 
+      margin: 0; 
+      display: -webkit-box; 
+      -webkit-line-clamp: 2; 
+      line-clamp: 2; 
+      -webkit-box-orient: vertical; 
+      overflow: hidden; 
+      line-height: 1.45; 
+    }
+    .arc-card-meta { display: flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 8px; }
+    .arc-status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .arc-status-dot[data-status="in-progress"] { background-color: #3b82f6; }
+    .arc-status-dot[data-status="on-hold"]     { background-color: #eab308; }
+    .arc-status-dot[data-status="dropped"]     { background-color: #ef4444; }
+    .arc-status-dot[data-status="completed"]   { background-color: #22c55e; }
+    .arc-card-date { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+    .arc-card-viewall { align-items: center; justify-content: center; gap: 10px; }
+    body:not(.dark) .arc-card-viewall { border-style: dashed; }
+    body.dark .arc-card-viewall { border-style: dashed; }
+    .arc-card-viewall:hover { border-style: solid !important; }
+    .viewall-icon {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--hover-bg); display: flex; align-items: center; justify-content: center;
+      transition: background 0.3s ease, transform 0.4s cubic-bezier(0.25,1,0.5,1);
+    }
+    .arc-card-viewall:hover .viewall-icon { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+    .viewall-label { font-size: 15px; font-weight: 700; text-align: center; line-height: 1.35; }
+    .viewall-count { font-size: 13px; color: var(--muted); font-weight: 500; }
+
+    .arc-indicators { display: flex; justify-content: center; margin-top: -10px; margin-bottom: 20px; pointer-events: none; }
+    #arc-dots-svg { width: 220px; height: 44px; overflow: visible; }
+    .arc-dot { transition: r 0.35s ease, fill 0.35s ease, opacity 0.35s ease; }
+
+    @media (max-width: 600px) {
+      .arc-deck-outer { height: 320px; }
+      .arc-card { width: 170px; height: 230px; }
+      .arc-card-thumb { height: 95px; }
     }
   </style>
 </head>
 <body>
   <script>
-    // Immediate Theme Apply
     (function() {
       const saved = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -289,7 +348,6 @@
   </script>
 
   <div class="top-nav-bg"></div>
-
   <nav class="nav-wrapper">
     <div class="nav-right-group">
       <button id="theme-toggle" class="icon-btn square" aria-label="Toggle dark mode">
@@ -306,23 +364,19 @@
         <div class="inner">
           <div style="text-align:center;max-width:900px;width:100%">
             <h1 class="split-flip-text">Ruiqian Zhang</h1>
-            
             <p class="reveal-flip" data-delay="300">📍 Blacksburg, VA</p>
-            
             <div class="social-pills">
-              <a class="icon-btn square pop-in" style="animation-delay: 400ms" href="https://github.com/rhemzema" target="_blank"><img src="icons/github_64x.svg" alt="GitHub"></a>
-              <a class="icon-btn square linkedin pop-in" style="animation-delay: 450ms" href="https://linkedin.com/in/ruiqianzhang" target="_blank"><img src="icons/linkedin_64x.svg" alt="LinkedIn"></a>
-              <a class="icon-btn square pop-in" style="animation-delay: 500ms" href="https://instagram.com/rhemzema" target="_blank"><img src="icons/instagram_64x.svg" alt="Instagram"></a>
-              <a class="icon-btn square x pop-in" style="animation-delay: 550ms" href="https://x.com/rhemzema" target="_blank"><img src="icons/x_300x.svg" alt="X"></a>
+              <a class="icon-btn square pop-in" style="animation-delay:400ms" href="https://github.com/rhemzema" target="_blank"><img src="icons/github_64x.svg" alt="GitHub"></a>
+              <a class="icon-btn square linkedin pop-in" style="animation-delay:450ms" href="https://linkedin.com/in/ruiqianzhang" target="_blank"><img src="icons/linkedin_64x.svg" alt="LinkedIn"></a>
+              <a class="icon-btn square pop-in" style="animation-delay:500ms" href="https://instagram.com/rhemzema" target="_blank"><img src="icons/instagram_64x.svg" alt="Instagram"></a>
+              <a class="icon-btn square x pop-in" style="animation-delay:550ms" href="https://x.com/rhemzema" target="_blank"><img src="icons/x_300x.svg" alt="X"></a>
             </div>
-
-            <div class="pill-row" style="margin-top: 16px;">
-              <a class="pill pill-wipe" href="projects.html" style="animation-delay: 500ms">Projects</a>
-              <a class="pill pill-wipe" href="mailto:rhema@vt.edu" style="animation-delay: 500ms">Email</a>
+            <div class="pill-row" style="margin-top:16px;">
+              <a class="pill pill-wipe" href="projects.html" style="animation-delay:500ms">Projects</a>
+              <a class="pill pill-wipe" href="mailto:rhema@vt.edu" style="animation-delay:500ms">Email</a>
             </div>
-
             <div class="pill-row">
-              <a class="pill pill-accent smooth-scroll-link pill-wipe" href="#about" style="animation-delay: 750ms">
+              <a class="pill pill-accent smooth-scroll-link pill-wipe" href="#about" style="animation-delay:750ms">
                 <span class="slot-scroller">
                   <span class="slot-label">About Me</span>
                   <span class="slot-label">About Me</span>
@@ -330,106 +384,47 @@
               </a>
             </div>
           </div>
-        </div>  
+        </div>
       </section>
 
-      <section id="about" class="page">
-        <div class="inner">
-          <div style="text-align:left;max-width:920px;width:100%;margin:0 auto;">
-            
-            <div class="about-title-row">
-              <h2 class="split-flip-text">Who Am I?</h2>
-              <a class="download-link" href="https://drive.google.com/file/d/16BJaZmmX7ZM_sW_otVHfL_wDuC9--Ux6/view?usp=sharing" target="_blank">
-                <span class="split-flip-text" data-delay="600">Download</span>
-                <svg viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </a>
-            </div>
-
-            <div class="about-section reveal-flip">
-              <h2>Education</h2>
-              <div class="about-item">
-                <div class="about-header"><h3>Virginia Tech</h3><span class="date">Expected May 2028</span></div>
-                <p class="subtitle">BS in Electrical Engineering | Blacksburg, VA</p>
-                <p style="margin-bottom:8px;"><strong>GPA:</strong> 3.64/4.0; Dean’s List with Distinction (Fall 2024, Spring 2026)</p>
-                <p><strong>Relevant Coursework:</strong> Embedded Systems, Signal and Systems, Physical Electronics, Fundamentals of Digital Systems, Circuits and Devices, Computational Engineering</p>
+      <section id="about" class="about-layout">
+        <div class="id-card-wrapper reveal-flip" id="id-wrapper" data-delay="200">
+          <div class="student-id" id="id-card">
+            <div class="id-header"><img src="/logos/Virginia_Tech_logo.svg" class="id-logo" alt="Virginia Tech"></div>
+            <div class="id-body">
+              <div class="id-photo-box"><img src="/Images/Ruiqian.jpg" alt="Profile"></div>
+              <div class="id-info">
+                <h3 class="id-name">Ruiqian (Rhema) Zhang</h3>
+                <div class="id-field"><span class="id-label">Age:</span><span class="id-value">20</span></div>
+                <div class="id-field"><span class="id-label">Major:</span><span class="id-value">Electrical Engineering</span></div>
+                <div class="id-field" style="border-bottom:none"><span class="id-label">Hometown:</span><span class="id-value">China</span></div>
+                <div class="barcode"></div>
               </div>
             </div>
-
-            <div class="about-section reveal-flip">
-              <h2>Technical Skills</h2>
-              <p><strong>Hardware:</strong> PCB Design, Embedded Systems, FPGA Design (basic), Power Systems, Circuit Simulation (LTSpice)</p>
-              <p><strong>Software:</strong> Verilog/VHDL, C/C++, Java, Python, HTML, CSS</p>
-              <p><strong>EDA & Tools:</strong> Quartus Prime, QuestaSim, KiCAD, EasyEDA, Git, VSCode, Arduino IDE, Autodesk Fusion 360</p>
-              <p><strong>Languages:</strong> English (Proficient), Mandarin Chinese (Proficient), Thai (Intermediate)</p>
-            </div>
-
-            <div class="about-section reveal-flip">
-              <h2>Projects & Experience</h2>
-              <div class="about-item">
-                <div class="about-header"><h3>MePad V1 – Custom USB Macro Keypad</h3><span class="date">Jan 2026 – Present</span></div>
-                <p class="subtitle">Personal Project</p>
-                <ul>
-                  <li>Designed custom PCB in EasyEDA; implemented VIA/QMK firmware for programmable macros and controls.</li>
-                  <li>Integrated 9 Cherry MX–style switches, 2 rotary encoders, and USB hub support (1x USB-C, 1x USB-A).</li>
-                  <li>Modeled and prototyped a 3D-printed enclosure using Autodesk Fusion 360.</li>
-                </ul>
-              </div>
-              <div class="about-item">
-                <div class="about-header"><h3>Electrical Hardware Engineer</h3><span class="date">Sep 2024 – Present</span></div>
-                <p class="subtitle">Robogrinder at Virginia Tech</p>
-                <ul>
-                  <li>Designed and simulated a 24 → 12V DC-DC buck converter in LTSpice and validated performance to meet requirements.</li>
-                  <li>Designed & fabricated 2 EasyEDA PCBs, strengthening hardware & PCB design expertise.</li>
-                  <li>Integrated 8 supercapacitors and 8 distribution boards across 4 competition robots, improving power integrity.</li>
-                </ul>
-              </div>
-              <div class="about-item">
-                <div class="about-header"><h3>Robotics Engineer</h3><span class="date">Sep 2025 – Present</span></div>
-                <p class="subtitle">VT CRO (Competitive Robotics Organization)</p>
-                <ul><li>Collaborated with 15-member team to build an all-terrain robot for the 2026 IEEE Southeast Conference Competition.</li></ul>
-              </div>
-              <div class="about-item">
-                <div class="about-header"><h3>"HokieB" Hokie Passport Bracelet</h3><span class="date">Jan – May 2025</span></div>
-                <p class="subtitle">Class Project - Foundations of Engineering</p>
-                <ul>
-                  <li>Led 6-member team to develop wearable RFID-enabled student ID.</li>
-                  <li>Programmed RFID scanner in C (Arduino IDE) for prototype validation.</li>
-                  <li>Built & tested 3 prototypes in Fusion 360 & 3D printing.</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="about-section reveal-flip">
-              <h2>Leadership & Volunteering</h2>
-              <div class="about-item">
-                <div class="about-header"><h3>High School Photography</h3><span class="date">2022 – 2024</span></div>
-                <p class="subtitle">President & Lead Photographer | Bangkok, Thailand</p>
-                <ul>
-                  <li>Directed media coverage for major school events & contributed photos for 6 school publications.</li>
-                  <li>Documented 4 MUN conferences, including THAIMUN X & XI (400+ delegates, 8 countries).</li>
-                </ul>
-              </div>
-              <div class="about-item">
-                <div class="about-header"><h3>National Art Honor Society</h3><span class="date">2022 – 2024</span></div>
-                <p class="subtitle">Historian & Officer | Bangkok, Thailand</p>
-                <ul><li>Led 21-member team to organize art auctions, Maker's Fair 2023, charity fundraisers, & painted 3 murals.</li></ul>
-              </div>
-              <div class="about-item">
-                <div class="about-header"><h3>Fruit For Hope: Capstone Service Project</h3><span class="date">2022</span></div>
-                <p class="subtitle">Project Lead & Volunteer | Bangkok, Thailand</p>
-                <ul>
-                  <li>Distributed food & supplies to 100+ refugee families; completed 39 hours.</li>
-                  <li>Organized sanitation workshop benefiting 20 families & generating 9,000 THB (~$280).</li>
-                </ul>
-              </div>
-              <div class="about-item">
-                <div class="about-header"><h3>Foundation for the Blind in Thailand</h3><span class="date">2022 – 2024</span></div>
-                <p class="subtitle">Volunteer | Bangkok, Thailand</p>
-                <ul><li>Tutored Math, Biology, Computer Science, English, & Chinese for visually impaired students; completed 13.5 hours.</li></ul>
-              </div>
-            </div>
-
+            <div class="id-glare" id="id-glare"></div>
+            <div class="holo-foil" id="holo-foil"></div>
           </div>
+        </div>
+        <div class="intro-text">
+          <h2 class="reveal-flip">About Me</h2>
+          <p class="reveal-flip">I'm Ruiqian Zhang, an electrical engineering student at Virginia Tech. I'm interested in PCB design, robotics, and bridging the gap between form and function.</p>
+          <a href="https://drive.google.com/file/d/16BJaZmmX7ZM_sW_otVHfL_wDuC9--Ux6/view?usp=drive_link" class="pill download-link reveal-flip" target="_blank" style="margin-top:12px;display:inline-flex;align-items:center;">
+            Download Resume
+            <svg class="resume-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"></line>
+              <polyline points="7 7 17 7 17 17"></polyline>
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      <section id="home-projects-section">
+        <h2 class="reveal-flip">Projects</h2>
+        <div class="arc-deck-outer" id="arc-deck-outer">
+          <div class="arc-deck-stage" id="arc-deck-stage"></div>
+        </div>
+        <div class="arc-indicators" id="arc-indicators" aria-hidden="true">
+          <svg id="arc-dots-svg" viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet"></svg>
         </div>
       </section>
     </main>
@@ -446,128 +441,509 @@
   </div>
 
   <script>
-    // --- UI Utilities ---
+  const ArcDeck = (() => {
+    function arcAt(t, W, ARC_H) {
+      const x     = (t - 0.5) * W;
+      const y     = 4 * ARC_H * t * (1 - t);
+      const slope = 4 * ARC_H * (1 - 2 * t) / W;
+      const tilt  = Math.atan(slope) * (180 / Math.PI) * 0.4;
+      return { x, y, tilt };
+    }
+
+    let allProjects    = [];
+    let totalCount     = 0;
+    let cards          = [];
+    let offset         = 0; // Current rendered float index
+    let targetOffset   = 0; // Target index we are animating to
+    let animRaf        = null;
+    let dragging       = false;
+    let dragStartX     = 0;
+    let dragBaseOffset = 0;
+    let dragMoved      = false;
+
+    const CARD_W    = 220;
+    const CARD_W_SM = 170;
+    const ARC_H     = 80;
+    const TOP_PAD   = 30;
+
+    function getCardW() {
+      const outer = document.getElementById('arc-deck-outer');
+      return outer && outer.clientWidth < 600 ? CARD_W_SM : CARD_W;
+    }
+
+    function getBounds() {
+      return { min: 0, max: Math.max(0, cards.length - 1) };
+    }
+
+    // Threads-style exponential limit for over-dragging
+    function applyStretch(val) {
+      const { min, max } = getBounds();
+      const limit = 0.55; // visual maximum stretch amount (indices)
+      if (val < min) return min - limit * (1 - Math.exp(-(min - val) / limit));
+      if (val > max) return max + limit * (1 - Math.exp(-(val - max) / limit));
+      return val;
+    }
+
+    function updateIndicators() {
+      const svg = document.getElementById('arc-dots-svg');
+      if (!svg || !cards.length || cards.length === 1) {
+        if (svg) svg.innerHTML = '';
+        return;
+      }
+
+      const n       = cards.length;
+      const GAP     = 22; // Boosted dot spacing
+      const DOT_R   = 4.5; // Boosted dot size
+      const IH      = 10;
+      const totalW  = (n - 1) * GAP;
+      const CY      = IH + DOT_R + 2;
+      const isDark  = document.body.classList.contains('dark');
+      const accent  = getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#0b5fff';
+
+      svg.innerHTML = '';
+
+      cards.forEach((card, i) => {
+        const t  = i / (n - 1);
+        const x  = i * GAP;
+        const y  = CY - 4 * IH * t * (1 - t);
+        const distFromActive = Math.abs(i - offset);
+        const activeMix = Math.max(0, 1 - distFromActive); // Smoothly fade active state
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', DOT_R + (activeMix * 0.5)); // slightly larger when active
+        circle.classList.add('arc-dot');
+        
+        // Active coloring logic
+        if (activeMix > 0.5) circle.setAttribute('fill', accent);
+        else circle.setAttribute('fill', isDark ? '#98a6b3' : '#6b7280');
+        
+        circle.setAttribute('opacity', 0.2 + 0.8 * activeMix);
+        circle.style.pointerEvents = 'auto';
+        circle.style.cursor = 'pointer';
+        
+        circle.addEventListener('click', () => {
+          const { min, max } = getBounds();
+          targetOffset = Math.max(min, Math.min(max, i));
+          startAnim();
+        });
+        svg.appendChild(circle);
+      });
+
+      const vbH = CY + DOT_R + 4;
+      svg.setAttribute('viewBox', `${-DOT_R - 1} ${-DOT_R - 1} ${totalW + DOT_R * 2 + 2} ${vbH + DOT_R + 2}`);
+      svg.style.width  = `${totalW + DOT_R * 2 + 2}px`;
+      svg.style.height = `${vbH + DOT_R + 2}px`;
+    }
+
+    function placeCard(el, topPx, leftCss, tilt, scale, zi, alpha, noTrans) {
+      el.style.transition = noTrans ? 'none' : 'translate 0.35s ease, box-shadow 0.35s ease, border-color 0.25s ease, opacity 0.5s ease';
+      el.style.top    = `${topPx}px`;
+      el.style.left   = leftCss;
+      el.style.zIndex = zi;
+      el.style.opacity = alpha;
+      el.style.setProperty('--card-tilt',  `${tilt}deg`);
+      el.style.setProperty('--card-scale', scale);
+      el.style.transform = `rotate(${tilt}deg) scale(${scale})`;
+    }
+
+    function layoutCards(noTrans) {
+      const outer = document.getElementById('arc-deck-outer');
+      if (!outer || !cards.length) return;
+
+      const cw = getCardW();
+      const W  = Math.min(outer.clientWidth * 0.9, 860);
+      
+      // Fixed angular distribution means 1-3 cards stay perfectly centered
+      const step = outer.clientWidth < 600 ? 0.32 : 0.24; 
+
+      cards.forEach((card, i) => {
+        const relI = i - offset;
+        const t = 0.5 + relI * step; 
+        
+        const { x, y, tilt } = arcAt(t, W, ARC_H);
+        const dist = Math.abs(relI);
+        
+        const scale = Math.max(0.75, 1 - dist * 0.08);
+        const zi    = Math.round(100 - dist * 10);
+        // Clean fade out before edges
+        const alpha = t < 0 ? Math.max(0, 1 + t * 4) : (t > 1 ? Math.max(0, 1 - (t - 1) * 4) : 1);
+        
+        placeCard(card.el, TOP_PAD + (ARC_H - y), `calc(50% + ${x}px - ${cw / 2}px)`, tilt, scale, zi, alpha, noTrans);
+      });
+
+      if (noTrans) setTimeout(() => { cards.forEach(c => { c.el.style.transition = 'translate 0.35s ease, box-shadow 0.35s ease, border-color 0.25s ease, opacity 0.5s ease'; }); }, 20);
+      updateIndicators();
+    }
+
+    // Smooth LERP physics (No post-travel bounce)
+    function tick() {
+      const diff = targetOffset - offset;
+      if (Math.abs(diff) < 0.001) {
+        offset = targetOffset;
+        layoutCards(false);
+        animRaf = null;
+        return;
+      }
+      offset += diff * 0.16; 
+      layoutCards(false);
+      animRaf = requestAnimationFrame(tick);
+    }
+
+    function startAnim() {
+      if (!animRaf) animRaf = requestAnimationFrame(tick);
+    }
+
+    function attachDragGuard(el) {
+      let downX = 0, downY = 0, wasDrag = false, isDown = false;
+      el.addEventListener('pointerdown', e => {
+        isDown = true; downX = e.clientX; downY = e.clientY; wasDrag = false;
+      });
+      window.addEventListener('pointerup', () => isDown = false);
+      el.addEventListener('pointermove', e => {
+        if (!isDown) return;
+        if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) wasDrag = true;
+      });
+      el.addEventListener('click', e => {
+        if (wasDrag) { e.preventDefault(); e.stopPropagation(); }
+      });
+    }
+
+    function buildProjectCard(proj) {
+      const a = document.createElement('a');
+      a.className = 'arc-card';
+      a.href = proj.href || 'projects.html';
+
+      const thumbDiv = document.createElement('div');
+      thumbDiv.className = 'arc-card-thumb';
+      if (proj.image) {
+        const img = document.createElement('img');
+        img.src = proj.image; img.alt = proj.title;
+        thumbDiv.appendChild(img);
+      } else {
+        thumbDiv.innerHTML = `<div class="arc-card-thumb-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <path d="M21 15l-5-5L5 21"/>
+          </svg></div>`;
+      }
+      a.appendChild(thumbDiv);
+
+      const body = document.createElement('div');
+      body.className = 'arc-card-body';
+      body.innerHTML = `
+        <h2 class="arc-card-title">${proj.title}</h2>
+        <p class="arc-card-desc">${proj.desc || ''}</p>
+        <div class="arc-card-meta">
+          ${proj.status ? `<span class="arc-status-dot" data-status="${proj.status}"></span>` : ''}
+          ${proj.date   ? `<span class="arc-card-date">${proj.date}</span>` : ''}
+        </div>`;
+      a.appendChild(body);
+      attachDragGuard(a);
+      return a;
+    }
+
+    function buildViewAllCard(total) {
+      const a = document.createElement('a');
+      a.className = 'arc-card arc-card-viewall';
+      a.href = 'projects.html';
+      a.innerHTML = `
+        <div class="viewall-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+        <div class="viewall-label">View all<br>projects</div>
+        ${total ? `<div class="viewall-count">${total} total</div>` : ''}`;
+      attachDragGuard(a);
+      return a;
+    }
+
+    function buildCards(stage, animate) {
+      const outer = document.getElementById('arc-deck-outer');
+      cards.forEach(c => c.el.remove());
+      cards = []; 
+      if (animRaf) { cancelAnimationFrame(animRaf); animRaf = null; }
+
+      allProjects.forEach(p => {
+        const el = buildProjectCard(p);
+        stage.appendChild(el);
+        cards.push({ el });
+      });
+      
+      // Only append "View All" if there is at least 1 project, max 4 items total layout
+      if (allProjects.length > 0) {
+        const vaEl = buildViewAllCard(totalCount);
+        stage.appendChild(vaEl);
+        cards.push({ el: vaEl });
+      }
+
+      // Start at the mathematical center to display all cleanly on initialization
+      const startIdx = 0; // Starts focus on the first project card
+      offset = startIdx; targetOffset = startIdx;
+
+      if (animate) {
+        const cw = getCardW();
+        const cl = `calc(50% - ${cw / 2}px)`;
+        cards.forEach(c => {
+          c.el.style.transition = 'none';
+          c.el.style.top = `${TOP_PAD}px`;
+          c.el.style.left = cl;
+          c.el.style.transform = 'rotate(0deg) scale(0.92)';
+          c.el.style.opacity = '0';
+          c.el.style.zIndex = '50';
+        });
+        outer && outer.offsetHeight;
+        cards.forEach((c, i) => {
+          setTimeout(() => {
+            c.el.style.transition = 'translate 0.35s ease, box-shadow 0.35s ease, border-color 0.25s ease, opacity 0.5s ease';
+            c.el.classList.add('card-in');
+            layoutCards(false);
+          }, 40 + i * 55);
+        });
+      } else {
+        layoutCards(true);
+        cards.forEach(c => c.el.classList.add('card-in'));
+      }
+      updateIndicators();
+    }
+
+    function setupInteraction() {
+      const outer = document.getElementById('arc-deck-outer');
+      if (!outer) return;
+
+      outer.addEventListener('mousedown', e => {
+        if (cards.length <= 1) return;
+        dragging = true; dragMoved = false;
+        dragStartX = e.clientX; dragBaseOffset = targetOffset;
+        outer.style.cursor = 'grabbing';
+        e.preventDefault();
+      });
+      
+      window.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        const dx = e.clientX - dragStartX;
+        if (Math.abs(dx) > 6) dragMoved = true;
+        
+        const rawOffset = dragBaseOffset - dx / 70;
+        targetOffset = applyStretch(rawOffset);
+        startAnim();
+      });
+      
+      window.addEventListener('mouseup', () => {
+        if (!dragging) return;
+        dragging = false;
+        outer.style.cursor = '';
+        const { min, max } = getBounds();
+        targetOffset = Math.max(min, Math.min(max, Math.round(targetOffset)));
+        startAnim();
+      });
+
+      outer.addEventListener('touchstart', e => {
+        if (cards.length <= 1) return;
+        dragging = true; dragMoved = false;
+        dragStartX = e.touches[0].clientX; dragBaseOffset = targetOffset;
+      }, { passive: true });
+      
+      outer.addEventListener('touchmove', e => {
+        if (!dragging) return;
+        const dx = e.touches[0].clientX - dragStartX;
+        if (Math.abs(dx) > 6) dragMoved = true;
+        if (dragMoved) e.preventDefault();
+        
+        const rawOffset = dragBaseOffset - dx / 60;
+        targetOffset = applyStretch(rawOffset);
+        startAnim();
+      }, { passive: false });
+      
+      outer.addEventListener('touchend', () => {
+        if (!dragging) return;
+        dragging = false;
+        const { min, max } = getBounds();
+        targetOffset = Math.max(min, Math.min(max, Math.round(targetOffset)));
+        startAnim();
+      });
+
+      let wheelTimer;
+      outer.addEventListener('wheel', e => {
+        if (cards.length <= 1) return;
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+          e.preventDefault();
+          const rawOffset = targetOffset + e.deltaX / 90; 
+          targetOffset = applyStretch(rawOffset);
+          startAnim();
+
+          // Debounced snap to int for scroll wheels
+          clearTimeout(wheelTimer);
+          wheelTimer = setTimeout(() => {
+             const { min, max } = getBounds();
+             targetOffset = Math.max(min, Math.min(max, Math.round(targetOffset)));
+             startAnim();
+          }, 150);
+        }
+      }, { passive: false });
+
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => layoutCards(false), 120);
+      });
+
+      new MutationObserver(() => updateIndicators())
+        .observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    async function init() {
+      const stage = document.getElementById('arc-deck-stage');
+      const outer = document.getElementById('arc-deck-outer');
+      if (!stage || !outer) return;
+
+      const PLACEHOLDERS = [
+        { title: 'Project One',   desc: 'A brief description of what this project does.',   href: 'projects.html', status: 'completed',  date: 'Jan 2025', image: '' },
+        { title: 'Project Two',   desc: 'Short summary of goals, tech, and outcomes.',       href: 'projects.html', status: 'in-progress', date: 'Mar 2025', image: '' },
+        { title: 'Project Three', desc: 'Hardware and software work across two semesters.',  href: 'projects.html', status: 'on-hold',     date: 'Nov 2024', image: '' },
+      ];
+
+      try {
+        const res = await fetch('projects.html');
+        if (!res.ok) throw new Error('Fetch failed');
+        
+        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        const allCards = doc.querySelectorAll('.project-card');
+        totalCount = allCards.length;
+        
+        // Take a maximum of 3 projects (allows 1 appended View All to reach 4 total limit)
+        const take = Math.min(3, allCards.length);
+        
+        for (let i = 0; i < take; i++) {
+          const c = allCards[i];
+          const imgEl = c.querySelector('img');
+          allProjects.push({
+            title:  c.querySelector('h2')?.textContent?.trim() || 'Project',
+            desc:   c.querySelector('p')?.textContent?.trim() || '',
+            image:  c.getAttribute('data-image') || (imgEl ? imgEl.src : ''),
+            href:   c.getAttribute('href') || c.querySelector('a')?.getAttribute('href') || 'projects.html',
+            status: c.querySelector('[data-status]')?.getAttribute('data-status') || '',
+            date:   c.querySelector('.date-label')?.textContent?.trim() || '',
+          });
+        }
+      } catch(e) {
+        console.warn('Arc deck: using placeholders');
+      }
+
+      if (allProjects.length === 0) { allProjects = PLACEHOLDERS; totalCount = allProjects.length; }
+
+      setupInteraction();
+
+      new IntersectionObserver((entries, obs) => {
+        if (entries[0].isIntersecting) {
+          outer.classList.add('deck-visible');
+          buildCards(stage, true);
+          obs.disconnect();
+        }
+      }, { threshold: 0.12 }).observe(outer);
+    }
+
+    return { init };
+  })();
+
+  document.addEventListener('DOMContentLoaded', () => {
+    ArcDeck.init();
+  });
+  </script>
+
+  <script>
     const UI = {
       body: document.body,
       themeToggle: document.getElementById('theme-toggle'),
       scrollBtn: document.getElementById('scroll-to-top'),
-      homeSection: document.getElementById('home') // Select Home section
     };
 
-    // --- 1. Load Animation ---
-    window.addEventListener('load', () => {
-      requestAnimationFrame(() => {
-        setTimeout(() => UI.body.style.transition = '', 100);
-      });
-    });
+    window.addEventListener('load', () => requestAnimationFrame(() => setTimeout(() => UI.body.style.transition = '', 100)));
 
-    // --- 2. Theme Toggle ---
     UI.themeToggle.addEventListener('click', () => {
       UI.body.classList.add('theme-transition');
-      const isDark = UI.body.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      const dark = UI.body.classList.toggle('dark');
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
       setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
     });
 
-    // --- 3. Smooth Scroll Engine ---
-    function smoothScrollTo(targetY) {
-      const startY = window.scrollY;
-      const distance = targetY - startY;
-      const duration = 800; // Optimized duration
-      let start = null;
-
-      function step(timestamp) {
-        if (!start) start = timestamp;
-        const progress = Math.min((timestamp - start) / duration, 1);
-        // EaseInOutCubic
-        const ease = progress < 0.5 
-          ? 4 * progress * progress * progress 
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-        
-        window.scrollTo(0, startY + (distance * ease));
-        if (progress < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    }
-
-    document.querySelectorAll('.smooth-scroll-link').forEach(link => {
+    document.querySelectorAll('.smooth-scroll-link').forEach(link =>
       link.addEventListener('click', e => {
         e.preventDefault();
-        const target = document.querySelector(link.getAttribute('href'));
-        if (target) smoothScrollTo(target.offsetTop - (target.id === 'about' ? 80 : 0));
-      });
-    });
+        document.querySelector(link.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+      })
+    );
+    UI.scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    UI.scrollBtn.addEventListener('click', () => smoothScrollTo(0));
-
-    // --- 4. Text Reveal Effects ---
-    const revealObserver = new IntersectionObserver((entries) => {
+    const revealObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const target = entry.target;
-          
-          // 1. Check for staggered delay from HTML data attribute
-          const delay = parseInt(target.getAttribute('data-delay') || 0);
-
-          const chars = target.querySelectorAll('.char-flip');
-          const blocks = target.classList.contains('about-title-row') 
-            ? document.querySelectorAll('.reveal-flip') 
-            : [];
-
-          // Reveal Characters (With added delay if present)
-          chars.forEach((c, i) => setTimeout(() => c.classList.add('visible'), delay + (i * 30)));
-          
-          // If this target is part of the download link, find the sibling SVG and animate it too
-          // This ensures the icon waits for the text, keeping it "clean"
-          const parentLink = target.closest('.download-link');
-          if (parentLink) {
-             const icon = parentLink.querySelector('svg');
-             if (icon) {
-                // Ensure initial hidden state then reveal
-                icon.style.opacity = '0';
-                icon.style.transform = 'translateY(5px)';
-                icon.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                setTimeout(() => {
-                    icon.style.opacity = '1';
-                    icon.style.transform = 'translateY(0) translate(0, 0)'; // Reset to allow hover effect later
-                }, delay);
-             }
-          }
-
-          // Reveal Blocks (if header or general reveal-flip element)
-          if (target.classList.contains('reveal-flip')) {
-             setTimeout(() => target.classList.add('visible'), delay);
-          }
-          
-          blocks.forEach((b, i) => setTimeout(() => b.classList.add('visible'), i * 200));
-          
-          revealObserver.unobserve(target);
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const delay = parseInt(el.getAttribute('data-delay') || 0);
+        el.querySelectorAll('.char-flip').forEach((c, i) => setTimeout(() => c.classList.add('visible'), delay + i * 30));
+        const dl = el.closest('.download-link');
+        if (dl) {
+          const icon = dl.querySelector('svg');
+          if (icon) { icon.style.opacity = '0'; icon.style.transition = 'opacity 0.5s ease'; setTimeout(() => icon.style.opacity = '1', delay); }
         }
+        if (el.classList.contains('reveal-flip')) setTimeout(() => el.classList.add('visible'), delay);
+        revealObserver.unobserve(el);
       });
     }, { rootMargin: '-50px', threshold: 0.1 });
 
-    // Initialize Split Text
     document.querySelectorAll('.split-flip-text').forEach(el => {
-      const text = el.textContent;
-      el.innerHTML = '';
-      text.split('').forEach(char => {
-        const span = document.createElement('span');
-        span.className = 'char-flip';
-        span.textContent = char;
-        el.appendChild(span);
-      });
+      el.innerHTML = el.textContent.split('').map(ch => `<span class="char-flip">${ch}</span>`).join('');
       revealObserver.observe(el);
     });
-
-    // Observe specific reveal-flip elements that aren't auto-observed by split-text
     document.querySelectorAll('.reveal-flip').forEach(el => revealObserver.observe(el));
 
-    // Specifically observe the About header container to trigger block reveals
-    const aboutHeader = document.querySelector('.about-title-row');
-    if (aboutHeader) revealObserver.observe(aboutHeader);
-
-    // Prevent mobile hover stuck states
-    document.addEventListener('touchstart', () => {}, {passive: true});
+    (() => {
+      const wrap = document.getElementById('id-wrapper');
+      const card = document.getElementById('id-card');
+      if (!wrap || !card) return;
+      let spinning = false, recovering = false, rt;
+      const reset = () => {
+        if (spinning) { rt = setTimeout(reset, 100); return; }
+        card.classList.remove('interacting');
+        card.style.setProperty('--rx','0deg'); card.style.setProperty('--ry','0deg');
+        card.style.setProperty('--px','50%'); card.style.setProperty('--py','50%');
+        card.style.boxShadow = 'none';
+      };
+      const spin = () => {
+        if (spinning) return;
+        spinning = true; card.classList.remove('interacting'); card.classList.add('spin-360');
+        setTimeout(() => { card.classList.remove('spin-360'); spinning = false; recovering = true; setTimeout(() => recovering = false, 300); }, 600);
+      };
+      const interact = (cx, cy) => {
+        if (spinning) return;
+        clearTimeout(rt);
+        const r = wrap.getBoundingClientRect();
+        const px = Math.max(0, Math.min(100, ((cx-r.left)/r.width)*100));
+        const py = Math.max(0, Math.min(100, ((cy-r.top)/r.height)*100));
+        const nx = Math.max(-1,Math.min(1,((cx-r.left)/r.width)*2-1));
+        const ny = Math.max(-1,Math.min(1,((cy-r.top)/r.height)*2-1));
+        const rx = Math.sin(ny*(Math.PI/2))*-16;
+        const ry = Math.sin(nx*(Math.PI/2))*16;
+        if (!recovering) card.classList.add('interacting');
+        card.style.setProperty('--rx',`${rx}deg`); card.style.setProperty('--ry',`${ry}deg`);
+        card.style.setProperty('--px',`${px}%`); card.style.setProperty('--py',`${py}%`);
+        card.style.boxShadow = `${-ry*1.5}px ${rx*1.5}px 30px ${getComputedStyle(document.body).getPropertyValue('--card-shadow')}`;
+      };
+      wrap.addEventListener('click', spin);
+      wrap.addEventListener('mousemove', e => interact(e.clientX, e.clientY));
+      wrap.addEventListener('mouseleave', () => { rt = setTimeout(reset, 500); });
+      let ts = {};
+      wrap.addEventListener('touchstart', e => { clearTimeout(rt); ts = { t: Date.now(), x: e.touches[0].clientX, y: e.touches[0].clientY }; }, { passive: true });
+      wrap.addEventListener('touchmove', e => { if (e.cancelable) e.preventDefault(); interact(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+      wrap.addEventListener('touchend', e => {
+        const d = Date.now() - ts.t, dist = Math.hypot(e.changedTouches[0].clientX - ts.x, e.changedTouches[0].clientY - ts.y);
+        if (d < 250 && dist < 20) { spin(); rt = setTimeout(reset, 600); } else { rt = setTimeout(reset, 500); }
+      });
+      wrap.addEventListener('touchcancel', () => { rt = setTimeout(reset, 500); });
+    })();
   </script>
 </body>
 </html>
