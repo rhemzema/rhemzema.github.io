@@ -87,14 +87,12 @@
 
     .slot-scroller { display: flex; flex-direction: column; width: 100%; transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
     .slot-label { height: 42px; display: flex; align-items: center; justify-content: center; width: 100%; flex-shrink: 0; }
-    .pill-accent:hover .slot-scroller { transform: translateY(-50%); }
 
     .scroll-to-top {
       position: relative; margin: 0 auto 20px auto; z-index: 10;
       overflow: hidden; align-items: flex-start !important; padding: 0;
     }
     .scroll-to-top .slot-label { height: 44px; width: 44px; }
-    .scroll-to-top:hover .slot-scroller { transform: translateY(-50%); }
 
     .theme-transition, .theme-transition * { 
       transition: background-color 0.32s ease, background 0.32s ease, color 0s, box-shadow 0.32s ease, border-color 0.32s ease !important; 
@@ -135,6 +133,10 @@
       .icon-btn:hover img { filter: brightness(0) saturate(100%) invert(27%) sepia(100%) saturate(2878%) hue-rotate(210deg) brightness(104%) contrast(97%); }
       body.dark .icon-btn:hover img { filter: brightness(0) saturate(100%) invert(70%) sepia(100%) saturate(2878%) hue-rotate(190deg) brightness(104%) contrast(97%); }
       .pill-accent:hover { box-shadow: 0 6px 18px rgba(11,95,255,0.3); }
+      .pill-accent:hover .slot-scroller { transform: translateY(-50%); }
+      .scroll-to-top:hover .slot-scroller { transform: translateY(-50%); }
+      .arc-card-viewall:hover { border-style: solid !important; }
+      .arc-card-viewall:hover .viewall-icon { background: color-mix(in srgb, var(--accent) 14%, transparent); }
     }
 
     .nav-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 50; pointer-events: none; }
@@ -403,13 +405,11 @@
     .arc-card-viewall { align-items: center; justify-content: center; gap: 10px; }
     body:not(.dark) .arc-card-viewall { border-style: dashed; }
     body.dark .arc-card-viewall { border-style: dashed; }
-    .arc-card-viewall:hover { border-style: solid !important; }
     .viewall-icon {
       width: 44px; height: 44px; border-radius: 50%;
       background: var(--hover-bg); display: flex; align-items: center; justify-content: center;
       transition: background 0.3s ease, transform 0.4s cubic-bezier(0.25,1,0.5,1);
     }
-    .arc-card-viewall:hover .viewall-icon { background: color-mix(in srgb, var(--accent) 14%, transparent); }
     .viewall-label { font-size: 15px; font-weight: 700; text-align: center; line-height: 1.35; }
     .viewall-count { font-size: 13px; color: var(--muted); font-weight: 500; }
 
@@ -1009,7 +1009,9 @@
       setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
     });
 
-    UI.scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    UI.scrollBtn.addEventListener('click', () => {
+      document.getElementById('home').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
 
     const revealObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
