@@ -53,6 +53,11 @@
       overflow-x: hidden;
     }
 
+    body.card-expanded {
+      overflow: hidden !important;
+      touch-action: none !important;
+    }
+
     .icon-btn, .pill, .download-link {
       display: inline-flex; align-items: center; justify-content: center;
       text-decoration: none; -webkit-tap-highlight-color: transparent;
@@ -818,7 +823,7 @@
         cards.push({ el: vaEl });
       }
 
-      const startIdx = 0; 
+      const startIdx = 1; 
 
       if (animate) {
         introStartOffset = cards.length + 1.8; // Set start position further down the arc
@@ -1009,9 +1014,35 @@
       setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
     });
 
-    UI.scrollBtn.addEventListener('click', () => {
-      document.getElementById('home').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Custom smooth scroll handler to bypass mobile scroll-snap conflicts
+    function safeSmoothScroll(targetId) {
+      const target = document.getElementById(targetId);
+      if (!target) return;
+      
+      // Temporarily remove snap to prevent jarring jumps on mobile
+      document.documentElement.style.scrollSnapType = 'none';
+      
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Re-enable snapping after the animation completes
+      setTimeout(() => {
+        document.documentElement.style.scrollSnapType = 'y mandatory';
+      }, 800);
+    }
+
+    UI.scrollBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      safeSmoothScroll('home');
     });
+
+    // Target the "About Me" button and apply the same safe scroll
+    const aboutBtn = document.querySelector('a[href="#about"]');
+    if (aboutBtn) {
+      aboutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        safeSmoothScroll('about');
+      });
+    }
 
     const revealObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -1124,6 +1155,7 @@
           spin();
           rt = setTimeout(reset, 600);
         } else {
+          reset();
           expandCard();
         }
       };
@@ -1133,14 +1165,18 @@
         clearTimeout(rt);
         const r = wrap.getBoundingClientRect();
         
-        // Even when scaled and translated, bounding client rect correctly bridges math 
-        const px = Math.max(0, Math.min(100, ((cx-r.left)/r.width)*100));
-        const py = Math.max(0, Math.min(100, ((cy-r.top)/r.height)*100));
-        const nx = Math.max(-1,Math.min(1,((cx-r.left)/r.width)*2-1));
-        const ny = Math.max(-1,Math.min(1,((cy-r.top)/r.height)*2-1));
+        // Boost sensitivity by 1.6x so you don't have to drag to the very edge, and remove sine wave for linear tracking
+        const rawNx = ((cx-r.left)/r.width)*2-1;
+        const rawNy = ((cy-r.top)/r.height)*2-1;
         
-        const rx = Math.sin(ny*(Math.PI/2))*-16;
-        const ry = Math.sin(nx*(Math.PI/2))*16;
+        const nx = Math.max(-1, Math.min(1, rawNx * 1.6));
+        const ny = Math.max(-1, Math.min(1, rawNy * 1.6));
+        
+        const px = (nx + 1) * 50;
+        const py = (ny + 1) * 50;
+        
+        const rx = ny * -16;
+        const ry = nx * 16;
         
         if (!recovering) card.classList.add('interacting');
         card.style.setProperty('--rx',`${rx}deg`); card.style.setProperty('--ry',`${ry}deg`);

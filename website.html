@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MePad V1 | Ruiqian Zhang</title>
+  <title>Personal Website | Ruiqian Zhang</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -314,18 +314,15 @@
       flex-shrink: 0;
       height: 300px;
       width: auto;
-      max-width: none; 
+      max-width: none;
       border-radius: 12px;
       cursor: pointer;
       object-fit: cover;
       scroll-snap-align: start;
       border: 1px solid var(--border);
       display: block;
-      /* Prevent image from turning blue/highlighted when dragging */
       -webkit-user-drag: none;
-      user-select: none;
-      -webkit-user-select: none;
-      transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1); 
+      transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     .content-image.square { width: 300px; height: 300px; }
@@ -339,7 +336,7 @@
       .content-image-grid .content-image:first-child:last-child.square {
         height: 250px !important;
         width: auto !important;
-        max-width: none !important; 
+        max-width: none !important;
         object-fit: cover !important;
       }
     }
@@ -380,7 +377,7 @@
 
     .image-modal-wrapper {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 950; pointer-events: none; 
+      z-index: 950; pointer-events: none;
       display: flex; align-items: center; justify-content: center;
     }
 
@@ -484,87 +481,53 @@
     <div class="container">
       <div class="project-layout">
         <aside class="project-sidebar">
-          <h1 class="split-flip-text">MePad V1</h1>
+          <h1 class="split-flip-text">Personal Website</h1>
           <div class="tag-row reveal-flip">
             <span class="pill-medicine no-hover status-in-progress">In Progress</span>
-            <span class="pill-medicine no-hover">Start Date: Jan 3, 2026</span>
+            <span class="pill-medicine no-hover">Start Date: Sep 20, 2025</span>
           </div>
-          <p class="intro reveal-flip">Welcome to my personal project, MePad! My take on the macro keypad.</p>
-          <p class="intro reveal-flip">My primary objective is to explore the entire process of product development from identifying user needs to hardware design and software implementation.</p>
+          <p class="intro reveal-flip">Welcome to my personal website project! A minimal, fast, and responsive portfolio built with the help from some videcoding :D</p>
+          <p class="intro reveal-flip">My primary objective was to refine my web development skills by avoiding bulky frameworks and relying strictly on vanilla HTML, CSS, and JavaScript.</p>
+        <div class="content-card reveal-flip">
+            <div class="text-grid-wrapper">
+              <p><a href="https://github.com/rhemzema/rhemzema.github.io" target="_blank">GitHub Repository</a></p>
+            </div>
+          </div>
           <div class="reveal-flip">
             <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--text);">Basic Requirements</h3>
             <div class="req-grid">
-              <div class="req-item"><span class="req-item-text">Compact Design</span></div>
-              <div class="req-item"><span class="req-item-text">Hotswap Switches</span></div>
-              <div class="req-item"><span class="req-item-text">Audio Controls</span></div>
-              <div class="req-item"><span class="req-item-text">2 USB Ports</span></div>
-              <div class="req-item"><span class="req-item-text">Multiple Switches</span></div>
-              <div class="req-item"><span class="req-item-text">Cheap</span></div>
+              <div class="req-item"><span class="req-item-text">Minimal</span></div>
+              <div class="req-item"><span class="req-item-text">Dark Mode</span></div>
+              <div class="req-item"><span class="req-item-text">Aesthetic</span></div>
+              <div class="req-item"><span class="req-item-text">Scalable</span></div>
+              <div class="req-item"><span class="req-item-text">Cheap Maintenence</span></div>
+              <div class="req-item"><span class="req-item-text">Cool!</span></div>
             </div>
+
           </div>
         </aside>
 
         <section class="project-feed">
-          <h2 class="reveal-flip">Dev Log</h2>
+          <h2 class="reveal-flip">Relevant Resources</h2>
 
           <div class="content-card reveal-flip">
-            <h3>Day 1: Layout Design</h3>
-            <span class="meta">Jan 3, 2026</span>
+            <h3>Design Inspiration</h3>
             <div class="image-grid-wrapper">
               <div class="content-image-grid">
-                <img src="assets/MePad_Layout.jpg" alt="MePad Layout Design" class="content-image" draggable="false" />
+                <img src="/assets/Website_Wongmjane.png" alt="Jane Wong Website" class="content-image" draggable="false" />
               </div>
             </div>
-            <p>Day one was the day I decided to start the project on a whim. I focused on researching and taking inspiration from online resources like Bilibili.</p>
-            <p>I set the initial layout for the keypad using <a href="http://keyboard-layout-editor.com" target="_blank">keyboard-layout-editor.com</a>. The plan is to have 9 custom regular switch keys and 2 scroll knobs—one for audio controls and one for scrolling through webpages or Premiere Pro timelines.</p>
-          </div>
-
-          <div class="content-card reveal-flip">
-            <h3>Day 2: PCB Schematics & Firmware</h3>
-            <span class="meta">Jan 5, 2026</span>
+            <p> <a href="https://wongmjane.com" target="_blank">wongmjane.com</a></p>
+            
             <div class="image-grid-wrapper">
               <div class="content-image-grid">
-                <img src="assets/MePad_Matrix.jpg" alt="MePad Switch Matrix" class="content-image" draggable="false" />
-                <img src="assets/MePad_Schematic.png" alt="MePad PCB Day 2" class="content-image" draggable="false" />
+                <img src="/assets/Website_Apple.png" alt="Apple Website" class="content-image" draggable="false" />
               </div>
+              <p> <a href="https://apple.com" target="_blank">apple.com</a></p>
             </div>
-            <p>Today was a big day for learning and design. I dived into the electrical engineering side of keyboards:</p>
-            <ul>
-              <li>Learned how to optimize microcontroller connections using a switch matrix.</li>
-              <li>Implemented diodes to avoid input ghosting.</li>
-              <li>Built initial keyboard firmware with <a href="https://kbfirmware.com" target="_blank">kbfirmware.com</a>.</li>
-              <li>Designed the PCB footprint using Autodesk Fusion 360 (Knobs: Top 15mm, Bottom 32mm).</li>
-              <li>Finished PCB schematics with EasyEDA centered on the ATmega32U4 microcontroller.</li>
-            </ul>
-          </div>
-
-          <div class="content-card reveal-flip">
-            <h3>Day 3: Component Placement</h3>
-            <span class="meta">Jan 6, 2026</span>
-            <div class="image-grid-wrapper">
-              <div class="content-image-grid">
-                <img src="assets/MePad_PCB_Day2.png" alt="MePad PCB Day 3" class="content-image" draggable="false" />
-              </div>
-            </div>
-            <p>Started work on component placement and ensuring components on the board fits within the planned housing constraints.</p>
-          </div>
-
-          <div class="content-card reveal-flip">
-            <h3>Day 4: PCB Wiring</h3>
-            <span class="meta">Jan 9, 2026</span>
-            <div class="image-grid-wrapper">
-              <div class="content-image-grid">
-                <img src="assets/MePad_PCB_Day3.png" alt="MePad PCB Day 4" class="content-image" draggable="false" />
-              </div>
-            </div>
-            <p>Started work on the wiring and routing of the PCB.</p>
-          </div>
-
-          <div class="content-card reveal-flip reduced-opacity" style="text-align: center;">
-            <h3 style="font-size: 20px; margin-bottom: 8px;">To be continued...</h3>
-            <p style="color: var(--muted); font-size: 14px; margin: 0;">More updates coming soon.</p>
           </div>
         </section>
+        
       </div>
     </div>
   </div>
@@ -694,7 +657,7 @@
         if (!isDown) return;
         e.preventDefault(); 
         const x = e.pageX - grid.offsetLeft;
-        const walk = (x - startX) * 1.5; 
+        const walk = (x - startX) * 1.5; // Drag speed multiplier
         
         if (Math.abs(walk) > 5) {
           isDragging = true;
@@ -703,6 +666,7 @@
         const newScrollLeft = scrollLeft - walk;
         const maxScroll = grid.scrollWidth - grid.clientWidth;
 
+        // Apply physical horizontal translate if dragged past limits (Rubber-banding)
         if (newScrollLeft < 0) {
           grid.scrollLeft = 0;
           grid.style.transform = `translate3d(${-newScrollLeft * 0.25}px, 0, 0)`;
@@ -723,6 +687,7 @@
         }, 400);
       }
 
+      // Merge click listener to prevent opening images if we were just dragging
       grid.addEventListener('click', (e) => {
         if (isDragging) {
           e.preventDefault();
@@ -738,6 +703,7 @@
     document.querySelectorAll('.content-image-grid .content-image').forEach(img => {
       img.addEventListener('dragstart', (e) => e.preventDefault());
     });
+
 
     // ── Image Modal Expansion Logic (Identical to index.html scaling) ────────
     const imageModal = document.getElementById('image-modal');
@@ -763,18 +729,6 @@
         imageModal.style.transform = `translateY(${diff}px)`;
       }
     });
-
-    function getFinalDimensions(img) {
-      const maxWidth = window.innerWidth * 0.9;
-      const maxHeight = window.innerHeight * 0.8;
-      let w = img.naturalWidth || 800;
-      let h = img.naturalHeight || 600;
-      
-      const aspect = w / h;
-      if (w > maxWidth) { w = maxWidth; h = w / aspect; }
-      if (h > maxHeight) { h = maxHeight; w = h * aspect; }
-      return { width: w, height: h };
-    }
 
     function expandImage(img) {
       isClosing = false;
