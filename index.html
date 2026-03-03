@@ -187,15 +187,25 @@
       z-index: 950;
     }
 
+    #home-projects-section h2 {
+      text-align: center;
+    }
+
+    #home-projects-section p {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
     #home-projects-section {
       margin-top: auto;
-      margin-bottom: auto;
+      margin-bottom: 0;
     }
 
     .site-footer-container { 
       text-align: center; 
       padding-bottom: 30px; 
-      margin-top: 60px; 
+      margin-top: 10px; 
     }
 
     .intro-text { flex: 1; transition: opacity 0.4s ease; }
@@ -253,15 +263,6 @@
     .spin-360 { animation: spin-y 0.6s cubic-bezier(0.175,0.885,0.32,1.275); }
     @keyframes spin-y { 0% { transform: rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)); } 100% { transform: rotateX(var(--rx,0deg)) rotateY(calc(var(--ry,0deg) + 360deg)); } }
 
-     Gemini said
-
-This happens because the introduction text next to the card forms its own visual layer (stacking context). Because it comes after the card in the HTML, when you rotate the card toward the right, the card slips underneath the invisible bounding box of the text and gets sliced off.
-
-To fix this, we just need to bring the card container's z-index to the front and preserve its 3D space.
-
-Find this block in your CSS (around line 235):
-CSS
-
     .id-card-container { width: 100%; display: flex; justify-content: center; }
     @media (min-width: 901px) {
       .id-card-container { width: auto; display: block; }
@@ -299,12 +300,21 @@ CSS
     .arc-deck-outer {
       position: relative;
       width: 100%;
-      height: 380px;
+      height: 440px;
       margin-top: 24px;
       margin-bottom: 10px;
       overflow: hidden;
-      -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
-      mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+      
+      /* Combine horizontal and vertical fading masks */
+      -webkit-mask-image: 
+        linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+        linear-gradient(to bottom, black 65%, transparent 100%);
+      -webkit-mask-composite: source-in;
+      mask-image: 
+        linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+        linear-gradient(to bottom, black 65%, transparent 100%);
+      mask-composite: intersect;
+      
       opacity: 0;
       transform: translateY(16px);
       transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
@@ -315,8 +325,8 @@ CSS
 
     .arc-card {
       position: absolute;
-      width: 220px;
-      height: 280px;
+      width: 260px;
+      height: 340px;
       border-radius: 18px;
       box-sizing: border-box;
       text-decoration: none;
@@ -327,10 +337,11 @@ CSS
       display: flex;
       flex-direction: column;
       transform-origin: bottom center;
-      will-change: transform, opacity, top, left;
-      transition: box-shadow 0.35s ease, border-color 0.25s ease, opacity 0.5s ease;
+      will-change: transform, opacity; /* Optimized for GPU */
+      transition: box-shadow 0.35s ease, border-color 0.25s ease, opacity 0.5s ease, transform 0.35s ease, translate 0.35s ease;
       opacity: 0;
     }
+
     .arc-card.card-in { opacity: 1; }
 
     body:not(.dark) .arc-card {
@@ -357,7 +368,7 @@ CSS
     .arc-card:active { opacity: 0.85 !important; }
 
     .arc-card-thumb {
-      width: 100%; height: 130px; flex-shrink: 0;
+      width: 100%; height: 160px; flex-shrink: 0;
       background: linear-gradient(135deg,
         color-mix(in srgb, var(--accent) 10%, var(--bg)),
         color-mix(in srgb, var(--accent) 4%, var(--bg))
@@ -371,7 +382,7 @@ CSS
     .arc-card-body { padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
     .arc-card-title { font-size: 15px; font-weight: 700; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.25s ease; }
     .arc-card-desc { 
-      font-size: 12px; 
+      font-size: 14px; 
       color: var(--muted); 
       margin: 0; 
       display: -webkit-box; 
@@ -416,6 +427,7 @@ CSS
       .arc-deck-outer { height: 320px; }
       .arc-card { width: 170px; height: 230px; }
       .arc-card-thumb { height: 95px; }
+      .arc-card-desc { font-size: 12px; }
     }
   </style>
 </head>
@@ -462,7 +474,7 @@ CSS
               <a class="icon-btn square x pop-in" style="animation-delay:550ms" href="https://x.com/rhemzema" target="_blank"><img src="icons/x_300x.svg" alt="X"></a>
             </div>
             <div class="pill-row" style="margin-top:16px;">
-              <a class="pill pill-wipe" href="projects.html" style="animation-delay:500ms">Projects</a>
+              <a class="pill pill-wipe" href="projects.html" style="animation-delay:500ms">All Projects</a>
               <a class="pill pill-wipe" href="mailto:rhema@vt.edu" style="animation-delay:500ms">Email</a>
             </div>
             <div class="pill-row">
@@ -502,7 +514,7 @@ CSS
 
       <div class="projects-footer-group">
         <section id="home-projects-section">
-          <h2 class="reveal-flip">Projects</h2>
+          <h2 class="reveal-flip">Recent Projects</h2>
           <div class="arc-deck-outer" id="arc-deck-outer">
             <div class="arc-deck-stage" id="arc-deck-stage"></div>
           </div>
@@ -544,6 +556,10 @@ CSS
     let dragStartX     = 0;
     let dragBaseOffset = 0;
     let dragMoved      = false;
+    
+    // New variables for the intro animation
+    let introStartOffset = 0;
+    let animStartTime    = null;
 
     const CARD_W    = 220;
     const CARD_W_SM = 170;
@@ -581,7 +597,6 @@ CSS
       const totalW  = (n - 1) * GAP;
       const CY      = IH + DOT_R + 2;
       const isDark  = document.body.classList.contains('dark');
-      const accent  = getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#0b5fff';
 
       svg.innerHTML = '';
 
@@ -598,9 +613,7 @@ CSS
         circle.setAttribute('r', DOT_R + (activeMix * 0.5)); 
         circle.classList.add('arc-dot');
         
-        if (activeMix > 0.5) circle.setAttribute('fill', isDark ? '#98a6b3' : '#6b7280');
-        else circle.setAttribute('fill', isDark ? '#98a6b3' : '#6b7280');
-        
+        circle.setAttribute('fill', isDark ? '#98a6b3' : '#6b7280');
         circle.setAttribute('opacity', 0.2 + 0.8 * activeMix);
         circle.style.pointerEvents = 'auto';
         circle.style.cursor = 'pointer';
@@ -608,6 +621,9 @@ CSS
         circle.addEventListener('click', () => {
           const { min, max } = getBounds();
           targetOffset = Math.max(min, Math.min(max, i));
+          
+          // Interrupt intro if clicked early
+          if (animStartTime) animStartTime = null; 
           startAnim();
         });
         svg.appendChild(circle);
@@ -619,24 +635,23 @@ CSS
       svg.style.height = `${vbH + DOT_R + 2}px`;
     }
 
-    function placeCard(el, topPx, leftCss, tilt, scale, zi, alpha, noTrans) {
-      el.style.transition = noTrans ? 'none' : 'translate 0.35s ease, box-shadow 0.35s ease, border-color 0.25s ease, opacity 0.5s ease';
-      el.style.top    = `${topPx}px`;
-      el.style.left   = leftCss;
+    function placeCard(el, x, y, tilt, scale, zi, alpha, isAnimating) {
+      // Keep hover-related transitions alive even during JS physics animations
+      el.style.transition = isAnimating 
+        ? 'translate 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease' 
+        : 'translate 0.35s ease, box-shadow 0.35s ease, border-color 0.25s ease, opacity 0.5s ease, transform 0.35s ease';
+      
       el.style.zIndex = zi;
       el.style.opacity = alpha;
-      el.style.setProperty('--card-tilt',  `${tilt}deg`);
-      el.style.setProperty('--card-scale', scale);
-      el.style.transform = `rotate(${tilt}deg) scale(${scale})`;
+      el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${tilt}deg) scale(${scale})`;
     }
 
-    function layoutCards(noTrans) {
+    function layoutCards(isAnimating) {
       const outer = document.getElementById('arc-deck-outer');
       if (!outer || !cards.length) return;
 
       const cw = getCardW();
       const W  = Math.min(outer.clientWidth * 0.9, 860);
-      
       const step = outer.clientWidth < 600 ? 0.32 : 0.24; 
 
       cards.forEach((card, i) => {
@@ -650,24 +665,55 @@ CSS
         const zi    = Math.round(100 - dist * 10);
         const alpha = t < 0 ? Math.max(0, 1 + t * 4) : (t > 1 ? Math.max(0, 1 - (t - 1) * 4) : 1);
         
-        placeCard(card.el, TOP_PAD + (ARC_H - y), `calc(50% + ${x}px - ${cw / 2}px)`, tilt, scale, zi, alpha, noTrans);
+        // Anchor the card perfectly in the center once, then let GPU handle the rest
+        if (!card.el.dataset.anchored) {
+          card.el.style.top = `${TOP_PAD}px`;
+          card.el.style.left = `50%`;
+          card.el.style.marginLeft = `${-cw / 2}px`;
+          card.el.dataset.anchored = 'true';
+        }
+
+        placeCard(card.el, x, ARC_H - y, tilt, scale, zi, alpha, isAnimating);
       });
 
-      if (noTrans) setTimeout(() => { cards.forEach(c => { c.el.style.transition = 'translate 0.35s ease, box-shadow 0.35s ease, border-color 0.25s ease, opacity 0.5s ease'; }); }, 20);
       updateIndicators();
     }
 
+    // Standard interactive physics loop (for dragging)
     function tick() {
       const diff = targetOffset - offset;
       if (Math.abs(diff) < 0.001) {
         offset = targetOffset;
-        layoutCards(false);
+        layoutCards(false); 
         animRaf = null;
         return;
       }
-      offset += diff * 0.16; 
-      layoutCards(false);
+      offset += diff * 0.16; // Increased from 0.12 to 0.16 for a more responsive, tighter drag
+      layoutCards(true);
       animRaf = requestAnimationFrame(tick);
+    }
+
+    // New time-based Ease-Out curve (just for the entrance)
+    function introTick(now) {
+      if (!animStartTime) animStartTime = now;
+      const elapsed = now - animStartTime;
+      const duration = 1300; // Reduced from 2000ms for a quicker overall sequence
+      let progress = Math.min(elapsed / duration, 1);
+
+      if (progress === 1) {
+        offset = targetOffset;
+        layoutCards(false); 
+        animRaf = null;
+        animStartTime = null;
+        return;
+      }
+
+      // Ease-Out Quart: Starts moving immediately at high speed, then gracefully settles
+      const ease = 1 - Math.pow(1 - progress, 4);
+      
+      offset = introStartOffset + (targetOffset - introStartOffset) * ease;
+      layoutCards(true); 
+      animRaf = requestAnimationFrame(introTick);
     }
 
     function startAnim() {
@@ -773,40 +819,41 @@ CSS
       }
 
       const startIdx = 0; 
-      offset = startIdx; targetOffset = startIdx;
 
       if (animate) {
-        const cw = getCardW();
-        const cl = `calc(50% - ${cw / 2}px)`;
-        cards.forEach(c => {
-          c.el.style.transition = 'none';
-          c.el.style.top = `${TOP_PAD}px`;
-          c.el.style.left = cl;
-          c.el.style.transform = 'rotate(0deg) scale(0.92)';
-          c.el.style.opacity = '0';
-          c.el.style.zIndex = '50';
-        });
-        outer && outer.offsetHeight;
-        cards.forEach((c, i) => {
-          setTimeout(() => {
-            c.el.style.transition = 'translate 0.35s ease, box-shadow 0.35s ease, border-color 0.25s ease, opacity 0.5s ease';
-            c.el.classList.add('card-in');
-            layoutCards(false);
-          }, 40 + i * 55);
-        });
+        introStartOffset = cards.length + 1.8; // Set start position further down the arc
+        offset = introStartOffset; 
+        targetOffset = startIdx;
+        
+        layoutCards(true); 
+        cards.forEach(c => c.el.classList.add('card-in'));
+        
+        animStartTime = null;
+        animRaf = requestAnimationFrame(introTick);
       } else {
-        layoutCards(true);
+        offset = startIdx; 
+        targetOffset = startIdx;
+        layoutCards(false);
         cards.forEach(c => c.el.classList.add('card-in'));
       }
-      updateIndicators();
     }
 
     function setupInteraction() {
       const outer = document.getElementById('arc-deck-outer');
       if (!outer) return;
 
+      const interruptIntro = () => {
+        if (animStartTime) {
+          cancelAnimationFrame(animRaf);
+          animRaf = null;
+          animStartTime = null;
+          targetOffset = offset; // Sync targets so the deck doesn't snap
+        }
+      };
+
       outer.addEventListener('mousedown', e => {
         if (cards.length <= 1) return;
+        interruptIntro();
         dragging = true; dragMoved = false;
         dragStartX = e.clientX; dragBaseOffset = targetOffset;
         outer.style.cursor = 'grabbing';
@@ -834,6 +881,7 @@ CSS
 
       outer.addEventListener('touchstart', e => {
         if (cards.length <= 1) return;
+        interruptIntro();
         dragging = true; dragMoved = false;
         dragStartX = e.touches[0].clientX; dragBaseOffset = targetOffset;
       }, { passive: true });
@@ -862,6 +910,8 @@ CSS
         if (cards.length <= 1) return;
         if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
           e.preventDefault();
+          interruptIntro();
+          
           const rawOffset = targetOffset + e.deltaX / 90; 
           targetOffset = applyStretch(rawOffset);
           startAnim();
