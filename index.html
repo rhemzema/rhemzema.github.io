@@ -226,7 +226,7 @@
     }
 
     /* ── Scroll-to-top (inline, centered below footer) ────── */
-    .scroll-to-top { position: relative; margin: 0 auto 20px; z-index: 10; }
+    .scroll-to-top { position: relative; margin: 0 auto 20px; z-index: 10; opacity: 1 !important; pointer-events: auto !important; }
   </style>
 </head>
 <body>
@@ -660,7 +660,10 @@
     // Theme toggle already attached by shared.js
     RZ.splitFlipText();
     RZ.observeReveal();
-    RZ.initScrollToTop();
+    // Scroll-to-top: inline button on index, always visible — just wire the click
+    document.getElementById('scroll-to-top').addEventListener('click', () =>
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    );
     RZ.initScrollProgress();
 
     // "About Me" pill smooth scroll
@@ -669,10 +672,6 @@
       document.getElementById('about').scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
-    // Scroll-to-top visibility: also show when past first screen
-    window.addEventListener('scroll', () => {
-      const btn = document.getElementById('scroll-to-top');
-    }, { passive: true });
   </script>
 </body>
 </html>

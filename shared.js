@@ -39,6 +39,7 @@ window.RZ = (() => {
       const text = el.textContent.trim();
       el.setAttribute('aria-label', text);
       el.innerHTML = text.split('').map(ch => `<span class="char-flip">${ch}</span>`).join('');
+      el.style.visibility = 'visible';
     });
     // Trigger visible on load
     window.addEventListener('load', () => {
