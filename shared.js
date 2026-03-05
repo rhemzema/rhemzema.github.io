@@ -41,12 +41,17 @@ window.RZ = (() => {
       el.innerHTML = text.split('').map(ch => `<span class="char-flip">${ch}</span>`).join('');
       el.style.visibility = 'visible';
     });
-    // Trigger visible on load
-    window.addEventListener('load', () => {
+    // Trigger visible — guard against load already having fired
+    function revealChars() {
       document.querySelectorAll('.char-flip').forEach((c, i) =>
         setTimeout(() => c.classList.add('visible'), i * delay)
       );
-    });
+    }
+    if (document.readyState === 'complete') {
+      revealChars();
+    } else {
+      window.addEventListener('load', revealChars);
+    }
   }
 
   /* ── 3. Intersection-observer reveal ───────────────────── */
