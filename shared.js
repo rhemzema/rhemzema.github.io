@@ -78,28 +78,20 @@ window.RZ = (() => {
     document.querySelectorAll(selector).forEach(el => obs.observe(el));
   }
 
-  /* ── 4. Smooth scroll to top ───────────────────────────── */
-  function smoothScrollTop(duration = 800) {
-    const startY    = window.scrollY;
-    let   startTime = null;
-    function tick(now) {
-      if (!startTime) startTime = now;
-      const t    = Math.min((now - startTime) / duration, 1);
-      const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-      window.scrollTo(0, startY * (1 - ease));
-      if (t < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
+  function smoothScrollTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function initScrollToTop(btnId = 'scroll-to-top') {
     const btn = document.getElementById(btnId);
     if (!btn) return;
     btn.addEventListener('click', () => smoothScrollTop());
-    window.addEventListener('scroll', () => {
+    function check() {
       const atBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
       btn.classList.toggle('visible', atBottom || window.scrollY > 400);
-    }, { passive: true });
+    }
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('load', check);
   }
 
   /* ── 5. Scroll-progress bar ─────────────────────────────── */
@@ -107,9 +99,9 @@ window.RZ = (() => {
     const bar = document.getElementById(barId);
     if (!bar) return;
     window.addEventListener('scroll', () => {
-      const total   = document.documentElement.scrollHeight - window.innerHeight;
-      const pct     = total > 0 ? (window.scrollY / total) * 100 : 0;
-      bar.style.width = pct + '%';
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      const pct   = total > 0 ? window.scrollY / total : 0;
+      bar.style.transform = `scaleX(${pct})`;
       bar.classList.toggle('visible', window.scrollY > 80);
     }, { passive: true });
   }

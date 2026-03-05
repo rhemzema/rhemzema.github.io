@@ -24,6 +24,7 @@
     .project-feed    { width: 70%; flex-grow: 1; }
 
     h1 { font-size: 32px; font-weight: 800; margin: 0 0 24px; letter-spacing: -0.5px; line-height: 1.2; }
+    @media (max-width: 768px) { h1 { font-size: 32px; } }
     h2 { font-size: 20px; font-weight: 600; color: var(--accent); margin: 0 0 24px; }
     p.intro { color: var(--muted); margin-bottom: 24px; line-height: 1.6; font-size: 16px; }
 
@@ -292,6 +293,20 @@
     let currentImages = [], currentIdx = 0, activeImg = null, isExpanded = false;
     let isClosing = false, closingScrollY = 0;
 
+    let scrollLockY = 0;
+    function lockScroll() {
+      scrollLockY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollLockY}px`;
+      document.body.style.width = '100%';
+    }
+    function unlockScroll() {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo({ top: scrollLockY, behavior: 'instant' });
+    }
+
     window.addEventListener('scroll', () => {
       if (isClosing) imageModal.style.transform = `translateY(${closingScrollY - window.scrollY}px)`;
     });
@@ -312,7 +327,7 @@
       img.style.opacity = '0';
       modalContent.offsetHeight;
       backdrop.classList.add('visible'); closeBtn.classList.add('visible');
-      document.body.style.overflow = 'hidden'; isExpanded = true;
+      lockScroll(); isExpanded = true;
       requestAnimationFrame(() => {
         modalContent.style.transition = 'transform 0.6s cubic-bezier(0.25,1,0.5,1), box-shadow 0.6s ease, width 0.3s ease, height 0.3s ease';
         modalContent.style.setProperty('--tx', '0px'); modalContent.style.setProperty('--ty', '0px');
@@ -331,8 +346,8 @@
 
     function closeModal() {
       if (!isExpanded || !activeImg) return;
-      isClosing = true; closingScrollY = window.scrollY;
-      document.body.style.overflow = '';
+      isClosing = true; closingScrollY = scrollLockY;
+      unlockScroll();
       const parentGrid = activeImg.closest('.content-image-grid');
       if (parentGrid) parentGrid.style.overflowX = 'hidden';
       const rect = activeImg.getBoundingClientRect();

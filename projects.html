@@ -15,6 +15,7 @@
   <style>
     /* ── Page layout ────────────────────────────────────────── */
     h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+    @media (max-width: 768px) { h1 { font-size: 32px; } }
     p.intro { color: var(--muted); margin-bottom: 32px; line-height: 1.5; max-width: 600px; }
 
     .content-wrap {
@@ -48,7 +49,7 @@
       border: 1px solid var(--border); border-radius: 16px; padding: 6px; min-width: 180px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       opacity: 0; visibility: hidden; transform: translateY(-10px) scale(0.98);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); z-index: 80;
     }
     .sort-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
 
@@ -145,6 +146,11 @@
   <div class="top-nav-bg"></div>
 
   <nav class="nav-wrapper">
+    <div class="nav-left-group">
+      <a href="https://rhemzema.github.io" class="icon-btn square" aria-label="Back to Home">
+        <div class="icon-mask back-icon"></div>
+      </a>
+    </div>
     <div class="nav-right-group">
       <a href="https://rhemzema.github.io" class="icon-btn square" aria-label="Go to Home">
         <div class="home-icon"></div>
