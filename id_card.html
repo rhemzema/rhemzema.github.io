@@ -4,84 +4,53 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <title>Card | Ruiqian Zhang</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   <link rel="icon" href="icons/face.svg" type="image/svg+xml">
 
+  <link rel="stylesheet" href="shared.css">
+
   <style>
+    /* ── ID card page: no scroll, centered ───────────────────── */
     :root {
-      /* Colors */
-      --bg: #f2f0ef;
-      --text: #111;
-      --muted: #6b7280;
-      --accent: #861F41; /* Maroon */
-      
-      /* Dynamic UI Colors */
-      --hover-bg: rgba(134, 31, 65, 0.06);
-      --border: rgba(16, 24, 40, 0.06);
-      
-      /* Shadows */
-      --btn-shadow: rgba(134, 31, 65, 0.08);
+      --card-accent: #861F41;
       --card-shadow: rgba(134, 31, 65, 0.3);
     }
-
     body.dark {
-      --bg: #071221;
-      --text: #f2f0ef;
-      --muted: #98a6b3;
-      --accent: #E5751F; /* Orange */
-      
-      /* Dark Overrides */
-      --hover-bg: rgba(255, 255, 255, 0.06);
-      --border: rgba(255, 255, 255, 0.06);
-      
-      /* Shadows */
-      --btn-shadow: rgba(200, 200, 200, 0.18);
+      --card-accent: #E5751F;
       --card-shadow: rgba(229, 117, 31, 0.75);
     }
 
-    /* --- Base Layout --- */
     body {
-      height: 100vh; 
-      height: 100dvh; 
-      margin: 0; padding: 0;
-      overflow: hidden; /* Prevent Scrolling */
-      
-      font-family: 'Inter', sans-serif;
-      background: var(--bg); color: var(--text);
-      
-      display: flex; 
-      flex-direction: column;
-      align-items: center; /* Center Horizontal */
-      justify-content: center; /* Center Vertical */
-      
-      /* DEFAULT PADDING (Desktop) */
+      height: 100vh; height: 100dvh;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       box-sizing: border-box;
     }
 
-    /* --- ID Card --- */
+    /* ── Card wrapper (3-D tilt host) ───────────────────────── */
     .id-card-wrapper {
-      perspective: 1000px; 
-      width: 100%; max-width: 320px; 
-      margin-bottom: 25px; /* Gap between card and buttons */
+      perspective: 1000px;
+      width: 100%; max-width: 320px;
+      margin-bottom: 25px;
       transform-style: preserve-3d;
-      z-index: 10;
-      /* Ensure touches are captured */
-      touch-action: none; 
+      z-index: 10; touch-action: none;
     }
 
+    /* ── Physical card ──────────────────────────────────────── */
     .student-id {
       position: relative; width: 100%; aspect-ratio: 0.63;
       background: #fff; border-radius: 20px;
       border: 1px solid rgba(0,0,0,0.1); padding: 30px;
       box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;
       overflow: hidden; transform-style: preserve-3d;
-      background-image: radial-gradient(circle at 100% 0%, rgba(134, 31, 65, 0.08) 0%, transparent 30%);
+      background-image: radial-gradient(circle at 100% 0%, rgba(134,31,65,0.08) 0%, transparent 30%);
       transition: transform 0.1s linear, box-shadow 0.1s linear;
     }
-    body.dark .student-id { border-color: rgba(255,255,255,0.2); background-color: #fff; }
+    body.dark .student-id { border-color: rgba(255,255,255,0.2); }
 
     /* Glare */
     .id-glare {
@@ -91,16 +60,11 @@
       background-size: 250% 250%; transition: opacity 0.2s ease;
     }
 
-    /* Card Content */
-    .id-header { display: flex; justify-content: flex-start; border-bottom: 2px solid var(--accent); padding-bottom: 15px; transform: translateZ(20px); }
-    
-    .id-logo {
-      height: 30px; /* Matches the previous font size */
-      width: auto;
-      display: block;
-    }
+    /* Content layers */
+    .id-header { display: flex; justify-content: flex-start; border-bottom: 2px solid var(--card-accent); padding-bottom: 15px; transform: translateZ(20px); }
+    .id-logo   { height: 30px; width: auto; display: block; }
+    .id-body   { display: flex; flex-direction: column; align-items: center; gap: 25px; flex-grow: 1; transform: translateZ(10px); }
 
-    .id-body { display: flex; flex-direction: column; align-items: center; gap: 25px; flex-grow: 1; transform: translateZ(10px); }
     .id-photo-box {
       width: 140px; height: 170px; background: #f2f0ef;
       border: 1px solid var(--border); border-radius: 12px;
@@ -108,170 +72,69 @@
     }
     .id-photo-box img { width: 100%; height: 100%; object-fit: cover; opacity: 0.95; }
 
-    .id-info { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-    .id-name { font-size: 22px; font-weight: 700; color: #111; text-align: center; margin: 0 0 10px 0; }
-    
+    .id-info  { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+    .id-name  { font-size: 22px; font-weight: 700; color: #111; text-align: center; margin: 0 0 10px; }
     .id-field { display: flex; justify-content: space-between; font-size: 14px; border-bottom: 1px dashed rgba(16,24,40,0.1); padding-bottom: 4px; }
     .id-label { color: #6b7280; font-weight: 500; font-size: 11px; text-transform: uppercase; }
     .id-value { color: #111; font-weight: 600; text-align: right; }
 
     .id-footer { margin-top: auto; padding-top: 10px; transform: translateZ(5px); }
-    .barcode {
-      height: 20px; width: 100%; opacity: 0.6;
-      background: repeating-linear-gradient(90deg, #111 0, #111 2px, transparent 2px, transparent 5px, #111 5px, #111 7px, transparent 7px, transparent 10px);
-    }
+    .barcode   { height: 20px; width: 100%; opacity: 0.6; background: repeating-linear-gradient(90deg, #111 0, #111 2px, transparent 2px, transparent 5px, #111 5px, #111 7px, transparent 7px, transparent 10px); }
 
-    /* --- Controls --- */
-    .ui-container { 
-      display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 100; 
-      opacity: 0; 
-      transition: opacity 0.8s ease; 
-      transition-delay: 0.4s; /* Slight delay so it appears after card starts */
+    /* ── Controls ────────────────────────────────────────────── */
+    .ui-container {
+      display: flex; flex-direction: column; align-items: center; gap: 20px;
+      z-index: 100; opacity: 0; transition: opacity 0.8s ease 0.4s;
     }
     .page-loaded .ui-container { opacity: 1; }
-
     .icon-row { display: flex; gap: 16px; }
 
-    .icon-btn {
-      cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
-      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 44px; height: 44px; border-radius: 8px; border: 0; background: transparent; color: var(--muted);
-    }
-    .icon-btn:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
-
-    .icon-mask {
-      width: 16px; height: 16px; display: block;
-      background-color: currentColor; 
-      -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-      -webkit-mask-position: center; mask-position: center;
-      -webkit-mask-size: contain; mask-size: contain;
-    }
-    .back-icon { 
-      width: 16px; height: 16px; display: block;
-      -webkit-mask-image: url('icons/up_arrow.svg'); 
-      mask-image: url('icons/up_arrow.svg'); 
-      transform: rotate(-90deg); 
-    }
-    .home-icon { 
-      width: 20px; height: 20px; display: block;
-      -webkit-mask-image: url('icons/home.svg'); 
-      mask-image: url('icons/home.svg'); 
-    }
-
-    @media (hover: hover) {
-      .icon-btn:hover { 
-        background: var(--hover-bg); color: var(--accent); 
-        transform: translateY(-3px) scale(1.02); 
-        box-shadow: 0 6px 18px var(--btn-shadow);
-        transition: color 0s, transform 0.6s, box-shadow 0.3s;
-      }
-    }
-
-    .theme-transition, .theme-transition * { 
-      transition: background-color 0.32s ease, border-color 0.32s ease, color 0s, box-shadow 0.32s ease !important; 
-    }
-
-    /* --- ANIMATION (Only for Card) --- */
-    .reveal-flip {
-      opacity: 0; 
-      transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
-      transform-origin: top center;
-      transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .reveal-flip.visible { 
-      opacity: 1; 
-      transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); 
-    }
-    
-    /* --- 360 SPIN ANIMATION --- */
-    .spin-360 {
-      /* 0.6s spin with a slight bounce at the end */
-      animation: spin-y 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
+    /* ── Spin animation ──────────────────────────────────────── */
     @keyframes spin-y {
-      0% { transform: rotateY(0deg); }
+      0%   { transform: rotateY(0deg); }
       100% { transform: rotateY(360deg); }
     }
+    .spin-360 { animation: spin-y 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-/* --- MOBILE ADJUSTMENTS --- */
+    /* ── Mobile ──────────────────────────────────────────────── */
     @media (max-width: 768px) {
-      body {
-        padding-bottom: 4vh;
-        padding-left: 15px;
-        padding-right: 15px;
-      } 
-
-      body.id-label {
-        font-size: 9px;
-      }
-
-      body.id-value {
-        font-size: 9px;
-      }
-
-      h3.id-name {
-        font-size: 16px;
-      }
-      
-      .barcode {
-        height: 12px;
-      }
-      
-      .id-card-wrapper {
-        margin-bottom: 20px;
-        max-width: 250px; /* ADDED: Reduces card width (and height automatically) */
-      }
-
-      .id-header img {
-        width: 70%;
-        height: 70%;
-        transform: translateX(-22px);
-      }
-
-      .id-header {
-        padding-bottom: 10px; /* ADDED: Reduces space below header */
-        justify-content: left;
-      }
-      
-      .student-id {
-        padding: 15px;    /* ADDED: Reduces internal spacing for the smaller size */
-      }
-      
-      /* Optional: Scale down the photo slightly if it feels too tight */
-      .id-photo-box {
-        width: 95px;     /* ADDED: Slightly smaller photo for mobile */
-        height: 110px;
-      }
+      body { padding-bottom: 4vh; padding-left: 15px; padding-right: 15px; }
+      .id-card-wrapper { margin-bottom: 20px; max-width: 250px; }
+      .id-header { padding-bottom: 10px; }
+      .id-header img { width: 70%; height: 70%; transform: translateX(-22px); }
+      .student-id { padding: 15px; }
+      .id-photo-box { width: 95px; height: 110px; }
+      .barcode { height: 12px; }
+      .id-name  { font-size: 16px; }
     }
   </style>
 </head>
 <body>
-
   <script>
     (function() {
-      const saved = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const s = localStorage.getItem('theme'), d = window.matchMedia('(prefers-color-scheme: dark)').matches;
       document.body.style.transition = 'none';
-      if (saved === 'dark' || (!saved && prefersDark)) document.body.classList.add('dark');
+      if (s === 'dark' || (!s && d)) document.body.classList.add('dark');
     })();
   </script>
 
   <div class="id-card-wrapper reveal-flip" id="id-wrapper">
     <div class="student-id" id="id-card">
       <div class="id-glare" id="id-glare"></div>
-      
+
       <div class="id-header">
         <img src="/logos/Virginia_Tech_logo.svg" class="id-logo" alt="Virginia Tech">
       </div>
-        
+
       <div class="id-body">
-        <div class="id-photo-box"><img src="/Images/Ruiqian.jpg" alt="Profile"></div>
+        <div class="id-photo-box">
+          <img src="/Images/Ruiqian.jpg" alt="Profile">
+        </div>
         <div class="id-info">
           <h3 class="id-name">Ruiqian (Rhema) Zhang</h3>
-          <div class="id-field"><span class="id-label">Age:</span><span class="id-value">20</span></div>
+          <div class="id-field"><span class="id-label">Age:</span>  <span class="id-value">20</span></div>
           <div class="id-field"><span class="id-label">Major:</span><span class="id-value">Electrical Engineering</span></div>
-          <div class="id-field" style="border-bottom: none;"><span class="id-label">Hometown:</span><span class="id-value">China</span></div>
+          <div class="id-field" style="border-bottom:none"><span class="id-label">Hometown:</span><span class="id-value">China</span></div>
           <div class="barcode"></div>
         </div>
       </div>
@@ -294,123 +157,60 @@
     </div>
   </div>
 
+  <script src="shared.js"></script>
   <script>
-    // --- State ---
-    const UI = {
-      wrapper: document.getElementById('id-wrapper'),
-      card: document.getElementById('id-card'),
-      glare: document.getElementById('id-glare'),
-      themeBtn: document.getElementById('theme-toggle')
-    };
-    
-    // --- Init ---
+    // Entrance animation
     window.addEventListener('load', () => {
       setTimeout(() => document.body.style.transition = '', 100);
-      
-      // 1. Trigger Card Flip
-      const animatedElements = document.querySelectorAll('.reveal-flip');
-      setTimeout(() => {
-        animatedElements.forEach(el => el.classList.add('visible'));
-      }, 100);
-
-      // 2. Trigger Button Fade (Standard)
+      setTimeout(() => document.getElementById('id-wrapper').classList.add('visible'), 100);
       requestAnimationFrame(() => document.body.classList.add('page-loaded'));
     });
 
-    // --- Actions ---
-    UI.themeBtn.addEventListener('click', () => {
-      document.body.classList.add('theme-transition');
-      const isDark = document.body.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      setTimeout(() => document.body.classList.remove('theme-transition'), 420);
-    });
+    // Card tilt / touch spin
+    const wrap  = document.getElementById('id-wrapper');
+    const card  = document.getElementById('id-card');
+    const glare = document.getElementById('id-glare');
 
+    let rt;
     function updateCard(rx, ry, px, py) {
-      UI.card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
-      const shadowColor = getComputedStyle(document.body).getPropertyValue('--card-shadow');
-      UI.card.style.boxShadow = `${-ry * 2}px ${rx * 2}px 30px ${shadowColor}`;
-      UI.glare.style.opacity = '1';
-      UI.glare.style.backgroundPosition = `${px * 100}% ${py * 100}%`;
+      card.style.transform    = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+      const shadowColor       = getComputedStyle(document.body).getPropertyValue('--card-shadow');
+      card.style.boxShadow    = `${-ry * 2}px ${rx * 2}px 30px ${shadowColor}`;
+      glare.style.opacity     = '1';
+      glare.style.backgroundPosition = `${px * 100}% ${py * 100}%`;
     }
-
     function resetCard() {
-      UI.card.style.transition = 'transform 0.5s ease, box-shadow 0.5s ease';
-      UI.card.style.transform = 'rotateX(0) rotateY(0)';
-      UI.card.style.boxShadow = 'none';
-      UI.glare.style.opacity = '0';
+      card.style.transition = 'transform 0.5s ease, box-shadow 0.5s ease';
+      card.style.transform  = 'rotateX(0) rotateY(0)';
+      card.style.boxShadow  = 'none';
+      glare.style.opacity   = '0';
     }
-
-    // --- Universal Interaction Handler ---
     function handleInteract(clientX, clientY) {
-      UI.card.style.transition = 'none'; 
-      const rect = UI.wrapper.getBoundingClientRect();
-      
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
-      
-      // Normalize to 0-1
-      const pctX = Math.max(0, Math.min(1, x / rect.width));
-      const pctY = Math.max(0, Math.min(1, y / rect.height));
-      
-      const maxRot = 12;
-      // Tilt calc
-      updateCard((pctY - 0.5) * -2 * maxRot, (pctX - 0.5) * 2 * maxRot, pctX, pctY);
+      card.style.transition = 'none';
+      const rect = wrap.getBoundingClientRect();
+      const pctX = Math.max(0, Math.min(1, (clientX - rect.left)  / rect.width));
+      const pctY = Math.max(0, Math.min(1, (clientY - rect.top)   / rect.height));
+      updateCard((pctY - 0.5) * -24, (pctX - 0.5) * 24, pctX, pctY);
     }
 
-    // --- Mouse Listeners ---
-    UI.wrapper.addEventListener('mousemove', e => {
-      handleInteract(e.clientX, e.clientY);
-    });
-    UI.wrapper.addEventListener('mouseleave', resetCard);
+    wrap.addEventListener('mousemove', e => handleInteract(e.clientX, e.clientY));
+    wrap.addEventListener('mouseleave', resetCard);
 
-    // --- Touch Listeners (Updated for Tap Spin) ---
-    let touchStartData = { x: 0, y: 0, time: 0 };
-
-    UI.wrapper.addEventListener('touchstart', e => {
-       UI.card.style.transition = 'none';
-       // Record start time and position
-       touchStartData.time = Date.now();
-       touchStartData.x = e.touches[0].clientX;
-       touchStartData.y = e.touches[0].clientY;
+    let ts = {};
+    wrap.addEventListener('touchstart', e => {
+      card.style.transition = 'none';
+      ts = { t: Date.now(), x: e.touches[0].clientX, y: e.touches[0].clientY };
     }, { passive: true });
-
-    UI.wrapper.addEventListener('touchmove', e => {
-       // Prevent scrolling while dragging the card
-       if (e.cancelable) e.preventDefault(); 
-       handleInteract(e.touches[0].clientX, e.touches[0].clientY);
-    }, { passive: false });
-
-    UI.wrapper.addEventListener('touchend', e => {
-       const duration = Date.now() - touchStartData.time;
-       const endX = e.changedTouches[0].clientX;
-       const endY = e.changedTouches[0].clientY;
-       
-       // Calculate how far the finger moved
-       const dist = Math.hypot(endX - touchStartData.x, endY - touchStartData.y);
-
-       // If tap was fast (< 250ms) and didn't move much (< 20px)
-       if (duration < 250 && dist < 20) {
-         // 1. Clear any inline transform from the drag
-         UI.card.style.transform = '';
-         UI.card.style.transition = 'none'; // Disable transition so animation takes over instantly
-         
-         // 2. Trigger the CSS animation
-         UI.card.classList.add('spin-360');
-         
-         // 3. Remove class after animation ends
-         setTimeout(() => {
-           UI.card.classList.remove('spin-360');
-           resetCard();
-         }, 600); // Matches animation duration
-       } else {
-         // It was a drag or slow press, just reset normally
-         resetCard();
-       }
+    wrap.addEventListener('touchmove', e => { if (e.cancelable) e.preventDefault(); handleInteract(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+    wrap.addEventListener('touchend', e => {
+      const dist = Math.hypot(e.changedTouches[0].clientX - ts.x, e.changedTouches[0].clientY - ts.y);
+      if (Date.now() - ts.t < 250 && dist < 20) {
+        card.style.transform = ''; card.style.transition = 'none';
+        card.classList.add('spin-360');
+        setTimeout(() => { card.classList.remove('spin-360'); resetCard(); }, 600);
+      } else { resetCard(); }
     });
-
-    UI.wrapper.addEventListener('touchcancel', resetCard);
-
+    wrap.addEventListener('touchcancel', resetCard);
   </script>
-
 </body>
 </html>

@@ -4,316 +4,147 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Projects | Ruiqian Zhang</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   <link rel="icon" href="icons/face.svg" type="image/svg+xml">
 
+  <link rel="stylesheet" href="shared.css">
+
   <style>
-    :root {
-      --bg: #f2f0ef;
-      --text: #111;
-      --muted: #6b7280;
-      --accent: #0b5fff;
-      --hover-bg: rgba(11, 95, 255, 0.06);
-      --border: rgba(16, 24, 40, 0.06);
-      --card-bg: #f7f6f5;
-      --shadow-color: rgba(11, 95, 255, 0.08);
-      --menu-bg: rgba(255, 255, 255, 0.95);
-      --nav-height: 100px;
-    }
+    /* ── Page layout ────────────────────────────────────────── */
+    h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+    p.intro { color: var(--muted); margin-bottom: 32px; line-height: 1.5; max-width: 600px; }
 
-    body.dark {
-      --bg: #071221;
-      --text: #f2f0ef;
-      --muted: #98a6b3;
-      --accent: #7ab7ff;
-      --hover-bg: rgba(255, 255, 255, 0.06);
-      --border: rgba(255, 255, 255, 0.06);
-      --card-bg: rgba(255, 255, 255, 0.03);
-      --shadow-color: rgba(200, 200, 200, 0.18);
-      --menu-bg: rgba(17, 27, 39, 0.95); 
+    .content-wrap {
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      padding: 120px 20px 40px; box-sizing: border-box;
     }
+    .container { width: 100%; max-width: 920px; }
 
-    body {
-      min-height: 100vh;
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
+    /* ── Filter + sort controls ─────────────────────────────── */
+    .controls-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 32px; gap: 12px; position: relative; z-index: 20;
     }
-
-    .icon-btn, .project-card {
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
-    }
-
-    .icon-btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      border-radius: 8px; border: 0; background: transparent; color: var(--muted);
-    }
-    .icon-btn.square { width: 44px; height: 44px; }
-    .icon-btn:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
+    .filter-group { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
 
     .filter-btn {
       font-family: 'Inter', sans-serif;
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 500;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--card-bg);
-      color: var(--muted);
-      cursor: pointer;
-      transition: all 0.2s ease;
+      padding: 8px 16px; font-size: 13px; font-weight: 500;
+      border-radius: 999px; border: 1px solid var(--border);
+      background: var(--card-bg); color: var(--muted);
+      cursor: pointer; transition: all 0.2s ease;
     }
-    .filter-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--hover-bg); }
+    .filter-btn:hover  { border-color: var(--accent); color: var(--accent); background: var(--hover-bg); }
     .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
     body.dark .filter-btn.active { color: var(--bg); }
 
-    .controls-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 32px;
-      gap: 12px;
-      position: relative;
-      z-index: 50;
-    }
-
-    /* Pills wrap freely within their flex child, hamburger stays pinned right */
-    .filter-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      flex: 1;
-    }
-
     .sort-wrapper { position: relative; flex-shrink: 0; margin-top: 2px; }
-    
     .sort-menu {
-      position: absolute;
-      top: 100%; right: 0;
-      margin-top: 12px;
-      background: var(--menu-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 6px;
-      min-width: 180px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+      position: absolute; top: 100%; right: 0; margin-top: 12px;
+      background: var(--menu-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border); border-radius: 16px; padding: 6px; min-width: 180px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       opacity: 0; visibility: hidden; transform: translateY(-10px) scale(0.98);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 100;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100;
     }
     .sort-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
 
     .sort-option {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      text-align: left;
-      padding: 10px 14px;
-      background: transparent;
-      border: 0;
-      color: var(--muted);
-      font-size: 14px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 500;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.2s ease, color 0.2s ease;
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; text-align: left; padding: 10px 14px;
+      background: transparent; border: 0; color: var(--muted);
+      font-size: 14px; font-family: 'Inter', sans-serif; font-weight: 500;
+      border-radius: 10px; cursor: pointer; transition: background 0.2s ease, color 0.2s ease;
     }
-    .sort-option:hover { background: var(--hover-bg); color: var(--text); }
-    .sort-option.selected { color: var(--accent); background: var(--hover-bg); font-weight: 600; }
+    .sort-option:hover   { background: var(--hover-bg); color: var(--text); }
+    .sort-option.selected{ color: var(--accent); background: var(--hover-bg); font-weight: 600; }
     .sort-option.selected::after {
-      content: '';
-      display: block;
-      width: 6px; height: 10px;
-      border: solid currentColor;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg) translateY(-2px);
-      margin-left: 8px;
+      content: ''; display: block; width: 6px; height: 10px;
+      border: solid currentColor; border-width: 0 2px 2px 0;
+      transform: rotate(45deg) translateY(-2px); margin-left: 8px;
     }
 
     .menu-icon {
-      width: 20px; height: 20px;
-      background-color: currentColor;
+      width: 20px; height: 20px; background-color: currentColor;
       -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12H21M3 6H21M3 18H21" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>');
       mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12H21M3 6H21M3 18H21" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>');
     }
 
-    .project-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-      width: 100%;
-    }
+    /* ── Project grid ───────────────────────────────────────── */
+    .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; width: 100%; }
 
     .project-card {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      box-sizing: border-box;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      color: var(--text);
-      position: relative;
-      overflow: hidden;
+      display: flex; flex-direction: column; width: 100%; box-sizing: border-box;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px;
+      color: var(--text); position: relative; overflow: hidden;
+      text-decoration: none; cursor: pointer; user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
-    .project-card.hidden { display: none; }
-    .project-card:active { transform: scale(0.98); transition-duration: 0.1s; }
+    .project-card.hidden  { display: none; }
+    .project-card:active  { transform: scale(0.98); transition-duration: 0.1s; }
+
+    @media (hover: hover) {
+      .project-card:hover { transform: translateY(-5px) scale(1.01); border-color: var(--accent); box-shadow: 0 12px 32px var(--shadow-color); }
+      .project-card:hover h2 { color: var(--accent); }
+      .project-card:hover .proj-arrow { background-color: var(--accent); transform: rotate(90deg) translateY(-4px); }
+    }
 
     .card-image {
-      width: 100%;
-      height: 180px;
-      overflow: hidden;
-      border-radius: 24px 24px 0 0;
-      flex-shrink: 0;
+      width: 100%; height: 180px; overflow: hidden; border-radius: 24px 24px 0 0; flex-shrink: 0;
       background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, var(--bg)), color-mix(in srgb, var(--accent) 3%, var(--bg)));
-      position: relative;
     }
-
-    .card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    .card-image-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .card-image img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+    .card-image-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
     .card-image-placeholder svg { width: 32px; height: 32px; color: var(--muted); opacity: 0.3; }
 
-    .card-body {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      padding: 20px 24px;
-      gap: 12px;
-    }
-
+    .card-body { display: flex; align-items: flex-start; justify-content: space-between; padding: 20px 24px; gap: 12px; }
     .project-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
     .project-info h2 { font-size: 18px; font-weight: 700; margin: 0; transition: color 0.3s ease; }
-    .project-info p { font-size: 14px; color: var(--muted); margin: 0 0 8px 0; line-height: 1.4; }
+    .project-info p  { font-size: 14px; color: var(--muted); margin: 0 0 8px; line-height: 1.4; }
 
     .meta-row { display: flex; align-items: center; gap: 12px; margin-top: 4px; flex-wrap: wrap; }
-    
     .date-label { font-size: 12px; color: var(--muted); font-weight: 500; opacity: 0.8; }
 
     .card-status { display: inline-flex; align-items: center; font-size: 12px; font-weight: 500; color: var(--muted); gap: 6px; }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    
-    .card-status[data-status="in-progress"] .status-dot { background-color: #3b82f6; }
-    .card-status[data-status="on-hold"] .status-dot { background-color: #eab308; }
-    .card-status[data-status="dropped"] .status-dot { background-color: #ef4444; }
-    .card-status[data-status="completed"] .status-dot { background-color: #22c55e; }
+    .status-dot  { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .card-status[data-status="in-progress"] .status-dot { background: #3b82f6; }
+    .card-status[data-status="on-hold"]     .status-dot { background: #eab308; }
+    .card-status[data-status="dropped"]     .status-dot { background: #ef4444; }
+    .card-status[data-status="completed"]   .status-dot { background: #22c55e; }
 
-    .arrow-icon {
+    .proj-arrow {
       width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;
       background-color: var(--muted);
       -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain;
       mask: url('icons/up_arrow.svg') no-repeat center / contain;
-      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease;
       transform: rotate(90deg);
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease;
     }
 
     .home-icon {
-      width: 20px; height: 20px; display: block;
-      background-color: currentColor;
+      width: 20px; height: 20px; display: block; background-color: currentColor;
       -webkit-mask: url('icons/home.svg') no-repeat center / contain;
       mask: url('icons/home.svg') no-repeat center / contain;
     }
-
-    @media (hover: hover) {
-      .icon-btn:hover {
-        background: var(--hover-bg); color: var(--accent);
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 6px 18px var(--shadow-color);
-      }
-      .project-card:hover {
-        transform: translateY(-5px) scale(1.01);
-        border-color: var(--accent);
-        box-shadow: 0 12px 32px var(--shadow-color);
-      }
-      .project-card:hover h2 { color: var(--accent); }
-      .project-card:hover .arrow-icon {
-        background-color: var(--accent);
-        transform: rotate(90deg) translateY(-4px); 
-      }
-    }
-
-    .nav-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 50; pointer-events: none; }
-    .nav-right-group { position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 100; pointer-events: auto; }
-    .nav-left-group { position: fixed; top: 20px; left: 20px; z-index: 100; pointer-events: auto; }
-
-    .top-nav-bg {
-      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height); z-index: 29; pointer-events: none;
-      background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-      mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-      transition: background-color 0.32s ease;
-    }
-
-    .content-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 120px 20px 40px 20px; box-sizing: border-box; }
-    .container { width: 100%; max-width: 920px; }
-
-    h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
-    p.intro { color: var(--muted); margin-bottom: 32px; line-height: 1.5; max-width: 600px; }
-
-    .theme-transition, .theme-transition * { 
-      transition: background-color 0.32s ease, border-color 0.32s ease, color 0s, box-shadow 0.32s ease !important; 
-    }
-
-    .reveal-flip {
-      opacity: 0; transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
-      transform-origin: top center;
-      transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .reveal-flip.visible { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); }
-
-    .char-flip {
-      display: inline-block; opacity: 0; white-space: pre;
-      transform: perspective(500px) rotateX(90deg) translateY(10px); transform-origin: bottom center;
-      transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
   </style>
 </head>
 <body>
-  
   <script>
     (function() {
-      const saved = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const s = localStorage.getItem('theme'), d = window.matchMedia('(prefers-color-scheme: dark)').matches;
       document.body.style.transition = 'none';
-      if (saved === 'dark' || (!saved && prefersDark)) document.body.classList.add('dark');
+      if (s === 'dark' || (!s && d)) document.body.classList.add('dark');
     })();
   </script>
 
+  <div id="scroll-progress"></div>
   <div class="top-nav-bg"></div>
 
   <nav class="nav-wrapper">
-    <div class="nav-left-group">
-      <a href="https://rhemzema.github.io" class="icon-btn square" aria-label="Back to Home">
-        <div class="icon-mask back-icon"></div>
-      </a>
-    </div>
     <div class="nav-right-group">
       <a href="https://rhemzema.github.io" class="icon-btn square" aria-label="Go to Home">
         <div class="home-icon"></div>
@@ -331,7 +162,7 @@
       <h1 class="split-flip-text">Featured Projects</h1>
       <p class="intro reveal-flip">My wardrobe of engineering, design, and creative experiments.</p>
 
-      <div class="controls-row reveal-flip" style="transition-delay: 0.1s">
+      <div class="controls-row reveal-flip" style="transition-delay:0.1s">
         <div class="filter-group">
           <button class="filter-btn active" data-filter="all">All</button>
           <button class="filter-btn" data-filter="in-progress">In Progress</button>
@@ -352,8 +183,6 @@
       </div>
 
       <div class="project-grid" id="project-grid">
-
-        <!-- Image path goes in data-image. Must be a valid relative or absolute URL. -->
         <a href="mepad.html" class="project-card reveal-flip" data-status="in-progress" data-date="2026-01-03" data-image="https://rhemzema.github.io/assets/MePad_PCB_Day3.png">
           <div class="card-image"></div>
           <div class="card-body">
@@ -361,13 +190,11 @@
               <h2>MePad V1</h2>
               <p>Custom programmable USB macro keypad</p>
               <div class="meta-row">
-                <div class="card-status" data-status="in-progress">
-                  <span class="status-dot"></span> In Progress
-                </div>
+                <div class="card-status" data-status="in-progress"><span class="status-dot"></span> In Progress</div>
                 <span class="date-label">Jan 3, 2026</span>
               </div>
             </div>
-            <div class="arrow-icon"></div>
+            <div class="proj-arrow"></div>
           </div>
         </a>
 
@@ -378,137 +205,82 @@
               <h2>Personal Website</h2>
               <p>Custom website built with HTML, CSS, and Javascript.</p>
               <div class="meta-row">
-                <div class="card-status" data-status="in-progress">
-                  <span class="status-dot"></span> In Progress
-                </div>
+                <div class="card-status" data-status="in-progress"><span class="status-dot"></span> In Progress</div>
                 <span class="date-label">Sep 20, 2025</span>
               </div>
             </div>
-            <div class="arrow-icon"></div>
+            <div class="proj-arrow"></div>
           </div>
         </a>
-
       </div>
     </div>
   </div>
 
-  <footer style="
-    text-align: center;
-    padding-bottom: 30px;
-    font-size: 14px;
-    color: var(--muted);
-    font-family: 'Inter', sans-serif;
-  ">
+  <footer style="text-align:center;padding-bottom:30px;font-size:14px;color:var(--muted);">
     &copy; 2026 Ruiqian Zhang
   </footer>
 
+  <script src="shared.js"></script>
   <script>
-    const UI = {
-      body: document.body,
-      toggleBtn: document.getElementById('theme-toggle'),
-      filterBtns: document.querySelectorAll('.filter-btn'),
-      grid: document.getElementById('project-grid'),
-      sortToggle: document.getElementById('sort-toggle'),
-      sortMenu: document.getElementById('sort-menu'),
-      sortOptions: document.querySelectorAll('.sort-option')
-    };
-
-    // --- 1. Populate Card Images ---
+    // Populate card images from data-image attribute
     document.querySelectorAll('.project-card').forEach(card => {
-      const imgSrc = card.getAttribute('data-image');
-      const imageContainer = card.querySelector('.card-image');
-      
-      if (imgSrc && imgSrc.trim() !== '') {
+      const src = card.getAttribute('data-image');
+      const box = card.querySelector('.card-image');
+      if (src && src.trim()) {
         const img = document.createElement('img');
-        img.src = imgSrc;
-        img.alt = card.querySelector('h2').textContent + ' preview';
-        imageContainer.appendChild(img);
+        img.src = src; img.alt = card.querySelector('h2').textContent + ' preview';
+        box.appendChild(img);
       } else {
-        imageContainer.innerHTML = `
-          <div class="card-image-placeholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="3"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <path d="M21 15l-5-5L5 21"/>
-            </svg>
-          </div>`;
+        box.innerHTML = `<div class="card-image-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>`;
       }
     });
 
-    // --- 2. Load Animation ---
+    RZ.splitFlipText();
+    RZ.observeReveal();
+    RZ.initScrollProgress();
+
+    // Load initial reveals
     window.addEventListener('load', () => {
-      setTimeout(() => UI.body.style.transition = '', 100);
-      const chars = document.querySelectorAll('.char-flip');
-      chars.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 30));
-      const cards = document.querySelectorAll('.reveal-flip');
-      setTimeout(() => {
-        cards.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 150));
-      }, 300);
+      document.querySelectorAll('.reveal-flip').forEach((el, i) =>
+        setTimeout(() => el.classList.add('visible'), 300 + i * 150)
+      );
     });
 
-    // --- 3. Theme Toggle ---
-    UI.toggleBtn.addEventListener('click', () => {
-      UI.body.classList.add('theme-transition');
-      const isDark = UI.body.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
-    });
-
-    // --- 4. Filtering ---
-    UI.filterBtns.forEach(btn => {
+    // Filter
+    document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        UI.filterBtns.forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        const filterValue = btn.getAttribute('data-filter');
-        UI.grid.querySelectorAll('.project-card').forEach(card => {
-          const match = filterValue === 'all' || card.getAttribute('data-status') === filterValue;
-          card.classList.toggle('hidden', !match);
-        });
+        const f = btn.getAttribute('data-filter');
+        document.querySelectorAll('.project-card').forEach(card =>
+          card.classList.toggle('hidden', f !== 'all' && card.getAttribute('data-status') !== f)
+        );
       });
     });
 
-    // --- 5. Sorting ---
-    UI.sortToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      UI.sortMenu.classList.toggle('open');
+    // Sort
+    const sortToggle = document.getElementById('sort-toggle');
+    const sortMenu   = document.getElementById('sort-menu');
+    const grid       = document.getElementById('project-grid');
+
+    sortToggle.addEventListener('click', e => { e.stopPropagation(); sortMenu.classList.toggle('open'); });
+    document.addEventListener('click', e => {
+      if (!sortMenu.contains(e.target) && !sortToggle.contains(e.target)) sortMenu.classList.remove('open');
     });
-    document.addEventListener('click', (e) => {
-      if (!UI.sortMenu.contains(e.target) && !UI.sortToggle.contains(e.target)) {
-        UI.sortMenu.classList.remove('open');
-      }
-    });
-    UI.sortOptions.forEach(opt => {
+    document.querySelectorAll('.sort-option').forEach(opt => {
       opt.addEventListener('click', () => {
-        UI.sortOptions.forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
-        UI.sortMenu.classList.remove('open');
-        const sortType = opt.getAttribute('data-sort');
-        const cards = Array.from(UI.grid.querySelectorAll('.project-card'));
+        document.querySelectorAll('.sort-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected'); sortMenu.classList.remove('open');
+        const type  = opt.getAttribute('data-sort');
+        const cards = Array.from(grid.querySelectorAll('.project-card'));
         cards.sort((a, b) => {
-          if (sortType === 'alphabetical') {
-            return a.querySelector('h2').textContent.trim().localeCompare(b.querySelector('h2').textContent.trim());
-          }
-          const dateA = new Date(a.getAttribute('data-date'));
-          const dateB = new Date(b.getAttribute('data-date'));
-          return sortType === 'newest' ? dateB - dateA : dateA - dateB;
+          if (type === 'alphabetical') return a.querySelector('h2').textContent.trim().localeCompare(b.querySelector('h2').textContent.trim());
+          const da = new Date(a.getAttribute('data-date')), db = new Date(b.getAttribute('data-date'));
+          return type === 'newest' ? db - da : da - db;
         });
-        cards.forEach(card => UI.grid.appendChild(card));
-      });
-    });
-
-    // --- 6. Split Text ---
-    document.querySelectorAll('.split-flip-text').forEach(el => {
-      const text = el.textContent;
-      el.setAttribute('aria-label', text);
-      el.innerHTML = '';
-      text.split('').forEach(char => {
-        const span = document.createElement('span');
-        span.className = 'char-flip';
-        span.textContent = char;
-        el.appendChild(span);
+        cards.forEach(c => grid.appendChild(c));
       });
     });
   </script>
-
 </body>
 </html>

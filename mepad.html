@@ -4,462 +4,177 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>MePad V1 | Ruiqian Zhang</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   <link rel="icon" href="icons/face.svg" type="image/svg+xml">
 
+  <link rel="stylesheet" href="shared.css">
+
   <style>
-    :root {
-      --bg: #f2f0ef;
-      --text: #111;
-      --muted: #6b7280;
-      --accent: #0b5fff;
-      --hover-bg: rgba(11, 95, 255, 0.06);
-      --border: rgba(16, 24, 40, 0.06);
-      --section-bg: rgba(255, 255, 255, 0.4);
-      --shadow-color: rgba(11, 95, 255, 0.08);
-      --nav-height: 100px;
-      --card-padding: 24px;
-    }
+    :root { --card-padding: 24px; }
 
-    body.dark {
-      --bg: #071221;
-      --text: #f2f0ef;
-      --muted: #98a6b3;
-      --accent: #7ab7ff;
-      --hover-bg: rgba(255, 255, 255, 0.06);
-      --border: rgba(255, 255, 255, 0.06);
-      --section-bg: rgba(255, 255, 255, 0.03);
-      --shadow-color: rgba(200, 200, 200, 0.18);
-    }
+    /* ── Page layout ─────────────────────────────────────────── */
+    .content-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: stretch; padding: 120px 20px 40px; box-sizing: border-box; }
+    .container    { width: 100%; max-width: 1100px; margin: 0 auto; }
 
-    body {
-      min-height: 100vh;
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-    }
+    .project-layout { display: flex; gap: 60px; align-items: flex-start; position: relative; width: 100%; }
+    .project-sidebar { width: 30%; position: sticky; top: 130px; flex-shrink: 0; }
+    .project-feed    { width: 70%; flex-grow: 1; }
 
-    .icon-btn, .pill, .download-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-      cursor: pointer;
-      user-select: none;
-    }
+    h1 { font-size: 32px; font-weight: 800; margin: 0 0 24px; letter-spacing: -0.5px; line-height: 1.2; }
+    h2 { font-size: 20px; font-weight: 600; color: var(--accent); margin: 0 0 24px; }
+    p.intro { color: var(--muted); margin-bottom: 24px; line-height: 1.6; font-size: 16px; }
 
-    .icon-btn {
-      border-radius: 8px;
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      overflow: hidden;
+    /* ── Pill tags (sidebar) ─────────────────────────────────── */
+    .pill-tag {
+      padding: 8px 16px; font-size: 13px; border-radius: 999px;
+      background: var(--section-bg); border: 1px solid var(--border);
+      color: var(--muted); font-weight: 500;
+      display: inline-flex; align-items: center; gap: 8px;
     }
-    .icon-btn.square { width: 44px; height: 44px; }
-    
-    .icon-btn:active, .pill:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
+    .pill-tag::before {
+      content: ''; display: block; width: 6px; height: 6px;
+      border-radius: 50%; flex-shrink: 0;
+    }
+    .pill-tag.status-in-progress::before { background: #3b82f6; box-shadow: 0 0 6px #3b82f6; }
+    .pill-tag.status-completed::before   { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+    .pill-tag.status-on-hold::before     { background: #eab308; box-shadow: 0 0 6px #eab308; }
+    .pill-tag.status-dropped::before     { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
 
-    .slot-scroller { display: flex; flex-direction: column; width: 100%; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-    .slot-label { height: 44px; display: flex; align-items: center; justify-content: center; width: 100%; flex-shrink: 0; }
-    .icon-btn:hover .slot-scroller { transform: translateY(-44px); }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; margin-top: 8px; }
 
-    .icon-mask {
-      display: block;
-      background-color: currentColor; 
-      -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-      -webkit-mask-position: center; mask-position: center;
-      -webkit-mask-size: contain; mask-size: contain;
+    /* ── Requirements grid ───────────────────────────────────── */
+    .req-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; margin-bottom: 24px; }
+    .req-item {
+      display: flex; gap: 10px; padding: 16px; border-radius: 8px;
+      background: var(--section-bg); border: 1px solid var(--border);
+      align-items: center; justify-content: center; text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
-    
-    .back-icon { 
-      width: 16px; height: 16px;
-      -webkit-mask-image: url('icons/up_arrow.svg'); 
-      mask-image: url('icons/up_arrow.svg'); 
-      transform: rotate(-90deg); 
-    }
+    .req-item-text { font-size: 14px; color: var(--text); line-height: 1.4; font-weight: 500; }
 
-    .home-icon {
-      width: 20px; height: 20px;
-      -webkit-mask-image: url('icons/home.svg');
-      mask-image: url('icons/home.svg');
-    }
-    
-    .arrow-icon {
-      width: 16px; height: 16px;
-      -webkit-mask-image: url('icons/up_arrow.svg');
-      mask-image: url('icons/up_arrow.svg');
-    }
-
-    .pill {
-      padding: 6px 12px; font-size: 13px;
-      border-radius: 6px;
-      background: var(--section-bg);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-weight: 500;
-    }
-    
-    .pill-medicine {
-      padding: 8px 16px; font-size: 13px;
-      border-radius: 999px;
-      background: var(--section-bg);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .status-in-progress, .status-on-hold, .status-dropped, .status-completed {
-        background: var(--section-bg) !important;
-        border: 1px solid var(--border) !important;
-        color: var(--muted) !important;
-    }
-
-    .status-in-progress::before,
-    .status-on-hold::before,
-    .status-dropped::before,
-    .status-completed::before {
-        content: '';
-        display: block;
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        flex-shrink: 0;
-    }
-
-    .status-in-progress::before { background-color: #3b82f6; box-shadow: 0 0 6px #3b82f6; }
-    .status-paused::before { background-color: #eab308; box-shadow: 0 0 6px #eab308; }
-    .status-dropped::before { background-color: #ef4444; box-shadow: 0 0 6px #ef4444; }
-    .status-completed::before { background-color: #22c55e; box-shadow: 0 0 6px #22c55e; }
-    
+    /* ── Content cards (dev log) ─────────────────────────────── */
     .content-card {
-      padding: var(--card-padding);
-      border-radius: 16px;
-      background: var(--section-bg);
-      border: 1px solid var(--border);
-      margin-bottom: 24px;
-      overflow: hidden;
+      padding: 24px; border-radius: 16px;
+      background: var(--section-bg); border: 1px solid var(--border);
+      margin-bottom: 24px; overflow: hidden;
     }
-    .content-card h3 { font-size: 18px; color: var(--text); margin: 0 0 4px 0; }
-    .content-card .meta { font-size: 13px; color: var(--muted); margin-bottom: 12px; display: block; font-family: 'Inter', monospace; }
-    .content-card p { margin: 0 0 16px 0; line-height: 1.6; color: var(--muted); font-size: 15px; }
+    .content-card h3 { font-size: 18px; color: var(--text); margin: 0 0 4px; }
+    .content-card .meta { font-size: 13px; color: var(--muted); margin-bottom: 12px; display: block; }
+    .content-card p { margin: 0 0 16px; line-height: 1.6; color: var(--muted); font-size: 15px; }
     .content-card p:last-child { margin-bottom: 0; }
     .content-card ul { margin: 0; padding-left: 20px; color: var(--muted); font-size: 15px; }
     .content-card li { margin-bottom: 6px; }
     .content-card a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
     .content-card a:hover { border-bottom-color: var(--accent); }
 
-    .req-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 16px;
-      margin-bottom: 24px;
-    }
-
-    .req-item {
-      display: flex;
-      gap: 10px;
-      padding: 16px 16px;
-      border-radius: 8px;
-      background: var(--section-bg);
-      border: 1px solid var(--border);
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-
-    .req-item-text {
-      font-size: 14px;
-      color: var(--text);
-      line-height: 1.4;
-      font-weight: 500;
-    }
-
     @media (hover: hover) {
-      .icon-btn:hover, .pill:not(.pill-accent):hover {
-        background: var(--hover-bg);
-        color: var(--accent);
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 6px 18px var(--shadow-color);
-      }
       .content-card:hover {
-        border-color: var(--accent);
-        transform: translateY(-2px);
+        border-color: var(--accent); transform: translateY(-2px);
         box-shadow: 0 8px 24px var(--shadow-color);
         transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
       }
     }
 
-    .nav-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 50; pointer-events: none; }
-    .nav-right-group { position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 100; pointer-events: auto; }
-    .nav-left-group { position: fixed; top: 20px; left: 20px; z-index: 100; pointer-events: auto; }
-
-    .top-nav-bg {
-      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height); z-index: 29; pointer-events: none;
-      background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-      mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-      transition: background-color 0.32s ease;
-    }
-
-    .content-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 120px 20px 40px 20px; box-sizing: border-box; }
-    .container { width: 100%; max-width: 1100px; }
-
-    .project-layout {
-      display: flex;
-      gap: 60px;
-      align-items: flex-start;
-      position: relative;
-    }
-
-    .project-sidebar {
-      width: 30%;
-      position: sticky;
-      top: 130px;
-      flex-shrink: 0;
-    }
-
-    .project-feed {
-      width: 70%;
-      flex-grow: 1;
-    }
-
-    h1 { font-size: 32px; font-weight: 800; margin-bottom: 24px; margin-top: 0px; letter-spacing: -0.5px; line-height: 1.2; }
-    h2 { font-size: 20px; font-weight: 600; color: var(--accent); margin: 0 0 24px 0; }
-    p.intro { color: var(--muted); margin-bottom: 24px; line-height: 1.6; font-size: 16px; }
-
-    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; margin-top: 8px; }
-
-    .site-footer-container { text-align: center; padding-bottom: 30px; }
-    .site-footer { color: var(--muted); font-size: 14px; }
-    
-    .scroll-to-top { 
-      position: fixed; bottom: 20px; right: 20px; z-index: 100; margin: 0;
-      overflow: hidden; align-items: flex-start !important; padding: 0; 
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.3s ease, transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    }
-    .scroll-to-top.visible { opacity: 1; pointer-events: auto; }
-    .scroll-to-top .slot-label { height: 44px; width: 44px; }
-    .scroll-to-top:hover .slot-scroller { transform: translateY(-44px); }
-
-    @media (max-width: 900px) {
-      .project-layout { flex-direction: column; gap: 40px; }
-      .project-sidebar, .project-feed { width: 100%; position: static; }
-      .req-grid { grid-template-columns: repeat(3, 1fr); }
-      .scroll-to-top { position: relative; bottom: auto; right: auto; opacity: 1 !important; pointer-events: auto; margin: 0 auto 20px auto; }
-    }
-
-    @media (max-width: 768px) { .modal-nav { display: none !important; } }
-    @media (max-width: 600px) { .req-grid { grid-template-columns: repeat(2, 1fr); } }
-
-    .theme-transition, .theme-transition * { 
-      transition: background-color 0.32s ease, border-color 0.32s ease, color 0s, box-shadow 0.32s ease !important; 
-    }
-
-    .reveal-flip {
-      opacity: 0; transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
-      transform-origin: top center;
-      transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .reveal-flip.visible { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); }
-    .reveal-flip.reduced-opacity.visible { opacity: 0.75; }
-
-    .char-flip {
-      display: inline-block; opacity: 0; white-space: pre;
-      transform: perspective(500px) rotateX(90deg) translateY(10px); transform-origin: bottom center;
-      transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
-
-    /* NATIVE CSS IMAGE CAROUSEL WITH LAPTOP DRAG SUPPORT */
+    /* ── Image carousel ──────────────────────────────────────── */
+    .image-grid-wrapper { position: relative; }
     .content-image-grid {
-      display: flex;
-      gap: 12px;
-      margin: 16px calc(-1 * var(--card-padding)) 20px;
-      padding: 4px 0;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-snap-type: x mandatory;
-      scroll-padding-left: var(--card-padding);
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      /* Prevent mobile browsers from bouncing the entire page horizontally */
-      overscroll-behavior-x: contain; 
-      cursor: grab; /* Indicates scrollability on desktop */
-      will-change: transform;
+      display: flex; gap: 12px;
+      margin: 16px -24px 20px; padding: 4px 0;
+      overflow-x: auto; overflow-y: hidden;
+      scroll-snap-type: x mandatory; scroll-padding-left: 24px;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+      overscroll-behavior-x: contain; cursor: grab; will-change: transform;
     }
-    .content-image-grid.grabbing {
-      cursor: grabbing;
-      scroll-snap-type: none; /* Let drag be smooth instead of fighting CSS snap */
-    }
+    .content-image-grid.grabbing { cursor: grabbing; scroll-snap-type: none; }
     .content-image-grid::-webkit-scrollbar { display: none; }
-
-    .content-image-grid .content-image:first-child { margin-left: var(--card-padding); }
-    .content-image-grid .content-image:last-child { margin-right: var(--card-padding); }
+    .content-image-grid .content-image:first-child { margin-left: 24px; }
+    .content-image-grid .content-image:last-child  { margin-right: 24px; }
 
     .content-image {
-      flex-shrink: 0;
-      height: 300px;
-      width: auto;
-      max-width: none; 
-      border-radius: 12px;
-      cursor: pointer;
-      object-fit: cover;
-      scroll-snap-align: start;
-      border: 1px solid var(--border);
-      display: block;
-      /* Prevent image from turning blue/highlighted when dragging */
-      -webkit-user-drag: none;
-      user-select: none;
-      -webkit-user-select: none;
-      transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1); 
+      flex-shrink: 0; height: 300px; width: auto; max-width: none;
+      border-radius: 12px; cursor: pointer; object-fit: cover;
+      scroll-snap-align: start; border: 1px solid var(--border); display: block;
+      -webkit-user-drag: none; user-select: none; -webkit-user-select: none;
+      transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
     }
-
     .content-image.square { width: 300px; height: 300px; }
     .content-image-grid .content-image:first-child:last-child { height: 350px; }
     .content-image-grid .content-image:first-child:last-child.square { width: 350px; height: 350px; }
+    .content-image:active { transform: scale(0.98); transition: transform 0.12s; }
 
     @media (max-width: 600px) {
       .content-image,
       .content-image.square,
       .content-image-grid .content-image:first-child:last-child,
       .content-image-grid .content-image:first-child:last-child.square {
-        height: 250px !important;
-        width: auto !important;
-        max-width: none !important; 
-        object-fit: cover !important;
+        height: 250px !important; width: auto !important;
+        max-width: none !important; object-fit: cover !important;
       }
     }
 
-    .image-grid-wrapper { position: relative; }
-
-    .content-image:active {
-      transform: scale(0.98);
-      transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    /* --- ID CARD STYLE EXPANSION EFFECTS --- */
-
-    #card-backdrop {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      z-index: 900; opacity: 0; pointer-events: none;
-      transition: opacity 0.5s ease;
-      touch-action: none;
-    }
-    #card-backdrop.visible { opacity: 1; pointer-events: auto; }
-
-    #card-close-btn {
-      position: fixed; top: 24px; left: 24px;
-      z-index: 1000; opacity: 0; pointer-events: none;
-      background: rgba(255,255,255,0.1); border-radius: 50%;
-      color: white; border: 1px solid rgba(255,255,255,0.2);
-      width: 44px; height: 44px; padding: 0;
-      backdrop-filter: blur(4px);
-      transition: opacity 0.5s ease, transform 0.2s ease, background 0.2s ease;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-    }
-    #card-close-btn.visible { opacity: 1; pointer-events: auto; }
-    #card-close-btn:active { transform: scale(0.9); }
-    @media(hover:hover) { #card-close-btn:hover { background: rgba(255,255,255,0.25); } }
-
+    /* ── Image modal ─────────────────────────────────────────── */
     .image-modal-wrapper {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 950; pointer-events: none; 
-      display: flex; align-items: center; justify-content: center;
+      z-index: 950; pointer-events: none; display: flex; align-items: center; justify-content: center;
     }
-
     .image-modal-content {
-      position: relative;
-      z-index: 960;
+      position: relative; z-index: 960;
       --tx: 0px; --ty: 0px; --s: 1;
       transform: translate3d(var(--tx), var(--ty), 0) scale(var(--s));
       transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s ease, width 0.3s ease, height 0.3s ease;
-      will-change: transform;
-      box-shadow: none; 
-      opacity: 0;
-      pointer-events: none; 
-      cursor: zoom-out;
+      will-change: transform; box-shadow: none; opacity: 0; pointer-events: none; cursor: zoom-out;
     }
+    .image-modal-content.expanded { pointer-events: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+    .image-modal-img { display: block; border-radius: 12px; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s ease; }
 
-    .image-modal-content.expanded {
-      pointer-events: auto; 
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-    }
-
-    .image-modal-img {
-      display: block;
-      border-radius: 12px;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: opacity 0.2s ease;
-    }
-
-    /* Modal Navigation Buttons */
     .modal-nav {
-      position: absolute;
-      top: 50%;
-      z-index: 970; 
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease, background 0.2s ease, transform 0.2s ease;
-      margin-top: -22px; 
+      position: absolute; top: 50%; z-index: 970; width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(4px); opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease, background 0.2s ease, transform 0.2s ease; margin-top: -22px;
     }
-    
     .modal-nav.visible { opacity: 1; pointer-events: auto; }
-    .modal-nav:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.1); }
+    .modal-nav:hover  { background: rgba(255,255,255,0.25); transform: scale(1.1); }
     .modal-nav:active { transform: scale(0.95); }
-    .modal-nav.prev { left: 24px; }
-    .modal-nav.next { right: 24px; }
-    
-    .modal-arrow-icon {
-      width: 20px; height: 20px; background: white;
-      -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain;
-      mask: url('icons/up_arrow.svg') no-repeat center / contain;
-    }
+    .modal-nav.prev   { left: 24px; }
+    .modal-nav.next   { right: 24px; }
+    .modal-arrow-icon { width: 20px; height: 20px; background: white; -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain; mask: url('icons/up_arrow.svg') no-repeat center / contain; }
     .modal-nav.prev .modal-arrow-icon { transform: rotate(-90deg); }
     .modal-nav.next .modal-arrow-icon { transform: rotate(90deg); margin-left: 2px; }
+    @media (max-width: 768px) { .modal-nav { display: none !important; } }
 
+    /* ── Scroll-to-top (fixed, bottom-right) ─────────────────── */
+    .scroll-to-top {
+      position: fixed; bottom: 20px; right: 20px; z-index: 100; margin: 0;
+      opacity: 0; pointer-events: none;
+    }
+    .scroll-to-top.visible { opacity: 1; pointer-events: auto; }
+    @media (max-width: 900px) {
+      .project-layout { flex-direction: column; gap: 40px; }
+      .project-sidebar, .project-feed { width: 100%; position: static; }
+      .req-grid { grid-template-columns: repeat(3, 1fr); }
+      .scroll-to-top { position: relative; bottom: auto; right: auto; opacity: 1 !important; pointer-events: auto; margin: 0 auto 20px; }
+    }
+    @media (max-width: 600px) { .req-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .home-icon { width: 20px; height: 20px; display: block; background-color: currentColor; -webkit-mask: url('icons/home.svg') no-repeat center / contain; mask: url('icons/home.svg') no-repeat center / contain; }
+    .arrow-up-icon { width: 16px; height: 16px; display: block; background-color: currentColor; -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain; mask: url('icons/up_arrow.svg') no-repeat center / contain; }
   </style>
 </head>
 <body>
-  
   <script>
     (function() {
-      const saved = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const s = localStorage.getItem('theme'), d = window.matchMedia('(prefers-color-scheme: dark)').matches;
       document.body.style.transition = 'none';
-      if (saved === 'dark' || (!saved && prefersDark)) document.body.classList.add('dark');
+      if (s === 'dark' || (!s && d)) document.body.classList.add('dark');
     })();
   </script>
 
+  <div id="scroll-progress"></div>
   <div class="top-nav-bg"></div>
 
   <nav class="nav-wrapper">
@@ -470,7 +185,7 @@
     </div>
     <div class="nav-right-group">
       <a href="https://rhemzema.github.io" class="icon-btn square" aria-label="Go to Home">
-        <div class="icon-mask home-icon"></div>
+        <div class="home-icon"></div>
       </a>
       <button id="theme-toggle" class="icon-btn square" aria-label="Toggle dark mode">
         <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -486,13 +201,13 @@
         <aside class="project-sidebar">
           <h1 class="split-flip-text">MePad V1</h1>
           <div class="tag-row reveal-flip">
-            <span class="pill-medicine no-hover status-in-progress">In Progress</span>
-            <span class="pill-medicine no-hover">Start Date: Jan 3, 2026</span>
+            <span class="pill-tag status-in-progress">In Progress</span>
+            <span class="pill-tag">Start Date: Jan 3, 2026</span>
           </div>
           <p class="intro reveal-flip">Welcome to my personal project, MePad! My take on the macro keypad.</p>
           <p class="intro reveal-flip">My primary objective is to explore the entire process of product development from identifying user needs to hardware design and software implementation.</p>
           <div class="reveal-flip">
-            <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--text);">Basic Requirements</h3>
+            <h3 style="font-size:16px;margin-bottom:12px;color:var(--text);">Basic Requirements</h3>
             <div class="req-grid">
               <div class="req-item"><span class="req-item-text">Compact Design</span></div>
               <div class="req-item"><span class="req-item-text">Hotswap Switches</span></div>
@@ -520,12 +235,12 @@
           </div>
 
           <div class="content-card reveal-flip">
-            <h3>Day 2: PCB Schematics & Firmware</h3>
+            <h3>Day 2: PCB Schematics &amp; Firmware</h3>
             <span class="meta">Jan 5, 2026</span>
             <div class="image-grid-wrapper">
               <div class="content-image-grid">
-                <img src="assets/MePad_Matrix.jpg" alt="MePad Switch Matrix" class="content-image" draggable="false" />
-                <img src="assets/MePad_Schematic.png" alt="MePad PCB Day 2" class="content-image" draggable="false" />
+                <img src="assets/MePad_Matrix.jpg"    alt="MePad Switch Matrix" class="content-image" draggable="false" />
+                <img src="assets/MePad_Schematic.png" alt="MePad PCB Day 2"     class="content-image" draggable="false" />
               </div>
             </div>
             <p>Today was a big day for learning and design. I dived into the electrical engineering side of keyboards:</p>
@@ -560,9 +275,9 @@
             <p>Started work on the wiring and routing of the PCB.</p>
           </div>
 
-          <div class="content-card reveal-flip reduced-opacity" style="text-align: center;">
-            <h3 style="font-size: 20px; margin-bottom: 8px;">To be continued...</h3>
-            <p style="color: var(--muted); font-size: 14px; margin: 0;">More updates coming soon.</p>
+          <div class="content-card reveal-flip reduced-opacity" style="text-align:center;">
+            <h3 style="font-size:20px;margin-bottom:8px;">To be continued...</h3>
+            <p style="color:var(--muted);font-size:14px;margin:0;">More updates coming soon.</p>
           </div>
         </section>
       </div>
@@ -572,15 +287,13 @@
   <div id="card-backdrop"></div>
   <button id="card-close-btn" aria-label="Close preview">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
-      <line x1="18" y1="6" x2="6" y2="18"></line>
-      <line x1="6" y1="6" x2="18" y2="18"></line>
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
     </svg>
   </button>
 
   <div class="image-modal-wrapper" id="image-modal">
     <div class="modal-nav prev" id="modal-prev"><div class="modal-arrow-icon"></div></div>
     <div class="modal-nav next" id="modal-next"><div class="modal-arrow-icon"></div></div>
-    
     <div class="image-modal-content" id="modal-content">
       <img id="modal-image" class="image-modal-img" src="" alt="" draggable="false" />
     </div>
@@ -589,352 +302,148 @@
   <div class="site-footer-container">
     <button class="icon-btn square scroll-to-top" id="scroll-to-top" aria-label="Scroll to top">
       <span class="slot-scroller">
-        <span class="slot-label"><div class="icon-mask arrow-icon"></div></span>
-        <span class="slot-label"><div class="icon-mask arrow-icon"></div></span>
+        <span class="slot-label"><div class="arrow-up-icon"></div></span>
+        <span class="slot-label"><div class="arrow-up-icon"></div></span>
       </span>
     </button>
     <footer class="site-footer">&copy; 2026 Ruiqian Zhang</footer>
   </div>
 
+  <script src="shared.js"></script>
   <script>
-    const UI = {
-      body: document.body,
-      toggleBtn: document.getElementById('theme-toggle'),
-      scrollBtn: document.getElementById('scroll-to-top')
-    };
+    RZ.splitFlipText();
+    RZ.initScrollToTop();
+    RZ.initScrollProgress();
 
+    // Stagger sidebar + feed reveals in parallel
     window.addEventListener('load', () => {
-      setTimeout(() => UI.body.style.transition = '', 100);
-      const chars = document.querySelectorAll('.char-flip');
-      chars.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 30));
-      setTimeout(() => {
-        const sidebarItems = document.querySelectorAll('.project-sidebar .reveal-flip');
-        const feedItems = document.querySelectorAll('.project-feed .reveal-flip');
-        const maxLen = Math.max(sidebarItems.length, feedItems.length);
-        for (let i = 0; i < maxLen; i++) {
-          const delay = i * 150;
-          if (sidebarItems[i]) setTimeout(() => sidebarItems[i].classList.add('visible'), delay);
-          if (feedItems[i]) setTimeout(() => feedItems[i].classList.add('visible'), delay);
-        }
-      }, 300);
-    });
-
-    UI.toggleBtn.addEventListener('click', () => {
-      UI.body.classList.add('theme-transition');
-      const isDark = UI.body.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      setTimeout(() => UI.body.classList.remove('theme-transition'), 420);
-    });
-
-    function smoothScrollToTop() {
-      const duration = 800;
-      const startY = window.scrollY;
-      const distance = -startY;
-      let startTime = null;
-      function animation(currentTime) {
-        if (startTime === null) startTime = currentTime;
-        const timeElapsed = currentTime - startTime;
-        const progress = Math.min(timeElapsed / duration, 1);
-        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-        window.scrollTo(0, startY + (distance * ease));
-        if (timeElapsed < duration) requestAnimationFrame(animation);
+      const sidebar = document.querySelectorAll('.project-sidebar .reveal-flip');
+      const feed    = document.querySelectorAll('.project-feed .reveal-flip');
+      const max     = Math.max(sidebar.length, feed.length);
+      for (let i = 0; i < max; i++) {
+        const delay = 300 + i * 150;
+        if (sidebar[i]) setTimeout(() => sidebar[i].classList.add('visible'), delay);
+        if (feed[i])    setTimeout(() => feed[i].classList.add('visible'),    delay);
       }
-      requestAnimationFrame(animation);
-    }
-    UI.scrollBtn.addEventListener('click', smoothScrollToTop);
-
-    window.addEventListener('scroll', () => {
-      const scrollPosition = window.innerHeight + window.scrollY;
-      const bottomPosition = document.body.offsetHeight - 100;
-      UI.scrollBtn.classList.toggle('visible', scrollPosition >= bottomPosition);
     });
 
-    document.querySelectorAll('.split-flip-text').forEach(el => {
-      const text = el.textContent;
-      el.setAttribute('aria-label', text);
-      el.innerHTML = '';
-      text.split('').forEach(char => {
-        const span = document.createElement('span');
-        span.className = 'char-flip';
-        span.textContent = char;
-        el.appendChild(span);
-      });
-    });
-
-    // ── Laptop Drag-to-Scroll & Rubber Banding Logic ────────
-    document.querySelectorAll('.content-image-grid').forEach(grid => {
-      let isDown = false;
-      let startX;
-      let scrollLeft;
-      let isDragging = false;
-
-      grid.addEventListener('mousedown', (e) => {
-        isDown = true;
-        isDragging = false;
-        grid.classList.add('grabbing');
-        startX = e.pageX - grid.offsetLeft;
-        scrollLeft = grid.scrollLeft;
-      });
-
-      grid.addEventListener('mouseleave', () => {
-        if (!isDown) return;
-        isDown = false;
-        grid.classList.remove('grabbing');
-        resetOverscroll();
-      });
-
-      grid.addEventListener('mouseup', () => {
-        if (!isDown) return;
-        isDown = false;
-        grid.classList.remove('grabbing');
-        resetOverscroll();
-      });
-
-      grid.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault(); 
-        const x = e.pageX - grid.offsetLeft;
-        const walk = (x - startX) * 1.5; 
-        
-        if (Math.abs(walk) > 5) {
-          isDragging = true;
-        }
-
-        const newScrollLeft = scrollLeft - walk;
-        const maxScroll = grid.scrollWidth - grid.clientWidth;
-
-        if (newScrollLeft < 0) {
-          grid.scrollLeft = 0;
-          grid.style.transform = `translate3d(${-newScrollLeft * 0.25}px, 0, 0)`;
-        } else if (newScrollLeft > maxScroll) {
-          grid.scrollLeft = maxScroll;
-          grid.style.transform = `translate3d(${-(newScrollLeft - maxScroll) * 0.25}px, 0, 0)`;
-        } else {
-          grid.style.transform = `translate3d(0px, 0, 0)`;
-          grid.scrollLeft = newScrollLeft;
-        }
-      });
-
-      function resetOverscroll() {
-        grid.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
-        grid.style.transform = 'translate3d(0px, 0, 0)';
-        setTimeout(() => {
-          grid.style.transition = '';
-        }, 400);
-      }
-
-      grid.addEventListener('click', (e) => {
-        if (isDragging) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
-        const img = e.target.closest('.content-image');
-        if (img) openModal(img, grid);
-      });
-    });
-
-    // Prevent ghost image selection during drag
-    document.querySelectorAll('.content-image-grid .content-image').forEach(img => {
-      img.addEventListener('dragstart', (e) => e.preventDefault());
-    });
-
-    // ── Image Modal Expansion Logic (Identical to index.html scaling) ────────
-    const imageModal = document.getElementById('image-modal');
-    const modalImage = document.getElementById('modal-image');
+    // ── Image Modal ──────────────────────────────────────────
+    const imageModal   = document.getElementById('image-modal');
+    const modalImage   = document.getElementById('modal-image');
     const modalContent = document.getElementById('modal-content');
-    const prevBtn = document.getElementById('modal-prev');
-    const nextBtn = document.getElementById('modal-next');
-    const backdrop = document.getElementById('card-backdrop');
-    const closeBtn = document.getElementById('card-close-btn');
-    
-    let currentGalleryImages = [], currentImageIndex = 0;
-    let activeOriginalImg = null;
-    let isExpanded = false;
-    
-    // Scroll-tracking state
-    let isClosing = false;
-    let closingScrollY = 0;
+    const prevBtn      = document.getElementById('modal-prev');
+    const nextBtn      = document.getElementById('modal-next');
+    const backdrop     = document.getElementById('card-backdrop');
+    const closeBtn     = document.getElementById('card-close-btn');
 
-    // Dynamically offset the fixed wrapper if the user scrolls while closing
+    let currentImages = [], currentIdx = 0, activeImg = null, isExpanded = false;
+    let isClosing = false, closingScrollY = 0;
+
     window.addEventListener('scroll', () => {
-      if (isClosing) {
-        const diff = closingScrollY - window.scrollY;
-        imageModal.style.transform = `translateY(${diff}px)`;
-      }
+      if (isClosing) imageModal.style.transform = `translateY(${closingScrollY - window.scrollY}px)`;
     });
-
-    function getFinalDimensions(img) {
-      const maxWidth = window.innerWidth * 0.9;
-      const maxHeight = window.innerHeight * 0.8;
-      let w = img.naturalWidth || 800;
-      let h = img.naturalHeight || 600;
-      
-      const aspect = w / h;
-      if (w > maxWidth) { w = maxWidth; h = w / aspect; }
-      if (h > maxHeight) { h = maxHeight; w = h * aspect; }
-      return { width: w, height: h };
-    }
 
     function expandImage(img) {
-      isClosing = false;
-      imageModal.style.transform = ''; 
-      
+      isClosing = false; imageModal.style.transform = '';
       const rect = img.getBoundingClientRect();
-      const vCenterX = window.innerWidth / 2;
-      const vCenterY = window.innerHeight / 2;
-      const thumbCenterX = rect.left + rect.width / 2;
-      const thumbCenterY = rect.top + rect.height / 2;
-
-      const tx = thumbCenterX - vCenterX;
-      const ty = thumbCenterY - vCenterY;
-
-      modalContent.style.width = `${rect.width}px`;
+      const tx = rect.left + rect.width / 2 - window.innerWidth / 2;
+      const ty = rect.top  + rect.height / 2 - window.innerHeight / 2;
+      const s  = Math.min((window.innerWidth * 0.9) / rect.width, (window.innerHeight * 0.8) / rect.height);
+      modalContent.style.width  = `${rect.width}px`;
       modalContent.style.height = `${rect.height}px`;
-
-      const s = Math.min((window.innerWidth * 0.9) / rect.width, (window.innerHeight * 0.8) / rect.height);
-
       modalContent.style.transition = 'none';
       modalContent.style.setProperty('--tx', `${tx}px`);
       modalContent.style.setProperty('--ty', `${ty}px`);
-      modalContent.style.setProperty('--s', `1`);
+      modalContent.style.setProperty('--s', '1');
       modalContent.style.opacity = '1';
-      
       img.style.opacity = '0';
-      
-      modalContent.offsetHeight; 
-
-      backdrop.classList.add('visible');
-      closeBtn.classList.add('visible');
-      document.body.style.overflow = 'hidden';
-      isExpanded = true;
-
+      modalContent.offsetHeight; // force reflow
+      backdrop.classList.add('visible'); closeBtn.classList.add('visible');
+      document.body.style.overflow = 'hidden'; isExpanded = true;
       requestAnimationFrame(() => {
-        modalContent.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s ease, width 0.3s ease, height 0.3s ease';
-        modalContent.style.setProperty('--tx', `0px`);
-        modalContent.style.setProperty('--ty', `0px`);
+        modalContent.style.transition = 'transform 0.6s cubic-bezier(0.25,1,0.5,1), box-shadow 0.6s ease, width 0.3s ease, height 0.3s ease';
+        modalContent.style.setProperty('--tx', '0px'); modalContent.style.setProperty('--ty', '0px');
         modalContent.style.setProperty('--s', `${s}`);
-        modalContent.classList.add('expanded');
-        updateArrowVisibility();
+        modalContent.classList.add('expanded'); updateArrows();
       });
     }
 
     function openModal(img, grid) {
       if (isExpanded) return;
-      activeOriginalImg = img;
-      currentGalleryImages = grid ? Array.from(grid.querySelectorAll('.content-image')) : [img];
-      currentImageIndex = currentGalleryImages.indexOf(img);
-      modalImage.src = img.src;
-      expandImage(img);
+      activeImg = img;
+      currentImages = grid ? Array.from(grid.querySelectorAll('.content-image')) : [img];
+      currentIdx = currentImages.indexOf(img);
+      modalImage.src = img.src; expandImage(img);
     }
 
     function closeModal() {
-      if (!isExpanded || !activeOriginalImg) return;
-
-      isClosing = true;
-      closingScrollY = window.scrollY;
+      if (!isExpanded || !activeImg) return;
+      isClosing = true; closingScrollY = window.scrollY;
       document.body.style.overflow = '';
-      
-      const parentGrid = activeOriginalImg.closest('.content-image-grid');
+      const parentGrid = activeImg.closest('.content-image-grid');
       if (parentGrid) parentGrid.style.overflowX = 'hidden';
-
-      const rect = activeOriginalImg.getBoundingClientRect();
-      const vCenterX = window.innerWidth / 2;
-      const vCenterY = window.innerHeight / 2;
-      const thumbCenterX = rect.left + rect.width / 2;
-      const thumbCenterY = rect.top + rect.height / 2;
-
-      const tx = thumbCenterX - vCenterX;
-      const ty = thumbCenterY - vCenterY;
-
-      backdrop.classList.remove('visible');
-      closeBtn.classList.remove('visible');
+      const rect = activeImg.getBoundingClientRect();
+      const tx = rect.left + rect.width / 2 - window.innerWidth / 2;
+      const ty = rect.top  + rect.height / 2 - window.innerHeight / 2;
+      backdrop.classList.remove('visible'); closeBtn.classList.remove('visible');
       modalContent.classList.remove('expanded');
-      
-      modalContent.style.setProperty('--tx', `${tx}px`);
-      modalContent.style.setProperty('--ty', `${ty}px`);
-      modalContent.style.setProperty('--s', `1`);
-      
-      prevBtn.classList.remove('visible');
-      nextBtn.classList.remove('visible');
-      
+      modalContent.style.setProperty('--tx', `${tx}px`); modalContent.style.setProperty('--ty', `${ty}px`); modalContent.style.setProperty('--s', '1');
+      prevBtn.classList.remove('visible'); nextBtn.classList.remove('visible');
       isExpanded = false;
-
       setTimeout(() => {
         if (!isExpanded) {
-          isClosing = false;
-          imageModal.style.transform = ''; 
-          if (parentGrid) parentGrid.style.overflowX = ''; 
-          
-          activeOriginalImg.style.opacity = '1'; 
-          modalContent.style.opacity = '0';
-          
-          activeOriginalImg = null;
+          isClosing = false; imageModal.style.transform = '';
+          if (parentGrid) parentGrid.style.overflowX = '';
+          activeImg.style.opacity = '1'; modalContent.style.opacity = '0'; activeImg = null;
         }
       }, 600);
     }
 
-    function updateModalContent(index) {
-      const newImg = currentGalleryImages[index];
-      
-      activeOriginalImg.style.opacity = '1'; 
-      activeOriginalImg = newImg; 
-      newImg.style.opacity = '0'; 
-      
-      modalImage.style.opacity = '0';
-      setTimeout(() => {
-        const rect = newImg.getBoundingClientRect();
-        modalContent.style.width = `${rect.width}px`;
-        modalContent.style.height = `${rect.height}px`;
-        
-        const s = Math.min((window.innerWidth * 0.9) / rect.width, (window.innerHeight * 0.8) / rect.height);
-        modalContent.style.setProperty('--s', `${s}`);
-        
-        modalImage.src = newImg.src;
-        modalImage.style.opacity = '1';
-      }, 150);
+    function updateArrows() {
+      if (currentImages.length <= 1) { prevBtn.classList.remove('visible'); nextBtn.classList.remove('visible'); return; }
+      currentIdx > 0                       ? prevBtn.classList.add('visible') : prevBtn.classList.remove('visible');
+      currentIdx < currentImages.length - 1 ? nextBtn.classList.add('visible') : nextBtn.classList.remove('visible');
     }
 
-    function updateArrowVisibility() {
-      if (currentGalleryImages.length <= 1) { 
-        prevBtn.classList.remove('visible'); 
-        nextBtn.classList.remove('visible'); 
-        return; 
-      }
-      currentImageIndex > 0 ? prevBtn.classList.add('visible') : prevBtn.classList.remove('visible');
-      currentImageIndex < currentGalleryImages.length - 1 ? nextBtn.classList.add('visible') : nextBtn.classList.remove('visible');
-    }
+    function goNext(e) { if (e) e.stopPropagation(); if (currentIdx < currentImages.length - 1) { const ni = ++currentIdx; const newImg = currentImages[ni]; activeImg.style.opacity = '1'; activeImg = newImg; newImg.style.opacity = '0'; modalImage.style.opacity = '0'; setTimeout(() => { const r = newImg.getBoundingClientRect(); const s = Math.min((window.innerWidth*0.9)/r.width,(window.innerHeight*0.8)/r.height); modalContent.style.width=`${r.width}px`; modalContent.style.height=`${r.height}px`; modalContent.style.setProperty('--s',`${s}`); modalImage.src=newImg.src; modalImage.style.opacity='1'; }, 150); updateArrows(); } }
+    function goPrev(e) { if (e) e.stopPropagation(); if (currentIdx > 0) { const ni = --currentIdx; const newImg = currentImages[ni]; activeImg.style.opacity = '1'; activeImg = newImg; newImg.style.opacity = '0'; modalImage.style.opacity = '0'; setTimeout(() => { const r = newImg.getBoundingClientRect(); const s = Math.min((window.innerWidth*0.9)/r.width,(window.innerHeight*0.8)/r.height); modalContent.style.width=`${r.width}px`; modalContent.style.height=`${r.height}px`; modalContent.style.setProperty('--s',`${s}`); modalImage.src=newImg.src; modalImage.style.opacity='1'; }, 150); updateArrows(); } }
 
-    function nextImage(e) { if (e) e.stopPropagation(); if (currentImageIndex < currentGalleryImages.length - 1) { currentImageIndex++; updateModalContent(currentImageIndex); updateArrowVisibility(); } }
-    function prevImage(e) { if (e) e.stopPropagation(); if (currentImageIndex > 0) { currentImageIndex--; updateModalContent(currentImageIndex); updateArrowVisibility(); } }
-
-    nextBtn.addEventListener('click', nextImage);
-    prevBtn.addEventListener('click', prevImage);
+    nextBtn.addEventListener('click', goNext);
+    prevBtn.addEventListener('click', goPrev);
     closeBtn.addEventListener('click', closeModal);
     backdrop.addEventListener('click', closeModal);
-    
-    document.addEventListener('keydown', (e) => {
-      if (!isExpanded) return;
-      if (e.key === 'ArrowRight') nextImage(e);
-      if (e.key === 'ArrowLeft') prevImage(e);
-      if (e.key === 'Escape') closeModal();
+    modalContent.addEventListener('click', closeModal);
+    document.addEventListener('keydown', e => { if (!isExpanded) return; if (e.key==='ArrowRight') goNext(e); if (e.key==='ArrowLeft') goPrev(e); if (e.key==='Escape') closeModal(); });
+    let mts = 0, mte = 0;
+    modalContent.addEventListener('touchstart', e => { mts = e.changedTouches[0].screenX; }, { passive: true });
+    modalContent.addEventListener('touchend',   e => { mte = e.changedTouches[0].screenX; if (mte < mts - 50) goNext(); if (mte > mts + 50) goPrev(); }, { passive: true });
+
+    // ── Drag-to-scroll image grids ────────────────────────────
+    document.querySelectorAll('.content-image-grid').forEach(grid => {
+      let isDown = false, startX, scrollLeft, isDragging = false;
+      grid.addEventListener('mousedown',  e => { isDown = true; isDragging = false; grid.classList.add('grabbing'); startX = e.pageX - grid.offsetLeft; scrollLeft = grid.scrollLeft; });
+      grid.addEventListener('mouseleave', () => { if (!isDown) return; isDown = false; grid.classList.remove('grabbing'); reset(); });
+      grid.addEventListener('mouseup',    () => { if (!isDown) return; isDown = false; grid.classList.remove('grabbing'); reset(); });
+      grid.addEventListener('mousemove',  e => {
+        if (!isDown) return; e.preventDefault();
+        const walk = (e.pageX - grid.offsetLeft - startX) * 1.5;
+        if (Math.abs(walk) > 5) isDragging = true;
+        const target = scrollLeft - walk, max = grid.scrollWidth - grid.clientWidth;
+        if (target < 0)    { grid.scrollLeft = 0;   grid.style.transform = `translate3d(${-target * 0.25}px,0,0)`; }
+        else if (target > max) { grid.scrollLeft = max; grid.style.transform = `translate3d(${-(target-max)*0.25}px,0,0)`; }
+        else                { grid.style.transform = 'translate3d(0px,0,0)'; grid.scrollLeft = target; }
+      });
+      function reset() { grid.style.transition = 'transform 0.4s cubic-bezier(0.25,1,0.5,1)'; grid.style.transform = 'translate3d(0px,0,0)'; setTimeout(() => grid.style.transition='', 400); }
+      grid.addEventListener('click', e => { if (isDragging) { e.preventDefault(); e.stopPropagation(); return; } const img = e.target.closest('.content-image'); if (img) openModal(img, grid); });
     });
 
-    let modalTouchStartX = 0, modalTouchEndX = 0;
-    modalContent.addEventListener('touchstart', (e) => { modalTouchStartX = e.changedTouches[0].screenX; }, { passive: true });
-    modalContent.addEventListener('touchend', (e) => { 
-      modalTouchEndX = e.changedTouches[0].screenX; 
-      if (modalTouchEndX < modalTouchStartX - 50) nextImage(); 
-      if (modalTouchEndX > modalTouchStartX + 50) prevImage(); 
-    }, { passive: true });
-    
-    modalContent.addEventListener('click', closeModal);
-
+    document.querySelectorAll('.content-image-grid .content-image').forEach(img =>
+      img.addEventListener('dragstart', e => e.preventDefault())
+    );
     document.querySelectorAll('.content-image').forEach(img => {
       const check = () => { if (img.naturalWidth === img.naturalHeight && img.naturalWidth > 0) img.classList.add('square'); };
       if (img.complete) check(); else img.addEventListener('load', check);
     });
-
   </script>
 </body>
 </html>

@@ -1,0 +1,335 @@
+/* ============================================================
+   shared.css — Ruiqian Zhang · Site-Wide Styles
+   ============================================================ */
+
+/* ── Variables ──────────────────────────────────────────── */
+:root {
+  --bg:           #f2f0ef;
+  --text:         #111;
+  --muted:        #6b7280;
+  --accent:       #0b5fff;
+  --card-accent:  #861F41;
+  --card-shadow:  rgba(134, 31, 65, 0.3);
+  --hover-bg:     rgba(11, 95, 255, 0.06);
+  --border:       rgba(16, 24, 40, 0.06);
+  --section-bg:   rgba(255, 255, 255, 0.4);
+  --card-bg:      #f7f6f5;
+  --shadow-color: rgba(11, 95, 255, 0.08);
+  --menu-bg:      rgba(255, 255, 255, 0.95);
+  --nav-height:   100px;
+}
+
+body.dark {
+  --bg:           #071221;
+  --text:         #f2f0ef;
+  --muted:        #98a6b3;
+  --accent:       #7ab7ff;
+  --card-accent:  #E5751F;
+  --card-shadow:  rgba(229, 117, 31, 0.75);
+  --hover-bg:     rgba(255, 255, 255, 0.06);
+  --border:       rgba(255, 255, 255, 0.06);
+  --section-bg:   rgba(255, 255, 255, 0.03);
+  --card-bg:      rgba(255, 255, 255, 0.03);
+  --shadow-color: rgba(200, 200, 200, 0.18);
+  --menu-bg:      rgba(17, 27, 39, 0.95);
+}
+
+/* ── Base ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Theme transition (flash-free) ─────────────────────── */
+.theme-transition,
+.theme-transition * {
+  transition:
+    background-color 0.32s ease,
+    background 0.32s ease,
+    border-color 0.32s ease,
+    box-shadow 0.32s ease,
+    color 0s !important;
+}
+
+/* ── Typography ─────────────────────────────────────────── */
+h1 { font-size: 84px; font-weight: 600; margin: 0 0 16px; color: var(--text); line-height: 1.1; }
+h2 { font-size: 28px; margin: 0 0 12px; color: var(--text); line-height: 1.2; }
+p  { margin: 0 0 18px; color: var(--muted); line-height: 1.6; }
+
+@media (max-width: 768px) { h1 { font-size: 42px !important; } }
+@media (max-width: 480px) { h1 { font-size: 32px !important; } }
+
+/* ── Icon buttons ───────────────────────────────────────── */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform    0.6s cubic-bezier(0.25, 1, 0.5, 1),
+    background   0.3s ease,
+    color        0.3s ease,
+    box-shadow   0.3s ease;
+}
+.icon-btn.square { width: 44px; height: 44px; }
+.icon-btn:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
+
+@media (hover: hover) {
+  .icon-btn:hover {
+    background: var(--hover-bg);
+    color: var(--accent);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 6px 18px var(--shadow-color);
+  }
+  .icon-btn:hover img { filter: brightness(0) saturate(100%) invert(27%) sepia(100%) saturate(2878%) hue-rotate(210deg) brightness(104%) contrast(97%); }
+  body.dark .icon-btn:hover img { filter: brightness(0) saturate(100%) invert(70%) sepia(100%) saturate(2878%) hue-rotate(190deg) brightness(104%) contrast(97%); }
+}
+
+.icon-btn img { height: 20px; width: auto; }
+.icon-btn.linkedin img { height: 21px; }
+.icon-btn.x img        { height: 17px; }
+body.dark .icon-btn img { filter: brightness(0) invert(1); }
+
+/* ── Pill buttons ───────────────────────────────────────── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform    0.6s cubic-bezier(0.25, 1, 0.5, 1),
+    background   0.3s ease,
+    color        0.3s ease,
+    box-shadow   0.3s ease,
+    border-color 0.3s ease;
+}
+.pill:active { transform: scale(0.95); background: var(--hover-bg); transition-duration: 0.1s; }
+
+@media (hover: hover) {
+  .pill:not(.pill-accent):hover {
+    background: var(--hover-bg);
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px var(--shadow-color);
+  }
+}
+
+.pill-accent {
+  padding: 0 20px;
+  height: 42px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  overflow: hidden;
+  align-items: flex-start !important;
+  position: relative;
+}
+body.dark .pill-accent { color: var(--bg); }
+.pill-accent:active { opacity: 0.8; background: var(--accent) !important; }
+
+@media (hover: hover) {
+  .pill-accent:hover { box-shadow: 0 6px 18px rgba(11, 95, 255, 0.3); }
+  .pill-accent:hover .slot-scroller { transform: translateY(-50%); }
+}
+
+/* ── Slot scroller (animated pill labels) ───────────────── */
+.slot-scroller { display: flex; flex-direction: column; width: 100%; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.slot-label    { height: 42px; display: flex; align-items: center; justify-content: center; width: 100%; flex-shrink: 0; }
+
+/* ── Icon masks ─────────────────────────────────────────── */
+.icon-mask {
+  display: block;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center;  mask-position: center;
+  -webkit-mask-size: contain;     mask-size: contain;
+}
+.back-icon {
+  width: 16px; height: 16px;
+  -webkit-mask-image: url('icons/up_arrow.svg');
+  mask-image: url('icons/up_arrow.svg');
+  transform: rotate(-90deg);
+}
+.home-icon {
+  width: 20px; height: 20px;
+  -webkit-mask-image: url('icons/home.svg');
+  mask-image: url('icons/home.svg');
+}
+.arrow-icon {
+  width: 16px; height: 16px;
+  -webkit-mask-image: url('icons/up_arrow.svg');
+  mask-image: url('icons/up_arrow.svg');
+}
+
+/* ── Navigation ─────────────────────────────────────────── */
+/* Blur lives in ::before (its stacking context is confined to .top-nav-bg).
+   The gradient fade is on the element itself. Nav buttons at z-index 95 sit
+   above the whole thing cleanly. */
+.top-nav-bg {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--nav-height); pointer-events: none;
+  z-index: 90;
+  background: linear-gradient(to bottom, var(--bg) 40%, transparent 100%);
+  transition: background-color 0.32s ease;
+}
+.top-nav-bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}
+
+.nav-wrapper    { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 95; pointer-events: none; }
+.nav-left-group { position: fixed; top: 20px; left: 20px; z-index: 95; pointer-events: auto; }
+.nav-right-group{ position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 95; pointer-events: auto; }
+
+/* ── Moon/sun SVG icon (shared theme toggle) ────────────── */
+.moon-svg { display: block; }
+
+/* ── Animations ─────────────────────────────────────────── */
+
+/* Entrance: card flip down from top */
+.reveal-flip {
+  opacity: 0;
+  transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
+  transform-origin: top center;
+  transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-flip.visible { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); }
+.reveal-flip.reduced-opacity.visible { opacity: 0.75; }
+
+/* Entrance: per-character flip */
+.char-flip {
+  display: inline-block;
+  opacity: 0;
+  white-space: pre;
+  transform: perspective(500px) rotateX(90deg) translateY(10px);
+  transform-origin: bottom center;
+  transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
+
+/* Entrance: pop-in (scale from 0) */
+@keyframes pop-in {
+  0%   { opacity: 0; transform: scale(0.5); filter: blur(4px); }
+  60%  { opacity: 1; transform: scale(0.99); }
+  100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+.pop-in { animation: pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards; }
+
+/* Entrance: pill wipe from center */
+@keyframes pill-wipe {
+  0%   { clip-path: inset(0 50% 0 50% round 999px); filter: blur(4px); opacity: 0; }
+  100% { clip-path: inset(0 0 0 0 round 999px); opacity: 1; }
+}
+.pill-wipe { opacity: 0; animation: pill-wipe 0.9s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+
+/* ── Scroll-to-top button ───────────────────────────────── */
+.scroll-to-top {
+  overflow: hidden;
+  align-items: flex-start !important;
+  padding: 0;
+  transition:
+    opacity     0.3s ease,
+    transform   0.6s cubic-bezier(0.25, 1, 0.5, 1),
+    background  0.3s ease,
+    color       0.3s ease,
+    box-shadow  0.3s ease;
+}
+.scroll-to-top .slot-label { height: 44px; width: 44px; }
+
+@media (hover: hover) {
+  .scroll-to-top:hover .slot-scroller { transform: translateY(-44px); }
+}
+
+/* ── Modal backdrop & close button (shared) ─────────────── */
+#card-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  z-index: 900; opacity: 0; pointer-events: none;
+  transition: opacity 0.5s ease;
+  touch-action: none;
+}
+#card-backdrop.visible { opacity: 1; pointer-events: auto; }
+
+#card-close-btn {
+  position: fixed; top: 24px; left: 24px;
+  z-index: 1000; opacity: 0; pointer-events: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 44px; height: 44px; padding: 0;
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.5s ease, transform 0.2s ease, background 0.2s ease;
+}
+#card-close-btn.visible { opacity: 1; pointer-events: auto; }
+#card-close-btn:active { transform: scale(0.9); }
+@media (hover: hover) { #card-close-btn:hover { background: rgba(255, 255, 255, 0.25); } }
+
+/* ── Site footer ─────────────────────────────────────────── */
+.site-footer         { color: var(--muted); font-size: 14px; }
+.site-footer-container { text-align: center; padding-bottom: 30px; }
+
+/* ── Download link / resume arrow ───────────────────────── */
+.download-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform    0.6s cubic-bezier(0.25, 1, 0.5, 1),
+    background   0.3s ease,
+    color        0.3s ease,
+    box-shadow   0.3s ease,
+    border-color 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.resume-arrow {
+  width: 16px; height: 16px;
+  margin-left: 6px;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+@media (hover: hover) {
+  .download-link:hover .resume-arrow { transform: translate(3px, -3px); }
+}
+
+/* ── Scroll-progress bar (replaces snap indicators) ─────── */
+#scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--accent);
+  z-index: 200;
+  transition: width 0.1s linear, opacity 0.3s ease;
+  opacity: 0;
+}
+#scroll-progress.visible { opacity: 1; }
