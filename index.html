@@ -218,11 +218,12 @@
       .download-link { margin: 12px auto 0 auto !important; }
     }
     @media (max-width: 600px) {
-      .arc-deck-outer { height: 320px; }
-      .arc-card { width: 170px; height: 230px; }
-      .arc-card-thumb { height: 110px; }
-      .arc-card-desc { font-size: 12px; }
-      .arc-card-title { font-size: 13px; }
+      .arc-deck-outer { height: 380px; }
+      .arc-card { width: 210px; height: 290px; }
+      .arc-card-thumb { height: 130px; }
+      .arc-card-desc { font-size: 13px; -webkit-line-clamp: 2; }
+      .arc-card-title { font-size: 15px; }
+      .arc-card-body { padding: 10px 12px 12px; }
     }
 
     /* ── Scroll-to-top (inline, centered below footer) ────── */
@@ -248,6 +249,7 @@
     </svg>
   </button>
 
+  <div class="top-nav-safe"></div>
   <div class="top-nav-bg"></div>
   <nav class="nav-wrapper">
     <div class="nav-right-group">
@@ -356,7 +358,7 @@
     let dragging = false, dragStartX = 0, dragBaseOffset = 0, dragMoved = false;
     let introStartOffset = 0, animStartTime = null;
 
-    const CARD_W = 220, CARD_W_SM = 170, ARC_H = 80, TOP_PAD = 30;
+    const CARD_W = 220, CARD_W_SM = 210, ARC_H = 80, TOP_PAD = 30;
 
     function getCardW() {
       const outer = document.getElementById('arc-deck-outer');
@@ -413,8 +415,9 @@
     function layoutCards(isAnim) {
       const outer = document.getElementById('arc-deck-outer');
       if (!outer || !cards.length) return;
-      const cw = getCardW(), W = Math.min(outer.clientWidth * 0.9, 860);
-      const step = outer.clientWidth < 600 ? 0.32 : 0.24;
+      const isMobile = outer.clientWidth < 600;
+      const cw = getCardW(), W = Math.min(outer.clientWidth * (isMobile ? 1.15 : 0.9), 860);
+      const step = isMobile ? 0.28 : 0.24;
       cards.forEach((card, i) => {
         const relI = i - offset, t = 0.5 + relI * step;
         const { x, y, tilt } = arcAt(t, W, ARC_H);

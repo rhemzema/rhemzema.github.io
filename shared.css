@@ -184,6 +184,17 @@ body.dark .pill-accent { color: var(--bg); }
 }
 
 /* ── Navigation ─────────────────────────────────────────── */
+/* Solid bar that fills only the OS safe area (notch / dynamic island).
+   Sits above top-nav-bg so the status bar area is never see-through. */
+.top-nav-safe {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: env(safe-area-inset-top);
+  background: var(--bg);
+  z-index: 92;
+  pointer-events: none;
+  transition: background-color 0.32s ease;
+}
+
 /* Blur lives in ::before (its stacking context is confined to .top-nav-bg).
    The gradient fade is on the element itself. Nav buttons at z-index 95 sit
    above the whole thing cleanly. */
@@ -193,7 +204,6 @@ body.dark .pill-accent { color: var(--bg); }
   z-index: 90;
   background: linear-gradient(to bottom, var(--bg) 60%, transparent 100%);
   transition: background-color 0.32s ease;
-  padding-top: env(safe-area-inset-top);
 }
 .top-nav-bg::before {
   content: '';
