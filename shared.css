@@ -278,14 +278,13 @@ body.dark .pill-accent { color: var(--bg); }
 /* ── Modal backdrop & close button (shared) ─────────────── */
 #card-backdrop {
   position: fixed; inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 1);
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   z-index: 900; opacity: 0; pointer-events: none;
   transition: opacity 0.5s ease;
   touch-action: none;
 }
 #card-backdrop.visible { opacity: 1; pointer-events: auto; }
-body.dark #card-backdrop { background: rgba(0, 0, 0, 0.5); }
 
 #card-close-btn {
   position: fixed; top: 24px; left: 24px;

@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Resume | Ruiqian Zhang</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="icon" href="icons/face.svg" type="image/svg+xml">
+
+  <link rel="stylesheet" href="shared.css">
+
+  <style>
+    .content-wrap {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 100px 20px 40px; box-sizing: border-box;
+    }
+    .container { width: 100%; max-width: 920px; }
+
+    /* ── Header row ── */
+    .resume-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
+    }
+    .resume-header h1 {
+      font-size: 32px; font-weight: 800; margin: 0;
+      letter-spacing: -0.5px; line-height: 1.2;
+    }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+
+    /* ── PDF viewer shell ── */
+    .pdf-shell {
+      width: 100%; border-radius: 20px; overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--section-bg);
+      box-shadow: 0 4px 24px var(--shadow-color);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+    .pdf-shell:hover {
+      border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+      box-shadow: 0 8px 40px var(--shadow-color);
+    }
+
+    /* toolbar strip */
+    .pdf-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--card-bg);
+    }
+    .pdf-toolbar-left { display: flex; align-items: center; gap: 8px; }
+
+    .pdf-filename {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 260px;
+    }
+    .pdf-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+      padding: 3px 8px; border-radius: 999px; text-transform: uppercase;
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    }
+
+    /* ── Fixed-height iframe — no aspect-ratio padding ── */
+    .pdf-frame-wrap {
+      position: relative;
+      width: 100%;
+      height: 85vh;
+      min-height: 500px;
+      background: var(--section-bg);
+    }
+
+    .pdf-frame-wrap iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: none; display: block;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .pdf-frame-wrap iframe.loaded { opacity: 1; }
+
+    /* loading spinner shown until iframe fades in */
+    .pdf-loader {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .pdf-loader.hidden { opacity: 0; }
+
+    .pdf-loader-spinner {
+      width: 28px; height: 28px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .pdf-loader-text { font-size: 13px; color: var(--muted); }
+
+    /* fallback */
+    .pdf-fallback {
+      display: none; position: absolute; inset: 0;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; padding: 40px; text-align: center;
+    }
+    .pdf-fallback.show { display: flex; }
+    .pdf-fallback-icon {
+      width: 48px; height: 48px; opacity: 0.3; background: var(--text);
+      -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpolyline points='14 2 14 8 20 8' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center / contain;
+      mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpolyline points='14 2 14 8 20 8' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center / contain;
+    }
+    .pdf-fallback p { color: var(--muted); font-size: 14px; margin: 0; line-height: 1.6; }
+    .pdf-fallback a { color: var(--accent); text-decoration: none; font-weight: 500; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+    .pdf-fallback a:hover { border-bottom-color: var(--accent); }
+
+    /* ── Note below viewer ── */
+    .resume-note {
+      margin-top: 14px; text-align: center;
+      font-size: 13px; color: var(--muted);
+    }
+    .resume-note a { color: var(--accent); text-decoration: none; font-weight: 500; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+    .resume-note a:hover { border-bottom-color: var(--accent); }
+
+    .home-icon {
+      width: 20px; height: 20px; display: block; background-color: currentColor;
+      -webkit-mask: url('icons/home.svg') no-repeat center / contain;
+      mask: url('icons/home.svg') no-repeat center / contain;
+    }
+
+    .resume-arrow {
+      width: 16px; height: 16px; margin-left: 6px;
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    @media (hover: hover) {
+      .download-link:hover .resume-arrow { transform: translate(3px, -3px); }
+    }
+
+    @media (max-width: 600px) {
+      .resume-header { flex-direction: column; align-items: flex-start; }
+      .pdf-filename  { max-width: 160px; }
+      .pdf-frame-wrap { height: 75vh; }
+    }
+
+    /* ── Cascaded slide-up title ── */
+    .resume-header .char-flip {
+      transform: translateY(20px);
+      opacity: 0;
+      transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .resume-header .char-flip.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function() {
+      const s = localStorage.getItem('theme'), d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.body.style.transition = 'none';
+      if (s === 'dark' || (!s && d)) document.body.classList.add('dark');
+    })();
+  </script>
+
+  <div id="scroll-progress"></div>
+  <div class="top-nav-safe"></div>
+  <div class="top-nav-bg"></div>
+
+  <nav class="nav-wrapper">
+    <div class="nav-left-group">
+      <a href="https://ruiqian.dev" class="icon-btn square" aria-label="Back to Home">
+        <div class="icon-mask back-icon"></div>
+      </a>
+    </div>
+    <div class="nav-right-group">
+      <a href="https://ruiqian.dev" class="icon-btn square" aria-label="Go to Home">
+        <div class="home-icon"></div>
+      </a>
+      <button id="theme-toggle" class="icon-btn square" aria-label="Toggle dark mode">
+        <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5373 21.3065 11.4608 21.0672 11.8568C19.9289 13.7406 17.8615 15 15.5 15C11.9101 15 9 12.0899 9 8.5C9 6.13845 10.2594 4.07105 12.1432 2.93276C12.5392 2.69347 12.4627 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <div class="content-wrap">
+    <div class="container">
+
+      <div class="resume-header">
+        <h1 class="split-flip-text">Resume</h1>
+        <div class="header-actions reveal-flip" data-delay="200">
+          <a href="https://drive.google.com/file/d/16BJaZmmX7ZM_sW_otVHfL_wDuC9--Ux6/view?usp=drive_link"
+             class="pill download-link" target="_blank" rel="noopener">
+            Open in Drive
+            <svg class="resume-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
+          <a href="https://drive.google.com/uc?export=download&id=16BJaZmmX7ZM_sW_otVHfL_wDuC9--Ux6"
+             class="pill" download>
+            Download
+          </a>
+        </div>
+      </div>
+
+      <div class="pdf-shell reveal-flip" data-delay="300">
+        <div class="pdf-toolbar">
+          <div class="pdf-toolbar-left">
+            <span class="pdf-filename">Ruiqian.Zhang.Resume.pdf</span>
+            <span class="pdf-badge">PDF</span>
+          </div>
+        </div>
+
+        <div class="pdf-frame-wrap">
+          <div class="pdf-loader" id="pdf-loader">
+            <div class="pdf-loader-spinner"></div>
+            <span class="pdf-loader-text">Loading resume…</span>
+          </div>
+
+          <iframe
+            id="pdf-frame"
+            src="https://drive.google.com/file/d/16BJaZmmX7ZM_sW_otVHfL_wDuC9--Ux6/preview"
+            title="Ruiqian Zhang Resume"
+            allow="autoplay"
+            loading="lazy">
+          </iframe>
+
+          <div class="pdf-fallback" id="pdf-fallback">
+            <div class="pdf-fallback-icon"></div>
+            <p>The PDF can't be previewed here.<br>
+              <a href="https://drive.google.com/file/d/16BJaZmmX7ZM_sW_otVHfL_wDuC9--Ux6/view?usp=drive_link"
+                 target="_blank" rel="noopener">Open in Google Drive</a> to view it.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <p class="resume-note reveal-flip" data-delay="400">
+        Having trouble viewing?
+        <a href="https://drive.google.com/file/d/16BJaZmmX7ZM_sW_otVHfL_wDuC9--Ux6/view?usp=drive_link"
+           target="_blank" rel="noopener">Open directly in Google Drive</a>
+        or
+        <a href="https://drive.google.com/uc?export=download&id=16BJaZmmX7ZM_sW_otVHfL_wDuC9--Ux6">
+          download the PDF</a>.
+      </p>
+
+    </div>
+  </div>
+
+  <div class="site-footer-container">
+    <footer class="site-footer">&copy; 2026 Ruiqian Zhang</footer>
+  </div>
+
+  <script src="shared.js"></script>
+  <script>
+    RZ.splitFlipText();
+    RZ.initScrollProgress();
+    RZ.observeReveal();
+
+    const frame    = document.getElementById('pdf-frame');
+    const loader   = document.getElementById('pdf-loader');
+    const fallback = document.getElementById('pdf-fallback');
+    let loaded = false;
+
+    frame.addEventListener('load', () => {
+      loaded = true;
+      // Extra delay lets Drive finish its internal render before revealing
+      setTimeout(() => {
+        frame.classList.add('loaded');
+        loader.classList.add('hidden');
+      }, 800);
+    });
+
+    // Show fallback if nothing loads after 12 seconds
+    setTimeout(() => {
+      if (!loaded) {
+        loader.classList.add('hidden');
+        fallback.classList.add('show');
+      }
+    }, 12000);
+  </script>
+</body>
+</html>
