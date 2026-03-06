@@ -20,7 +20,7 @@
 
     body { min-height: 100vh; }
 
-    body.card-expanded { overflow: hidden !important; touch-action: none !important; }
+    body.card-expanded { touch-action: none !important; }
 
     .content-wrap { padding: 0 20px; }
 
@@ -601,6 +601,8 @@
       setTimeout(() => { card.classList.remove('spin-360'); spinning = false; recovering = true; setTimeout(() => recovering = false, 300); }, 600);
     };
 
+    let scrollLockY = 0;
+
     const expandCard = () => {
       if (isExpanded) return;
       const rect = wrap.getBoundingClientRect();
@@ -608,9 +610,16 @@
       const ty = window.innerHeight / 2 - (rect.top  + rect.height / 2);
       const s  = Math.min(1.8, (window.innerWidth * 0.85) / rect.width, (window.innerHeight * 0.8) / rect.height);
       wrap.style.setProperty('--tx', `${tx}px`); wrap.style.setProperty('--ty', `${ty}px`); wrap.style.setProperty('--s', `${s}`);
+      
+      /* Lock scroll safely for iOS */
+      scrollLockY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollLockY}px`;
+      document.body.style.width = '100%';
+
       wrap.classList.add('expanded'); document.body.classList.add('card-expanded');
       backdrop.classList.add('visible'); closeBtn.classList.add('visible');
-      document.documentElement.style.overflow = 'hidden'; isExpanded = true;
+      isExpanded = true;
     };
 
     const shrinkCard = () => {
@@ -618,7 +627,14 @@
       wrap.style.setProperty('--tx','0px'); wrap.style.setProperty('--ty','0px'); wrap.style.setProperty('--s','1');
       document.body.classList.remove('card-expanded');
       backdrop.classList.remove('visible'); closeBtn.classList.remove('visible');
-      document.documentElement.style.overflow = ''; isExpanded = false;
+      
+      /* Unlock scroll safely for iOS */
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo({ top: scrollLockY, behavior: 'instant' });
+
+      isExpanded = false;
       setTimeout(() => { if (!isExpanded) wrap.classList.remove('expanded'); }, 600);
       rt = setTimeout(reset, 500);
     };
