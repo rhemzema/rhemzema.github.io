@@ -186,14 +186,14 @@ body.dark .pill-accent { color: var(--bg); }
 /* ── Navigation ─────────────────────────────────────────── */
 .top-nav-safe {
   position: fixed; 
-  top: -100px; /* Extends up to cover pull-down rubber-banding */
+  top: -100px; /* Pulls the block up to cover overscroll */
   left: 0; right: 0;
-  height: calc(env(safe-area-inset-top) + 100px); /* Compensates for the negative top */
+  padding-top: 100px; /* Pushes the actual safe area back down */
+  height: env(safe-area-inset-top);
   background: var(--bg);
   z-index: 890;
   pointer-events: none;
   transition: background-color 0.32s ease;
-  transform: translate3d(0, 0, 0);
 }
 
 .top-nav-bg {
