@@ -191,6 +191,7 @@ body.dark .pill-accent { color: var(--bg); }
   z-index: 890; /* Increased from 92 */
   pointer-events: none;
   transition: background-color 0.32s ease;
+  transform: translateZ(0);
 }
 
 .top-nav-bg {
@@ -199,6 +200,7 @@ body.dark .pill-accent { color: var(--bg); }
   z-index: 880; /* Increased from 90 */
   background: linear-gradient(to bottom, var(--bg) 60%, transparent 100%);
   transition: background-color 0.32s ease;
+  transform: translateZ(0);
 }
 
 .top-nav-bg::before {
