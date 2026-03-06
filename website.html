@@ -69,72 +69,6 @@
       .content-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px var(--shadow-color); transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
     }
 
-    /* ── Image carousel ──────────────────────────────────────── */
-    .image-grid-wrapper { position: relative; }
-    .content-image-grid {
-      display: flex; gap: 12px;
-      margin: 16px calc(-1 * var(--card-padding)) 20px; padding: 4px 0;
-      overflow-x: auto; overflow-y: hidden;
-      scroll-snap-type: x mandatory; scroll-padding-left: var(--card-padding);
-      -webkit-overflow-scrolling: touch; scrollbar-width: none;
-      overscroll-behavior-x: contain; cursor: grab; will-change: transform;
-    }
-    .content-image-grid.grabbing { cursor: grabbing; scroll-snap-type: none; }
-    .content-image-grid::-webkit-scrollbar { display: none; }
-    .content-image-grid .content-image:first-child { margin-left: var(--card-padding); }
-    .content-image-grid .content-image:last-child  { margin-right: var(--card-padding); }
-
-    .content-image {
-      flex-shrink: 0; height: 300px; width: auto; max-width: none;
-      border-radius: 12px; cursor: pointer; object-fit: cover;
-      scroll-snap-align: start; border: 1px solid var(--border); display: block;
-      -webkit-user-drag: none; user-select: none; -webkit-user-select: none;
-      transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-    .content-image.square { width: 300px; height: 300px; }
-    .content-image-grid .content-image:first-child:last-child { height: 350px; }
-    .content-image-grid .content-image:first-child:last-child.square { width: 350px; height: 350px; }
-    .content-image:active { transform: scale(0.98); transition: transform 0.12s; }
-    @media (max-width: 600px) {
-      .content-image, .content-image.square,
-      .content-image-grid .content-image:first-child:last-child,
-      .content-image-grid .content-image:first-child:last-child.square {
-        height: 250px !important; width: auto !important; max-width: none !important; object-fit: cover !important;
-      }
-    }
-
-    /* ── Image modal ─────────────────────────────────────────── */
-    .image-modal-wrapper {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 950; pointer-events: none; display: flex; align-items: center; justify-content: center;
-    }
-    .image-modal-content {
-      position: relative; z-index: 960;
-      --tx: 0px; --ty: 0px; --s: 1;
-      transform: translate3d(var(--tx), var(--ty), 0) scale(var(--s));
-      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s ease, width 0.3s ease, height 0.3s ease;
-      will-change: transform; box-shadow: none; opacity: 0; pointer-events: none; cursor: zoom-out;
-    }
-    .image-modal-content.expanded { pointer-events: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-    .image-modal-img { display: block; border-radius: 12px; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s ease; }
-
-    .modal-nav {
-      position: absolute; top: 50%; z-index: 970; width: 44px; height: 44px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; cursor: pointer;
-      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-      backdrop-filter: blur(4px); opacity: 0; pointer-events: none;
-      transition: opacity 0.3s ease, background 0.2s ease, transform 0.2s ease; margin-top: -22px;
-    }
-    .modal-nav.visible { opacity: 1; pointer-events: auto; }
-    .modal-nav:hover   { background: rgba(255,255,255,0.25); transform: scale(1.1); }
-    .modal-nav:active  { transform: scale(0.95); }
-    .modal-nav.prev    { left: 24px; }
-    .modal-nav.next    { right: 24px; }
-    .modal-arrow-icon  { width: 20px; height: 20px; background: white; -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain; mask: url('icons/up_arrow.svg') no-repeat center / contain; }
-    .modal-nav.prev .modal-arrow-icon { transform: rotate(-90deg); }
-    .modal-nav.next .modal-arrow-icon { transform: rotate(90deg); margin-left: 2px; }
-    @media (max-width: 768px) { .modal-nav { display: none !important; } }
-
     /* ── Scroll-to-top (fixed, collapses to static on mobile) ── */
     .scroll-to-top { position: fixed; bottom: 20px; right: 20px; z-index: 100; margin: 0; opacity: 0; pointer-events: none; }
     .scroll-to-top.visible { opacity: 1; pointer-events: auto; }
@@ -186,7 +120,6 @@
     <div class="container">
       <div class="project-layout">
 
-        <!-- ── Sidebar ── -->
         <aside class="project-sidebar">
           <h1 class="split-flip-text">Personal Website</h1>
           <div class="tag-row reveal-flip">
@@ -213,7 +146,6 @@
           </div>
         </aside>
 
-        <!-- ── Feed ── -->
         <section class="project-feed">
           <h2 class="reveal-flip">Relevant Resources</h2>
 
@@ -246,14 +178,6 @@
     </svg>
   </button>
 
-  <div class="image-modal-wrapper" id="image-modal">
-    <div class="modal-nav prev" id="modal-prev"><div class="modal-arrow-icon"></div></div>
-    <div class="modal-nav next" id="modal-next"><div class="modal-arrow-icon"></div></div>
-    <div class="image-modal-content" id="modal-content">
-      <img id="modal-image" class="image-modal-img" src="" alt="" draggable="false" />
-    </div>
-  </div>
-
   <div class="site-footer-container">
     <button class="icon-btn square scroll-to-top" id="scroll-to-top" aria-label="Scroll to top">
       <span class="slot-scroller">
@@ -269,6 +193,7 @@
     RZ.splitFlipText();
     RZ.initScrollToTop();
     RZ.initScrollProgress();
+    RZ.initImageGallery();
 
     // Stagger sidebar + feed in parallel
     window.addEventListener('load', () => {
@@ -281,176 +206,6 @@
         if (feed[i])    setTimeout(() => feed[i].classList.add('visible'),    delay);
       }
     });
-
-    // ── Image Modal ───────────────────────────────────────────
-    const imageModal   = document.getElementById('image-modal');
-    const modalImage   = document.getElementById('modal-image');
-    const modalContent = document.getElementById('modal-content');
-    const prevBtn      = document.getElementById('modal-prev');
-    const nextBtn      = document.getElementById('modal-next');
-    const backdrop     = document.getElementById('card-backdrop');
-    const closeBtn     = document.getElementById('card-close-btn');
-
-    let currentImages = [], currentIdx = 0, activeImg = null, isExpanded = false;
-    let isClosing = false, closingScrollY = 0;
-
-    let scrollLockY = 0;
-    function lockScroll() {
-      scrollLockY = window.scrollY;
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollLockY}px`;
-      document.body.style.width = '100%';
-    }
-    function unlockScroll() {
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      window.scrollTo({ top: scrollLockY, behavior: 'instant' });
-    }
-
-    window.addEventListener('scroll', () => {
-      if (isClosing) imageModal.style.transform = `translateY(${closingScrollY - window.scrollY}px)`;
-    });
-
-    function expandImage(img) {
-      isClosing = false; imageModal.style.transform = '';
-      const rect = img.getBoundingClientRect();
-      const tx = rect.left + rect.width  / 2 - window.innerWidth  / 2;
-      const ty = rect.top  + rect.height / 2 - window.innerHeight / 2;
-      const s  = Math.min((window.innerWidth * 0.9) / rect.width, (window.innerHeight * 0.8) / rect.height);
-      modalContent.style.width  = `${rect.width}px`;
-      modalContent.style.height = `${rect.height}px`;
-      modalContent.style.transition = 'none';
-      modalContent.style.setProperty('--tx', `${tx}px`);
-      modalContent.style.setProperty('--ty', `${ty}px`);
-      modalContent.style.setProperty('--s', '1');
-      modalContent.style.opacity = '1';
-      img.style.opacity = '0';
-      modalContent.offsetHeight;
-      backdrop.classList.add('visible'); closeBtn.classList.add('visible');
-      lockScroll(); isExpanded = true;
-      requestAnimationFrame(() => {
-        modalContent.style.transition = 'transform 0.6s cubic-bezier(0.25,1,0.5,1), box-shadow 0.6s ease, width 0.3s ease, height 0.3s ease';
-        modalContent.style.setProperty('--tx', '0px'); modalContent.style.setProperty('--ty', '0px');
-        modalContent.style.setProperty('--s', `${s}`);
-        modalContent.classList.add('expanded'); updateArrows();
-      });
-    }
-
-    function openModal(img, grid) {
-      if (isExpanded) return;
-      activeImg = img;
-      currentImages = grid ? Array.from(grid.querySelectorAll('.content-image')) : [img];
-      currentIdx = currentImages.indexOf(img);
-      modalImage.src = img.src; expandImage(img);
-    }
-
-    function closeModal() {
-      if (!isExpanded || !activeImg) return;
-      isClosing = true; closingScrollY = scrollLockY;
-      unlockScroll();
-      const parentGrid = activeImg.closest('.content-image-grid');
-      if (parentGrid) parentGrid.style.overflowX = 'hidden';
-      const rect = activeImg.getBoundingClientRect();
-      const tx = rect.left + rect.width  / 2 - window.innerWidth  / 2;
-      const ty = rect.top  + rect.height / 2 - window.innerHeight / 2;
-      backdrop.classList.remove('visible'); closeBtn.classList.remove('visible');
-      modalContent.classList.remove('expanded');
-      modalContent.style.setProperty('--tx', `${tx}px`); modalContent.style.setProperty('--ty', `${ty}px`); modalContent.style.setProperty('--s', '1');
-      prevBtn.classList.remove('visible'); nextBtn.classList.remove('visible');
-      isExpanded = false;
-      setTimeout(() => {
-        if (!isExpanded) {
-          isClosing = false; imageModal.style.transform = '';
-          if (parentGrid) parentGrid.style.overflowX = '';
-          activeImg.style.opacity = '1'; modalContent.style.opacity = '0'; activeImg = null;
-        }
-      }, 600);
-    }
-
-    function updateArrows() {
-      if (currentImages.length <= 1) { prevBtn.classList.remove('visible'); nextBtn.classList.remove('visible'); return; }
-      currentIdx > 0                        ? prevBtn.classList.add('visible') : prevBtn.classList.remove('visible');
-      currentIdx < currentImages.length - 1 ? nextBtn.classList.add('visible') : nextBtn.classList.remove('visible');
-    }
-
-    function goNext(e) {
-      if (e) e.stopPropagation();
-      if (currentIdx >= currentImages.length - 1) return;
-      const newImg = currentImages[++currentIdx];
-      activeImg.style.opacity = '1'; activeImg = newImg; newImg.style.opacity = '0';
-      modalImage.style.opacity = '0';
-      setTimeout(() => {
-        const r = newImg.getBoundingClientRect();
-        const s = Math.min((window.innerWidth*0.9)/r.width,(window.innerHeight*0.8)/r.height);
-        modalContent.style.width=`${r.width}px`; modalContent.style.height=`${r.height}px`;
-        modalContent.style.setProperty('--s',`${s}`); modalImage.src=newImg.src; modalImage.style.opacity='1';
-      }, 150);
-      updateArrows();
-    }
-
-    function goPrev(e) {
-      if (e) e.stopPropagation();
-      if (currentIdx <= 0) return;
-      const newImg = currentImages[--currentIdx];
-      activeImg.style.opacity = '1'; activeImg = newImg; newImg.style.opacity = '0';
-      modalImage.style.opacity = '0';
-      setTimeout(() => {
-        const r = newImg.getBoundingClientRect();
-        const s = Math.min((window.innerWidth*0.9)/r.width,(window.innerHeight*0.8)/r.height);
-        modalContent.style.width=`${r.width}px`; modalContent.style.height=`${r.height}px`;
-        modalContent.style.setProperty('--s',`${s}`); modalImage.src=newImg.src; modalImage.style.opacity='1';
-      }, 150);
-      updateArrows();
-    }
-
-    nextBtn.addEventListener('click', goNext);
-    prevBtn.addEventListener('click', goPrev);
-    closeBtn.addEventListener('click', closeModal);
-    backdrop.addEventListener('click', closeModal);
-    modalContent.addEventListener('click', closeModal);
-    document.addEventListener('keydown', e => {
-      if (!isExpanded) return;
-      if (e.key === 'ArrowRight') goNext(e);
-      if (e.key === 'ArrowLeft')  goPrev(e);
-      if (e.key === 'Escape')     closeModal();
-    });
-    let mts = 0;
-    modalContent.addEventListener('touchstart', e => { mts = e.changedTouches[0].screenX; }, { passive: true });
-    modalContent.addEventListener('touchend',   e => {
-      const mte = e.changedTouches[0].screenX;
-      if (mte < mts - 50) goNext(); if (mte > mts + 50) goPrev();
-    }, { passive: true });
-
-    // ── Drag-to-scroll image grids ────────────────────────────
-    document.querySelectorAll('.content-image-grid').forEach(grid => {
-      let isDown = false, startX, scrollLeft, isDragging = false;
-      grid.addEventListener('mousedown',  e => { isDown = true; isDragging = false; grid.classList.add('grabbing'); startX = e.pageX - grid.offsetLeft; scrollLeft = grid.scrollLeft; });
-      grid.addEventListener('mouseleave', () => { if (!isDown) return; isDown = false; grid.classList.remove('grabbing'); resetGrid(); });
-      grid.addEventListener('mouseup',    () => { if (!isDown) return; isDown = false; grid.classList.remove('grabbing'); resetGrid(); });
-      grid.addEventListener('mousemove',  e => {
-        if (!isDown) return; e.preventDefault();
-        const walk = (e.pageX - grid.offsetLeft - startX) * 1.5;
-        if (Math.abs(walk) > 5) isDragging = true;
-        const target = scrollLeft - walk, max = grid.scrollWidth - grid.clientWidth;
-        if      (target < 0)   { grid.scrollLeft = 0;   grid.style.transform = `translate3d(${-target * 0.25}px,0,0)`; }
-        else if (target > max) { grid.scrollLeft = max;  grid.style.transform = `translate3d(${-(target-max)*0.25}px,0,0)`; }
-        else                   { grid.style.transform = 'translate3d(0px,0,0)'; grid.scrollLeft = target; }
-      });
-      function resetGrid() { grid.style.transition='transform 0.4s cubic-bezier(0.25,1,0.5,1)'; grid.style.transform='translate3d(0px,0,0)'; setTimeout(()=>grid.style.transition='',400); }
-      grid.addEventListener('click', e => {
-        if (isDragging) { e.preventDefault(); e.stopPropagation(); return; }
-        const img = e.target.closest('.content-image'); if (img) openModal(img, grid);
-      });
-    });
-
-    document.querySelectorAll('.content-image-grid .content-image').forEach(img =>
-      img.addEventListener('dragstart', e => e.preventDefault())
-    );
-    document.querySelectorAll('.content-image').forEach(img => {
-      const check = () => { if (img.naturalWidth === img.naturalHeight && img.naturalWidth > 0) img.classList.add('square'); };
-      if (img.complete) check(); else img.addEventListener('load', check);
-    });
   </script>
 </body>
-</html>
+</html>z

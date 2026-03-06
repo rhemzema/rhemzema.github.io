@@ -185,44 +185,41 @@ body.dark .pill-accent { color: var(--bg); }
 
 /* ── Navigation ─────────────────────────────────────────── */
 .top-nav-safe {
-  position: fixed; 
-  top: -100px; /* Pulls the block up to cover overscroll */
-  left: 0; right: 0;
-  padding-top: 100px; /* Pushes the actual safe area back down */
+  position: fixed; top: -100px; left: 0; right: 0;
+  padding-top: 100px;
   height: env(safe-area-inset-top);
   background: var(--bg);
-  z-index: 890;
+  z-index: 990;
   pointer-events: none;
   transition: background-color 0.32s ease;
+  transform: translateZ(0); 
 }
 
 .top-nav-bg {
   position: fixed; top: 0; left: 0; right: 0;
   height: var(--nav-height); pointer-events: none;
-  z-index: 880; 
+  z-index: 980;
   background: linear-gradient(to bottom, var(--bg) 60%, transparent 100%);
   transition: background-color 0.32s ease;
-  transform: translate3d(0, 0, 0);
+  transform: translateZ(0); 
 }
 
 .top-nav-bg::before {
   content: '';
+  display: block;
   position: absolute; inset: 0;
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-  transform: translate3d(0, 0, 0); /* Forces iOS to render the mask immediately */
 }
 
-.nav-wrapper    { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 895; pointer-events: none; } /* Increased from 95 */
-.nav-left-group { position: fixed; top: 20px; left: 20px; z-index: 895; pointer-events: auto; } /* Increased from 95 */
-.nav-right-group{ position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 895; pointer-events: auto; } /* Increased from 95 */
+.nav-wrapper    { position: fixed; top: 0; left: 0; width: 100%; height: 0; z-index: 995; pointer-events: none; transform: translateZ(0); }
+.nav-left-group { position: fixed; top: 20px; left: 20px; z-index: 995; pointer-events: auto; }
+.nav-right-group{ position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 995; pointer-events: auto; }
 
 .split-flip-text { visibility: hidden; }
 
 /* ── Animations ─────────────────────────────────────────── */
-
-/* Entrance: card flip down from top */
 .reveal-flip {
   opacity: 0;
   transform: perspective(1000px) rotateX(-45deg) translateY(30px) scale(0.95);
@@ -232,7 +229,6 @@ body.dark .pill-accent { color: var(--bg); }
 .reveal-flip.visible { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); }
 .reveal-flip.reduced-opacity.visible { opacity: 0.75; }
 
-/* Entrance: per-character flip */
 .char-flip {
   display: inline-block;
   opacity: 0;
@@ -243,7 +239,6 @@ body.dark .pill-accent { color: var(--bg); }
 }
 .char-flip.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
 
-/* Entrance: pop-in (scale from 0) */
 @keyframes pop-in {
   0%   { opacity: 0; transform: scale(0.5); filter: blur(4px); }
   60%  { opacity: 1; transform: scale(0.99); }
@@ -251,7 +246,6 @@ body.dark .pill-accent { color: var(--bg); }
 }
 .pop-in { animation: pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards; }
 
-/* Entrance: pill wipe from center */
 @keyframes pill-wipe {
   0%   { clip-path: inset(0 50% 0 50% round 999px); filter: blur(4px); opacity: 0; }
   100% { clip-path: inset(0 0 0 0 round 999px); opacity: 1; }
@@ -332,7 +326,7 @@ body.dark .pill-accent { color: var(--bg); }
   .download-link:hover .resume-arrow { transform: translate(3px, -3px); }
 }
 
-/* ── Scroll-progress bar (replaces snap indicators) ─────── */
+/* ── Scroll-progress bar ────────────────────────────────── */
 #scroll-progress {
   position: fixed;
   top: 0; left: 0;
@@ -347,3 +341,100 @@ body.dark .pill-accent { color: var(--bg); }
   transition: opacity 0.3s ease;
 }
 #scroll-progress.visible { opacity: 1; }
+
+/* ── Image carousel (Shared) ─────────────────────────────── */
+.image-grid-wrapper { position: relative; }
+.content-image-grid {
+  display: flex; gap: 12px;
+  margin: 16px -24px 20px; padding: 4px 0;
+  overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory; scroll-padding-left: 24px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  overscroll-behavior-x: contain; cursor: grab; will-change: transform;
+}
+.content-image-grid.grabbing { cursor: grabbing; scroll-snap-type: none; }
+.content-image-grid::-webkit-scrollbar { display: none; }
+.content-image-grid .content-image:first-child { margin-left: 24px; }
+.content-image-grid .content-image:last-child  { margin-right: 24px; }
+
+.content-image {
+  flex-shrink: 0; height: 300px; width: auto; max-width: none;
+  border-radius: 12px; cursor: pointer; object-fit: cover;
+  scroll-snap-align: start; border: 1px solid var(--border); display: block;
+  -webkit-user-drag: none; user-select: none; -webkit-user-select: none;
+  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.content-image.square { width: 300px; height: 300px; }
+.content-image-grid .content-image:first-child:last-child { height: 350px; }
+.content-image-grid .content-image:first-child:last-child.square { width: 350px; height: 350px; }
+.content-image:active { transform: scale(0.98); transition: transform 0.12s; }
+@media (max-width: 600px) {
+  .content-image, .content-image.square,
+  .content-image-grid .content-image:first-child:last-child,
+  .content-image-grid .content-image:first-child:last-child.square {
+    height: 250px !important; width: auto !important; max-width: none !important; object-fit: cover !important;
+  }
+}
+
+/* ── Image modal (Shared) ────────────────────────────────── */
+.image-modal-wrapper {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 950; pointer-events: none; display: flex; align-items: center; justify-content: center;
+}
+
+.image-modal-content {
+  position: relative; z-index: 960;
+  --tx: 0px; --ty: 0px; --s: 1;
+  transform: translate3d(var(--tx), var(--ty), 0) scale(var(--s));
+  will-change: transform; box-shadow: none; opacity: 0; pointer-events: none; cursor: zoom-out;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s ease, width 0.3s ease, height 0.3s ease;
+}
+
+.image-modal-content.expanded { 
+  pointer-events: auto; 
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+}
+
+/* Border radius animated strictly on the image to prevent iOS 3D mask bugs */
+.image-modal-img { 
+  display: block; 
+  border-radius: 12px; 
+  width: 100%; height: 100%; 
+  object-fit: cover; 
+  /* Shrinking curve: waits to round corners until scale is almost normal to avoid bulging */
+  transition: opacity 0.2s ease, border-radius 0.6s cubic-bezier(0.8, 0, 1, 1); 
+}
+
+.image-modal-content.expanded .image-modal-img {
+  border-radius: 0px;
+  /* Expanding curve: instantly drops to 0 radius to avoid bulging */
+  transition: opacity 0.2s ease, border-radius 0.6s cubic-bezier(0, 0.9, 0.1, 1);
+}
+
+.modal-nav {
+  position: absolute; top: 50%; z-index: 970; width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(4px); opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease, background 0.2s ease, transform 0.2s ease; margin-top: -22px;
+}
+.modal-nav.visible { opacity: 1; pointer-events: auto; }
+.modal-nav:hover   { background: rgba(255,255,255,0.25); transform: scale(1.1); }
+.modal-nav:active  { transform: scale(0.95); }
+.modal-nav.prev    { left: 24px; }
+.modal-nav.next    { right: 24px; }
+.modal-arrow-icon  { width: 20px; height: 20px; background: white; -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain; mask: url('icons/up_arrow.svg') no-repeat center / contain; }
+.modal-nav.prev .modal-arrow-icon { transform: rotate(-90deg); }
+.modal-nav.next .modal-arrow-icon { transform: rotate(90deg); margin-left: 2px; }
+@media (max-width: 768px) { .modal-nav { display: none !important; } }
+
+/* ── Nav Bar Fade Out (Shared) ───────────────────────────── */
+.top-nav-safe, .top-nav-bg, .nav-wrapper {
+  transition: background-color 0.32s ease, opacity 0.4s ease !important;
+}
+body.card-expanded .top-nav-safe,
+body.card-expanded .top-nav-bg,
+body.card-expanded .nav-wrapper {
+  opacity: 0;
+  pointer-events: none;
+}
