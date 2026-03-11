@@ -292,7 +292,7 @@
               <a class="icon-btn square x pop-in" style="animation-delay:550ms" href="https://x.com/rhemzema" target="_blank"><img src="icons/x_300x.svg" alt="X"></a>
             </div>
             <div class="pill-row" style="margin-top:16px;">
-              <a class="pill pill-wipe" href="/projects/index.html" style="animation-delay:500ms">All Projects</a>
+              <a class="pill pill-wipe" href="/projects/" style="animation-delay:500ms">All Projects</a>
               <a class="pill pill-wipe" href="mailto:ruiqian@vt.edu" style="animation-delay:500ms">Email</a>
             </div>
             <div class="pill-row">
@@ -323,7 +323,7 @@
           <p class="reveal-flip">I'm Ruiqian Zhang. (Or Rhema)</p>
           <p class="reveal-flip">I'm an electrical engineering student at Virginia Tech. My interest in hardware started with competitive robotics and has since grown to cover PCB design, embedded systems, and building electronic projects.</p>
           <p class="reveal-flip">I care about making things that are well-engineered, feels good to use, and not just functional. When I'm not in the lab, you'll find me gaming, watching F1, or picking up whatever new hobby caught my attention that week!</p>
-          <a href="/resume/index.html"
+          <a href="/resume/"
              class="pill download-link reveal-flip" target="_blank" style="margin-top:12px;display:inline-flex;align-items:center;">
             View Resume
             <svg class="resume-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -487,7 +487,7 @@
 
     function buildProjectCard(proj) {
       const a = document.createElement('a');
-      a.className = 'arc-card'; a.href = proj.href || '/projects/index.html';
+      a.className = 'arc-card'; a.href = proj.href || '/projects/';
       const thumb = document.createElement('div'); thumb.className = 'arc-card-thumb';
       if (proj.image) {
         const img = document.createElement('img'); img.src = proj.image; img.alt = proj.title; thumb.appendChild(img);
@@ -510,7 +510,7 @@
     }
 
     function buildViewAllCard(total) {
-      const a = document.createElement('a'); a.className = 'arc-card arc-card-viewall'; a.href = '/projects/index.html';
+      const a = document.createElement('a'); a.className = 'arc-card arc-card-viewall'; a.href = '/projects/';
       a.innerHTML = `<div class="viewall-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
         <div class="viewall-label">View all<br>projects</div>${total?`<div class="viewall-count">${total} total</div>`:''}`;
       attachDragGuard(a); return a;
@@ -560,17 +560,17 @@
       const stage = document.getElementById('arc-deck-stage'), outer = document.getElementById('arc-deck-outer');
       if (!stage || !outer) return;
       const PLACEHOLDERS = [
-        { title: 'Project One',   desc: 'A brief description.',                              href: '/projects/index.html', status: 'completed',  date: 'Jan 2025', image: '' },
-        { title: 'Project Two',   desc: 'Short summary of goals, tech, and outcomes.',        href: '/projects/index.html', status: 'in-progress',date: 'Mar 2025', image: '' },
-        { title: 'Project Three', desc: 'Hardware and software work across two semesters.',   href: '/projects/index.html', status: 'on-hold',    date: 'Nov 2024', image: '' },
+        { title: 'Project One',   desc: 'A brief description.',                              href: '/projects/', status: 'completed',  date: 'Jan 2025', image: '' },
+        { title: 'Project Two',   desc: 'Short summary of goals, tech, and outcomes.',        href: '/projects/', status: 'in-progress',date: 'Mar 2025', image: '' },
+        { title: 'Project Three', desc: 'Hardware and software work across two semesters.',   href: '/projects/', status: 'on-hold',    date: 'Nov 2024', image: '' },
       ];
       try {
-        const res = await fetch('/projects/index.html'); if (!res.ok) throw new Error();
+        const res = await fetch('/projects/'); if (!res.ok) throw new Error();
         const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
         const allCards = doc.querySelectorAll('.project-card'); totalCount = allCards.length;
         for (let i = 0; i < Math.min(3, allCards.length); i++) {
           const c = allCards[i];
-          allProjects.push({ title: c.querySelector('h2')?.textContent?.trim()||'Project', desc: c.querySelector('p')?.textContent?.trim()||'', image: c.getAttribute('data-image')||'', href: c.getAttribute('href')||'/projects/index.html', status: c.querySelector('[data-status]')?.getAttribute('data-status')||'', date: c.querySelector('.date-label')?.textContent?.trim()||'' });
+          allProjects.push({ title: c.querySelector('h2')?.textContent?.trim()||'Project', desc: c.querySelector('p')?.textContent?.trim()||'', image: c.getAttribute('data-image')||'', href: c.getAttribute('href')||'/projects/', status: c.querySelector('[data-status]')?.getAttribute('data-status')||'', date: c.querySelector('.date-label')?.textContent?.trim()||'' });
         }
       } catch(e) { console.warn('Arc deck: using placeholders'); }
       if (!allProjects.length) { allProjects = PLACEHOLDERS; totalCount = allProjects.length; }
