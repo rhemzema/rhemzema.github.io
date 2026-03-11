@@ -312,7 +312,7 @@
         <div class="reveal-flip id-card-container" data-delay="200">
           <div class="id-card-wrapper" id="id-wrapper">
             <div class="student-id" id="id-card">
-              <img src="images/Ruiqian_Card.png" alt="Ruiqian Zhang">
+              <img src="/images/Ruiqian_Card.png" alt="Ruiqian Zhang">
               <div class="id-glare"  id="id-glare"></div>
               <div class="holo-foil" id="holo-foil"></div>
             </div>
@@ -510,7 +510,7 @@
     }
 
     function buildViewAllCard(total) {
-      const a = document.createElement('a'); a.className = 'arc-card arc-card-viewall'; a.href = 'projects.html';
+      const a = document.createElement('a'); a.className = 'arc-card arc-card-viewall'; a.href = '/projects/index.html';
       a.innerHTML = `<div class="viewall-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
         <div class="viewall-label">View all<br>projects</div>${total?`<div class="viewall-count">${total} total</div>`:''}`;
       attachDragGuard(a); return a;
@@ -560,17 +560,17 @@
       const stage = document.getElementById('arc-deck-stage'), outer = document.getElementById('arc-deck-outer');
       if (!stage || !outer) return;
       const PLACEHOLDERS = [
-        { title: 'Project One',   desc: 'A brief description.',                              href: 'projects.html', status: 'completed',  date: 'Jan 2025', image: '' },
-        { title: 'Project Two',   desc: 'Short summary of goals, tech, and outcomes.',        href: 'projects.html', status: 'in-progress',date: 'Mar 2025', image: '' },
-        { title: 'Project Three', desc: 'Hardware and software work across two semesters.',   href: 'projects.html', status: 'on-hold',    date: 'Nov 2024', image: '' },
+        { title: 'Project One',   desc: 'A brief description.',                              href: '/projects/index.html', status: 'completed',  date: 'Jan 2025', image: '' },
+        { title: 'Project Two',   desc: 'Short summary of goals, tech, and outcomes.',        href: '/projects/index.html', status: 'in-progress',date: 'Mar 2025', image: '' },
+        { title: 'Project Three', desc: 'Hardware and software work across two semesters.',   href: '/projects/index.html', status: 'on-hold',    date: 'Nov 2024', image: '' },
       ];
       try {
-        const res = await fetch('projects.html'); if (!res.ok) throw new Error();
+        const res = await fetch('/projects/index.html'); if (!res.ok) throw new Error();
         const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
         const allCards = doc.querySelectorAll('.project-card'); totalCount = allCards.length;
         for (let i = 0; i < Math.min(3, allCards.length); i++) {
           const c = allCards[i];
-          allProjects.push({ title: c.querySelector('h2')?.textContent?.trim()||'Project', desc: c.querySelector('p')?.textContent?.trim()||'', image: c.getAttribute('data-image')||'', href: c.getAttribute('href')||'projects.html', status: c.querySelector('[data-status]')?.getAttribute('data-status')||'', date: c.querySelector('.date-label')?.textContent?.trim()||'' });
+          allProjects.push({ title: c.querySelector('h2')?.textContent?.trim()||'Project', desc: c.querySelector('p')?.textContent?.trim()||'', image: c.getAttribute('data-image')||'', href: c.getAttribute('href')||'/projects/index.html', status: c.querySelector('[data-status]')?.getAttribute('data-status')||'', date: c.querySelector('.date-label')?.textContent?.trim()||'' });
         }
       } catch(e) { console.warn('Arc deck: using placeholders'); }
       if (!allProjects.length) { allProjects = PLACEHOLDERS; totalCount = allProjects.length; }
