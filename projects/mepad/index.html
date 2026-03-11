@@ -1,3 +1,6 @@
+/* 
+  Project: MePad V1
+*/
 <!doctype html>
 <html lang="en">
 <head>
@@ -8,9 +11,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-  <link rel="icon" href="icons/face.svg" type="image/svg+xml">
+  <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
 
-  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="/shared/shared.css">
 
   <style>
     :root { --card-padding: 24px; }
@@ -92,8 +95,8 @@
     }
     @media (max-width: 600px) { .req-grid { grid-template-columns: repeat(2, 1fr); } }
 
-    .home-icon { width: 20px; height: 20px; display: block; background-color: currentColor; -webkit-mask: url('icons/home.svg') no-repeat center / contain; mask: url('icons/home.svg') no-repeat center / contain; }
-    .arrow-up-icon { width: 16px; height: 16px; display: block; background-color: currentColor; -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain; mask: url('icons/up_arrow.svg') no-repeat center / contain; }
+    .home-icon { width: 20px; height: 20px; display: block; background-color: currentColor; -webkit-mask: url('/icons/home.svg') no-repeat center / contain; mask: url('/icons/home.svg') no-repeat center / contain; }
+    .arrow-up-icon { width: 16px; height: 16px; display: block; background-color: currentColor; -webkit-mask: url('/icons/up_arrow.svg') no-repeat center / contain; mask: url('/icons/up_arrow.svg') no-repeat center / contain; }
   </style>
 </head>
 <body>
@@ -111,12 +114,12 @@
 
   <nav class="nav-wrapper">
     <div class="nav-left-group">
-      <a href="projects.html" class="icon-btn square" aria-label="Back to Projects">
+      <a href="/projects/index.html" class="icon-btn square" aria-label="Back to Projects">
         <div class="icon-mask back-icon"></div>
       </a>
     </div>
     <div class="nav-right-group">
-      <a href="https://ruiqian.dev" class="icon-btn square" aria-label="Go to Home">
+      <a href="/index.html" class="icon-btn square" aria-label="Go to Home">
         <div class="home-icon"></div>
       </a>
       <button id="theme-toggle" class="icon-btn square" aria-label="Toggle dark mode">
@@ -159,7 +162,7 @@
             <span class="meta">Jan 3, 2026</span>
             <div class="image-grid-wrapper">
               <div class="content-image-grid">
-                <img src="assets/MePad_Layout.jpg" alt="MePad Layout Design" class="content-image" draggable="false" />
+                <img src="/assets/MePad_Layout.jpg" alt="MePad Layout Design" class="content-image" draggable="false" />
               </div>
             </div>
             <p>Day one was the day I decided to start the project on a whim. I focused on researching and taking inspiration from online resources like Bilibili.</p>
@@ -171,8 +174,8 @@
             <span class="meta">Jan 5, 2026</span>
             <div class="image-grid-wrapper">
               <div class="content-image-grid">
-                <img src="assets/MePad_Matrix.jpg"    alt="MePad Switch Matrix" class="content-image" draggable="false" />
-                <img src="assets/MePad_Schematic.png" alt="MePad PCB Day 2"     class="content-image" draggable="false" />
+                <img src="/assets/MePad_Matrix.jpg"    alt="MePad Switch Matrix" class="content-image" draggable="false" />
+                <img src="/assets/MePad_Schematic.png" alt="MePad Schematic"     class="content-image" draggable="false" />
               </div>
             </div>
             <p>Today was a big day for learning and design. I dived into the electrical engineering side of keyboards:</p>
@@ -190,7 +193,7 @@
             <span class="meta">Jan 6, 2026</span>
             <div class="image-grid-wrapper">
               <div class="content-image-grid">
-                <img src="assets/MePad_PCB_Day2.png" alt="MePad PCB Day 3" class="content-image" draggable="false" />
+                <img src="/assets/MePad_PCB_Day2.png" alt="MePad PCB Day 3" class="content-image" draggable="false" />
               </div>
             </div>
             <p>Started work on component placement and ensuring components on the board fits within the planned housing constraints.</p>
@@ -201,10 +204,21 @@
             <span class="meta">Jan 9, 2026</span>
             <div class="image-grid-wrapper">
               <div class="content-image-grid">
-                <img src="assets/MePad_PCB_Day3.png" alt="MePad PCB Day 4" class="content-image" draggable="false" />
+                <img src="/assets/MePad_PCB_Day3.png" alt="MePad PCB Day 4" class="content-image" draggable="false" />
               </div>
             </div>
             <p>Started work on the wiring and routing of the PCB.</p>
+          </div>
+
+          <div class="content-card reveal-flip">
+            <h3>Day 5: Continued PCB Wiring</h3>
+            <span class="meta">Mar 7, 2026</span>
+            <div class="image-grid-wrapper">
+              <div class="content-image-grid">
+                <img src="/assets/MePad_PCB_Day4.png" alt="MePad PCB Day 4" class="content-image" draggable="false" />
+              </div>
+            </div>
+            <p>Changed the layout of the microcontroller and improved the routing.</p>
           </div>
 
           <div class="content-card reveal-flip reduced-opacity" style="text-align:center;">
@@ -234,7 +248,7 @@
     <footer class="site-footer">&copy; 2026 Ruiqian Zhang</footer>
   </div>
 
-  <script src="shared.js"></script>
+  <script src="/shared/shared.js"></script>
   <script>
     RZ.splitFlipText();
     RZ.initScrollToTop();

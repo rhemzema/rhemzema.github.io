@@ -9,10 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style" onload="this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
-  <link rel="icon" href="icons/face.svg" type="image/svg+xml">
+  <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
 
   <!-- Shared site-wide styles -->
-  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="/shared/shared.css">
 
   <style>
     /* ── Page-specific layout ─────────────────────────────── */
@@ -292,7 +292,7 @@
               <a class="icon-btn square x pop-in" style="animation-delay:550ms" href="https://x.com/rhemzema" target="_blank"><img src="icons/x_300x.svg" alt="X"></a>
             </div>
             <div class="pill-row" style="margin-top:16px;">
-              <a class="pill pill-wipe" href="projects.html" style="animation-delay:500ms">All Projects</a>
+              <a class="pill pill-wipe" href="/projects/index.html" style="animation-delay:500ms">All Projects</a>
               <a class="pill pill-wipe" href="mailto:ruiqian@vt.edu" style="animation-delay:500ms">Email</a>
             </div>
             <div class="pill-row">
@@ -312,7 +312,7 @@
         <div class="reveal-flip id-card-container" data-delay="200">
           <div class="id-card-wrapper" id="id-wrapper">
             <div class="student-id" id="id-card">
-              <img src="/Images/Ruiqian_Card.png" alt="Ruiqian Zhang">
+              <img src="images/Ruiqian_Card.png" alt="Ruiqian Zhang">
               <div class="id-glare"  id="id-glare"></div>
               <div class="holo-foil" id="holo-foil"></div>
             </div>
@@ -323,7 +323,7 @@
           <p class="reveal-flip">I'm Ruiqian Zhang. (Or Rhema)</p>
           <p class="reveal-flip">I'm an electrical engineering student at Virginia Tech. My interest in hardware started with competitive robotics and has since grown to cover PCB design, embedded systems, and building electronic projects.</p>
           <p class="reveal-flip">I care about making things that are well-engineered, feels good to use, and not just functional. When I'm not in the lab, you'll find me gaming, watching F1, or picking up whatever new hobby caught my attention that week!</p>
-          <a href="resume.html"
+          <a href="/resume/index.html"
              class="pill download-link reveal-flip" target="_blank" style="margin-top:12px;display:inline-flex;align-items:center;">
             View Resume
             <svg class="resume-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -487,7 +487,7 @@
 
     function buildProjectCard(proj) {
       const a = document.createElement('a');
-      a.className = 'arc-card'; a.href = proj.href || 'projects.html';
+      a.className = 'arc-card'; a.href = proj.href || '/projects/index.html';
       const thumb = document.createElement('div'); thumb.className = 'arc-card-thumb';
       if (proj.image) {
         const img = document.createElement('img'); img.src = proj.image; img.alt = proj.title; thumb.appendChild(img);
@@ -698,7 +698,7 @@
   <!-- ─────────────────────────────────────────────────────
        Shared JS (theme, animations, scroll progress)
   ────────────────────────────────────────────────────── -->
-  <script src="shared.js"></script>
+  <script src="/shared/shared.js"></script>
   <script>
     // Theme toggle already attached by shared.js
     RZ.splitFlipText();

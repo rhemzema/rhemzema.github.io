@@ -168,19 +168,19 @@ body.dark .pill-accent { color: var(--bg); }
 }
 .back-icon {
   width: 16px; height: 16px;
-  -webkit-mask-image: url('icons/up_arrow.svg');
-  mask-image: url('icons/up_arrow.svg');
+  -webkit-mask-image: url('/icons/up_arrow.svg');
+  mask-image: url('/icons/up_arrow.svg');
   transform: rotate(-90deg);
 }
 .home-icon {
   width: 20px; height: 20px;
-  -webkit-mask-image: url('icons/home.svg');
-  mask-image: url('icons/home.svg');
+  -webkit-mask-image: url('/icons/home.svg');
+  mask-image: url('/icons/home.svg');
 }
 .arrow-icon {
   width: 16px; height: 16px;
-  -webkit-mask-image: url('icons/up_arrow.svg');
-  mask-image: url('icons/up_arrow.svg');
+  -webkit-mask-image: url('/icons/up_arrow.svg');
+  mask-image: url('/icons/up_arrow.svg');
 }
 
 /* ── Navigation ─────────────────────────────────────────── */
@@ -423,7 +423,7 @@ body.dark .pill-accent { color: var(--bg); }
 .modal-nav:active  { transform: scale(0.95); }
 .modal-nav.prev    { left: 24px; }
 .modal-nav.next    { right: 24px; }
-.modal-arrow-icon  { width: 20px; height: 20px; background: white; -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain; mask: url('icons/up_arrow.svg') no-repeat center / contain; }
+.modal-arrow-icon  { width: 20px; height: 20px; background: white; -webkit-mask: url('/icons/up_arrow.svg') no-repeat center / contain; mask: url('/icons/up_arrow.svg') no-repeat center / contain; }
 .modal-nav.prev .modal-arrow-icon { transform: rotate(-90deg); }
 .modal-nav.next .modal-arrow-icon { transform: rotate(90deg); margin-left: 2px; }
 @media (max-width: 768px) { .modal-nav { display: none !important; } }

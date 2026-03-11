@@ -1,3 +1,7 @@
+/*
+  Projects Page
+*/
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -8,9 +12,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-  <link rel="icon" href="icons/face.svg" type="image/svg+xml">
+  <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
 
-  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="/shared/shared.css">
 
   <style>
     /* ── Page layout ────────────────────────────────────────── */
@@ -120,16 +124,16 @@
     .proj-arrow {
       width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;
       background-color: var(--muted);
-      -webkit-mask: url('icons/up_arrow.svg') no-repeat center / contain;
-      mask: url('icons/up_arrow.svg') no-repeat center / contain;
+      -webkit-mask: url('/icons/up_arrow.svg') no-repeat center / contain;
+      mask: url('/icons/up_arrow.svg') no-repeat center / contain;
       transform: rotate(90deg);
       transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease;
     }
 
     .home-icon {
       width: 20px; height: 20px; display: block; background-color: currentColor;
-      -webkit-mask: url('icons/home.svg') no-repeat center / contain;
-      mask: url('icons/home.svg') no-repeat center / contain;
+      -webkit-mask: url('/icons/home.svg') no-repeat center / contain;
+      mask: url('/icons/home.svg') no-repeat center / contain;
     }
   </style>
 </head>
@@ -185,7 +189,7 @@
       </div>
 
       <div class="project-grid" id="project-grid">
-        <a href="mepad.html" class="project-card reveal-flip" data-status="in-progress" data-date="2026-01-03" data-image="https://ruiqian.dev/assets/MePad_PCB_Day3.png">
+        <a href="/projects/mepad/index.html" class="project-card reveal-flip" data-status="in-progress" data-date="2026-01-03" data-image="/assets/MePad_PCB_Day3.png">
           <div class="card-image"></div>
           <div class="card-body">
             <div class="project-info">
@@ -200,7 +204,7 @@
           </div>
         </a>
 
-        <a href="website.html" class="project-card reveal-flip" data-status="in-progress" data-date="2025-09-20" data-image="/assets/Website_Main.png">
+        <a href="/projects/website/index.html" class="project-card reveal-flip" data-status="in-progress" data-date="2025-09-20" data-image="/assets/Website_Main.png">
           <div class="card-image"></div>
           <div class="card-body">
             <div class="project-info">
@@ -222,7 +226,7 @@
     &copy; 2026 Ruiqian Zhang
   </footer>
 
-  <script src="shared.js"></script>
+  <script src="/shared/shared.js"></script>
   <script>
     // Populate card images from data-image attribute
     document.querySelectorAll('.project-card').forEach(card => {
