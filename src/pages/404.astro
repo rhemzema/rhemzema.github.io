@@ -1,0 +1,212 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+---
+<Base title="404 | Ruiqian Zhang">
+  <Nav />
+  <canvas id="ascii-canvas"></canvas>
+
+  <div class="content-wrap">
+    <div class="content-backdrop">
+      <div style="display:flex;flex-direction:column;align-items:center;position:relative;z-index:1;">
+        <h1 class="error-heading">Erm...</h1>
+        <p class="error-sub">I didn't code what you're looking for.<br>Let's head back?</p>
+        <div class="btn-row">
+          <a href="/" class="btn btn-primary">
+            <div class="btn-arrow arrow-left">
+              <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 1L1 7L7 13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span>Go home</span>
+            <div class="btn-arrow arrow-right">
+              <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 1L1 7L7 13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </a>
+          <a href="/projects/" class="btn btn-secondary">View projects</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <Fragment slot="scripts">
+    <script is:inline>
+      window.addEventListener('load', () => {
+        setTimeout(() => document.querySelector('.error-heading').classList.add('visible'), 200);
+        setTimeout(() => document.querySelector('.error-sub').classList.add('visible'), 400);
+        setTimeout(() => document.querySelector('.btn-row').classList.add('visible'), 550);
+      });
+
+      // ASCII DVD bounce
+      (function () {
+        const canvas = document.getElementById('ascii-canvas');
+        const ctx = canvas.getContext('2d');
+        const IMAGE_URL = '/images/monkeyThink.png';
+        const isMobile = () => window.innerWidth < 600;
+        const getCols = () => (isMobile() ? 40 : 80);
+        const getFontSize = () => (isMobile() ? 5 : 7);
+        const getLineH = () => (isMobile() ? 6 : 8);
+
+        let ASCII_COLS = getCols(), FONT_SIZE = getFontSize(), LINE_HEIGHT = getLineH();
+        const SPEED = 3, FRAME_INTERVAL = 1000 / 25;
+        const DENSITY_LIGHT = '@%#*+=-:. ', DENSITY_DARK = ' .:=-+*#%@';
+        const COLOR_LIGHT = '#111827', COLOR_DARK = '#93c5fd';
+
+        let lines = [], spriteW = 0, spriteH = 0, x, y, vx, vy, asciiColor;
+        let lastTime = 0, ready = false;
+
+        function imageToAscii(img) {
+          const density = document.body.classList.contains('dark') ? DENSITY_DARK : DENSITY_LIGHT;
+          const rows = Math.round(ASCII_COLS * (img.naturalHeight / img.naturalWidth) * 0.5);
+          const off = document.createElement('canvas'); off.width = ASCII_COLS; off.height = rows;
+          const octx = off.getContext('2d'); octx.drawImage(img, 0, 0, ASCII_COLS, rows);
+          const data = octx.getImageData(0, 0, ASCII_COLS, rows).data, out = [];
+          for (let r = 0; r < rows; r++) {
+            let line = '';
+            for (let c = 0; c < ASCII_COLS; c++) {
+              const i = (r * ASCII_COLS + c) * 4;
+              const lum = (0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]) / 255;
+              line += lum > 0.85 ? ' ' : density[Math.floor(lum * (density.length - 1))];
+            }
+            out.push(line);
+          }
+          return out;
+        }
+
+        function cacheColors() { asciiColor = document.body.classList.contains('dark') ? COLOR_DARK : COLOR_LIGHT; }
+
+        function initPosition() {
+          canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+          ASCII_COLS = getCols(); FONT_SIZE = getFontSize(); LINE_HEIGHT = getLineH();
+          spriteW = ASCII_COLS * (FONT_SIZE * 0.62); spriteH = lines.length * LINE_HEIGHT;
+          x = Math.random() * Math.max(1, canvas.width - spriteW);
+          y = Math.random() * Math.max(1, canvas.height - spriteH);
+          const sign = () => (Math.random() < 0.5 ? 1 : -1);
+          vx = sign() * (SPEED * 0.7 + Math.random() * SPEED * 0.3);
+          vy = sign() * (SPEED * 0.7 + Math.random() * SPEED * 0.3);
+          cacheColors(); ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function draw(ts) {
+          requestAnimationFrame(draw);
+          if (!ready || ts - lastTime < FRAME_INTERVAL) return;
+          lastTime = ts; ctx.clearRect(0, 0, canvas.width, canvas.height);
+          x += vx; y += vy;
+          if (x <= 0) { x = 0; vx = Math.abs(vx); }
+          if (x + spriteW >= canvas.width) { x = canvas.width - spriteW; vx = -Math.abs(vx); }
+          if (y <= 0) { y = 0; vy = Math.abs(vy); }
+          if (y + spriteH >= canvas.height) { y = canvas.height - spriteH; vy = -Math.abs(vy); }
+          ctx.font = `${FONT_SIZE}px "JetBrains Mono","Courier New",monospace`;
+          ctx.fillStyle = asciiColor;
+          for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], x, y + i * LINE_HEIGHT);
+        }
+
+        const img = new Image(); img.crossOrigin = 'anonymous';
+        img.onload = () => { lines = imageToAscii(img); initPosition(); ready = true; };
+        img.onerror = () => { lines = ['image not found', 'check IMAGE_URL', 'in 404.astro']; initPosition(); ready = true; };
+        img.src = IMAGE_URL;
+        requestAnimationFrame(draw);
+
+        window.addEventListener('resize', () => {
+          if (ready) { ASCII_COLS = getCols(); lines = imageToAscii(img); initPosition(); }
+        });
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+          requestAnimationFrame(() => { cacheColors(); if (ready) lines = imageToAscii(img); });
+        });
+      })();
+    </script>
+  </Fragment>
+</Base>
+
+<style>
+  .content-wrap {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 80px 20px; box-sizing: border-box; text-align: center;
+    position: relative; z-index: 1;
+  }
+
+  .content-backdrop {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 48px 56px; border-radius: 32px;
+    position: relative; isolation: isolate;
+    background: rgba(242, 240, 239, 0.3);
+    box-shadow: 0 0 0 1px rgba(16, 24, 40, 0.05);
+  }
+  .content-backdrop::before {
+    content: ''; position: absolute; inset: 0;
+    border-radius: 32px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: -1;
+  }
+  :global(body.dark) .content-backdrop {
+    background: rgba(7, 18, 33, 0.3);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  @media (max-width: 600px) {
+    .content-backdrop { background: rgba(242,240,239,0.1); padding: 32px 24px; }
+    :global(body.dark) .content-backdrop { background: rgba(7,18,33,0.1); }
+  }
+
+  .error-heading {
+    font-size: clamp(24px, 5vw, 36px); font-weight: 800; letter-spacing: -0.5px;
+    margin: 0 0 12px; opacity: 0;
+    transform: perspective(500px) rotateX(90deg) translateY(10px); transform-origin: bottom center;
+    transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .error-heading.visible { opacity: 1; transform: perspective(500px) rotateX(0deg) translateY(0); }
+
+  .error-sub {
+    font-size: 15px; color: var(--muted); max-width: 360px;
+    line-height: 1.6; margin: 0 0 40px; opacity: 0; transform: translateY(16px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .error-sub.visible { opacity: 1; transform: translateY(0); }
+
+  .btn-row {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-row.visible { opacity: 1; transform: translateY(0); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px; border-radius: 999px;
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+    text-decoration: none; cursor: pointer; border: 0;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease, background-color 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { transform: scale(0.97); transition-duration: 0.1s; }
+
+  .btn-primary {
+    background: var(--accent); color: #fff;
+    position: relative; padding: 12px 44px 12px 22px;
+    transition: transform 0.6s cubic-bezier(0.25,1,0.5,1), box-shadow 0.3s ease, background-color 0.3s ease, padding 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  :global(body.dark) .btn-primary { color: var(--bg); }
+  @media (hover: hover) { .btn-primary:hover { padding: 12px 22px 12px 44px; } }
+
+  .btn-secondary { background: var(--card-bg); color: var(--text); border: 1px solid var(--border); }
+  @media (hover: hover) {
+    .btn-secondary:hover { color: var(--accent); border-color: var(--accent); background: var(--hover-bg); }
+  }
+
+  .btn-arrow {
+    position: absolute; top: 50%; width: 14px; height: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .btn-arrow svg { display: block; width: 14px; height: 14px; }
+  .arrow-right { right: 22px; transform: translateY(-50%) translateX(0); opacity: 1; }
+  .arrow-left  { left: 22px; transform: translateY(-50%) translateX(-15px); opacity: 0; }
+  @media (hover: hover) {
+    .btn-primary:hover .arrow-right { transform: translateY(-50%) translateX(15px); opacity: 0; }
+    .btn-primary:hover .arrow-left  { transform: translateY(-50%) translateX(0); opacity: 1; }
+  }
+
+  #ascii-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+</style>

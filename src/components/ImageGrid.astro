@@ -1,0 +1,12 @@
+---
+interface Img { src: string; alt?: string }
+interface Props { images: Img[] }
+const { images = [] } = Astro.props;
+---
+<div class="image-grid-wrapper">
+  <div class="content-image-grid">
+    {images.map((img) => (
+      <img src={img.src} alt={img.alt ?? ''} class="content-image" draggable="false" />
+    ))}
+  </div>
+</div>

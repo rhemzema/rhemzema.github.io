@@ -1,0 +1,15 @@
+---
+// A single dev-log card in a project feed. Used inside MDX content.
+interface Props {
+  title?: string;
+  date?: string;
+  /** Dim the card (e.g. "To be continued…" placeholders) */
+  muted?: boolean;
+}
+const { title, date, muted = false } = Astro.props;
+---
+<div class:list={['content-card', 'reveal-flip', { 'reduced-opacity': muted }]} style={muted ? 'text-align:center;' : undefined}>
+  {title && <h3>{title}</h3>}
+  {date && <span class="meta">{date}</span>}
+  <slot />
+</div>

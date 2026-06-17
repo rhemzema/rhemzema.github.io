@@ -1,0 +1,177 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import LogEntry from '../../components/LogEntry.astro';
+import ImageGrid from '../../components/ImageGrid.astro';
+import FeedHeading from '../../components/FeedHeading.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  return projects.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, status, startDate, intro, requirements, repo } = entry.data;
+
+const statusLabel: Record<string, string> = {
+  'in-progress': 'In Progress',
+  'on-hold': 'On Hold',
+  completed: 'Completed',
+  dropped: 'Dropped',
+};
+const startStr = startDate.toLocaleDateString('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+});
+---
+<Base title={`${title} | Ruiqian Zhang`} description={entry.data.summary}>
+  <Nav home back="/projects/" />
+
+  <div class="content-wrap">
+    <div class="container">
+      <div class="project-layout">
+        <aside class="project-sidebar">
+          <h1 class="split-flip-text">{title}</h1>
+          <div class="tag-row reveal-flip">
+            <span class={`pill-tag status-${status}`}>{statusLabel[status]}</span>
+            <span class="pill-tag">Start Date: {startStr}</span>
+          </div>
+
+          {intro.map((para) => (
+            <p class="intro reveal-flip">{para}</p>
+          ))}
+
+          {repo && (
+            <div class="content-card reveal-flip">
+              <p><a href={repo} target="_blank" rel="noopener">GitHub Repository</a></p>
+            </div>
+          )}
+
+          {requirements.length > 0 && (
+            <div class="reveal-flip">
+              <h3 class="sidebar-subhead">Basic Requirements</h3>
+              <div class="req-grid">
+                {requirements.map((r) => (
+                  <div class="req-item"><span class="req-item-text">{r}</span></div>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+
+        <section class="project-feed">
+          <Content components={{ LogEntry, ImageGrid, FeedHeading }} />
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div id="card-backdrop"></div>
+  <button id="card-close-btn" aria-label="Close preview">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+
+  <Footer>
+    <button class="icon-btn square scroll-to-top" id="scroll-to-top" aria-label="Scroll to top">
+      <span class="slot-scroller">
+        <span class="slot-label"><div class="arrow-up-icon"></div></span>
+        <span class="slot-label"><div class="arrow-up-icon"></div></span>
+      </span>
+    </button>
+  </Footer>
+
+  <Fragment slot="scripts">
+    <script is:inline>
+      RZ.splitFlipText();
+      RZ.initScrollToTop();
+      RZ.initScrollProgress();
+      RZ.initImageGallery();
+
+      // Stagger sidebar + feed reveals in parallel
+      window.addEventListener('load', () => {
+        const sidebar = document.querySelectorAll('.project-sidebar .reveal-flip');
+        const feed = document.querySelectorAll('.project-feed .reveal-flip');
+        const max = Math.max(sidebar.length, feed.length);
+        for (let i = 0; i < max; i++) {
+          const delay = 300 + i * 150;
+          if (sidebar[i]) setTimeout(() => sidebar[i].classList.add('visible'), delay);
+          if (feed[i]) setTimeout(() => feed[i].classList.add('visible'), delay);
+        }
+      });
+    </script>
+  </Fragment>
+</Base>
+
+<style is:global>
+  /* Project detail layout — only shipped on detail pages */
+  .content-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: stretch; padding: 120px 20px 40px; box-sizing: border-box; }
+  .container    { width: 100%; max-width: 1100px; margin: 0 auto; }
+
+  .project-layout  { display: flex; gap: 60px; align-items: flex-start; position: relative; width: 100%; }
+  .project-sidebar { width: 30%; position: sticky; top: 130px; flex-shrink: 0; }
+  .project-feed    { width: 70%; flex-grow: 1; }
+
+  .project-sidebar h1 { font-size: 32px; font-weight: 800; margin: 0 0 24px; letter-spacing: -0.5px; line-height: 1.2; }
+  .project-feed h2 { font-size: 20px; font-weight: 600; color: var(--accent); margin: 0 0 24px; }
+  p.intro { color: var(--muted); margin-bottom: 24px; line-height: 1.6; font-size: 16px; }
+  .sidebar-subhead { font-size: 16px; margin-bottom: 12px; color: var(--text); }
+
+  .pill-tag {
+    padding: 8px 16px; font-size: 13px; border-radius: 999px;
+    background: var(--section-bg); border: 1px solid var(--border);
+    color: var(--muted); font-weight: 500;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .pill-tag::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .pill-tag.status-in-progress::before { background: #3b82f6; box-shadow: 0 0 6px #3b82f6; }
+  .pill-tag.status-completed::before   { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+  .pill-tag.status-on-hold::before     { background: #eab308; box-shadow: 0 0 6px #eab308; }
+  .pill-tag.status-dropped::before     { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; margin-top: 8px; }
+
+  .req-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; margin-bottom: 24px; }
+  .req-item {
+    padding: 16px; border-radius: 8px;
+    background: var(--section-bg); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .req-item-text { font-size: 14px; color: var(--text); line-height: 1.4; font-weight: 500; }
+
+  .content-card {
+    padding: 24px; border-radius: 16px;
+    background: var(--section-bg); border: 1px solid var(--border);
+    margin-bottom: 24px; overflow: hidden;
+  }
+  .content-card h3           { font-size: 18px; color: var(--text); margin: 0 0 4px; }
+  .content-card .meta        { font-size: 13px; color: var(--muted); margin-bottom: 12px; display: block; }
+  .content-card p            { margin: 0 0 16px; line-height: 1.6; color: var(--muted); font-size: 15px; }
+  .content-card p:last-child { margin-bottom: 0; }
+  .content-card ul           { margin: 0; padding-left: 20px; color: var(--muted); font-size: 15px; }
+  .content-card li           { margin-bottom: 6px; }
+  .content-card a            { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+  .content-card a:hover      { border-bottom-color: var(--accent); }
+  @media (hover: hover) {
+    .content-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px var(--shadow-color); transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+  }
+
+  .scroll-to-top { position: fixed; bottom: 20px; right: 20px; z-index: 100; margin: 0; opacity: 0; pointer-events: none; }
+  .scroll-to-top.visible { opacity: 1; pointer-events: auto; }
+
+  @media (max-width: 900px) {
+    .project-layout { flex-direction: column; gap: 40px; }
+    .project-sidebar, .project-feed { width: 100%; position: static; }
+    .req-grid { grid-template-columns: repeat(3, 1fr); }
+    .scroll-to-top { position: relative; bottom: auto; right: auto; opacity: 1 !important; pointer-events: auto; margin: 0 auto 20px; }
+  }
+  @media (max-width: 600px) { .req-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .home-icon     { width: 20px; height: 20px; display: block; background-color: currentColor; -webkit-mask: url('/icons/home.svg') no-repeat center / contain; mask: url('/icons/home.svg') no-repeat center / contain; }
+  .arrow-up-icon { width: 16px; height: 16px; display: block; background-color: currentColor; -webkit-mask: url('/icons/up_arrow.svg') no-repeat center / contain; mask: url('/icons/up_arrow.svg') no-repeat center / contain; }
+</style>

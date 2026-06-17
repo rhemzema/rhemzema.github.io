@@ -1,0 +1,64 @@
+---
+title: MePad V1
+summary: Custom programmable USB macro keypad
+status: in-progress
+startDate: 2026-01-03
+cover: /assets/MePad_PCB_Day3.png
+intro:
+  - Welcome to my personal project, MePad! My take on the macro keypad.
+  - My primary objective is to explore the entire process of product development from identifying user needs to hardware design and software implementation.
+requirements:
+  - Compact Design
+  - Hotswap Switches
+  - Audio Controls
+  - 2 USB Ports
+  - Multiple Switches
+  - Cheap
+---
+
+<FeedHeading>Dev Log</FeedHeading>
+
+<LogEntry title="Day 1: Layout Design" date="Jan 3, 2026">
+  <ImageGrid images={[{ src: '/assets/MePad_Layout.jpg', alt: 'MePad Layout Design' }]} />
+
+  Day one was the day I decided to start the project on a whim. I focused on researching and taking inspiration from online resources like Bilibili.
+
+  I set the initial layout for the keypad using [keyboard-layout-editor.com](http://keyboard-layout-editor.com). The plan is to have 9 custom regular switch keys and 2 scroll knobs—one for audio controls and one for scrolling through webpages or Premiere Pro timelines.
+</LogEntry>
+
+<LogEntry title="Day 2: PCB Schematics & Firmware" date="Jan 5, 2026">
+  <ImageGrid images={[
+    { src: '/assets/MePad_Matrix.jpg', alt: 'MePad Switch Matrix' },
+    { src: '/assets/MePad_Schematic.png', alt: 'MePad Schematic' },
+  ]} />
+
+  Today was a big day for learning and design. I dived into the electrical engineering side of keyboards:
+
+  - Learned how to optimize microcontroller connections using a switch matrix.
+  - Implemented diodes to avoid input ghosting.
+  - Built initial keyboard firmware with [kbfirmware.com](https://kbfirmware.com).
+  - Designed the PCB footprint using Autodesk Fusion 360 (Knobs: Top 15mm, Bottom 32mm).
+  - Finished PCB schematics with EasyEDA centered on the ATmega32U4 microcontroller.
+</LogEntry>
+
+<LogEntry title="Day 3: Component Placement" date="Jan 6, 2026">
+  <ImageGrid images={[{ src: '/assets/MePad_PCB_Day2.png', alt: 'MePad PCB Day 3' }]} />
+
+  Started work on component placement and ensuring components on the board fits within the planned housing constraints.
+</LogEntry>
+
+<LogEntry title="Day 4: PCB Wiring" date="Jan 9, 2026">
+  <ImageGrid images={[{ src: '/assets/MePad_PCB_Day3.png', alt: 'MePad PCB Day 4' }]} />
+
+  Started work on the wiring and routing of the PCB.
+</LogEntry>
+
+<LogEntry title="Day 5: Continued PCB Wiring" date="Mar 7, 2026">
+  <ImageGrid images={[{ src: '/assets/MePad_PCB_Day4.png', alt: 'MePad PCB Day 5' }]} />
+
+  Changed the layout of the microcontroller and improved the routing.
+</LogEntry>
+
+<LogEntry title="To be continued..." muted>
+  More updates coming soon.
+</LogEntry>

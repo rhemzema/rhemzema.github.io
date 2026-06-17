@@ -1,0 +1,31 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  /** Show the home button in the right group */
+  home?: boolean;
+  /** If set, show a back button in the left group linking here */
+  back?: string;
+}
+const { home = false, back } = Astro.props;
+---
+<div class="top-nav-safe"></div>
+<div class="top-nav-bg"></div>
+
+<nav class="nav-wrapper">
+  {back && (
+    <div class="nav-left-group">
+      <a href={back} class="icon-btn square" aria-label="Back">
+        <div class="icon-mask back-icon"></div>
+      </a>
+    </div>
+  )}
+  <div class="nav-right-group">
+    {home && (
+      <a href="/" class="icon-btn square" aria-label="Go to Home">
+        <div class="home-icon"></div>
+      </a>
+    )}
+    <ThemeToggle />
+  </div>
+</nav>

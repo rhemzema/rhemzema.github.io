@@ -1,0 +1,269 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+
+const statusLabel: Record<string, string> = {
+  'in-progress': 'In Progress',
+  'on-hold': 'On Hold',
+  completed: 'Completed',
+  dropped: 'Dropped',
+};
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.startDate.getTime() - a.data.startDate.getTime(),
+);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+---
+<Base title="Projects | Ruiqian Zhang">
+  <Nav home />
+
+  <div class="content-wrap">
+    <div class="container">
+      <h1 class="split-flip-text">Featured Projects</h1>
+      <p class="intro reveal-flip">My wardrobe of engineering, design, and creative experiments.</p>
+
+      <div class="controls-row reveal-flip" style="transition-delay:0.1s">
+        <div class="filter-group">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="in-progress">In Progress</button>
+          <button class="filter-btn" data-filter="on-hold">On Hold</button>
+          <button class="filter-btn" data-filter="completed">Completed</button>
+          <button class="filter-btn" data-filter="dropped">Dropped</button>
+        </div>
+        <div class="sort-wrapper">
+          <button class="icon-btn square" id="sort-toggle" aria-label="Sort Options">
+            <div class="menu-icon"></div>
+          </button>
+          <div class="sort-menu" id="sort-menu">
+            <button class="sort-option selected" data-sort="newest">Newest First</button>
+            <button class="sort-option" data-sort="oldest">Oldest First</button>
+            <button class="sort-option" data-sort="alphabetical">Alphabetical</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-grid" id="project-grid">
+        {projects.map((p) => (
+          <a
+            href={`/projects/${p.id}/`}
+            class="project-card reveal-flip"
+            data-status={p.data.status}
+            data-date={iso(p.data.startDate)}
+            data-image={p.data.cover ?? ''}
+          >
+            <div class="card-image"></div>
+            <div class="card-body">
+              <div class="project-info">
+                <h2>{p.data.title}</h2>
+                <p>{p.data.summary}</p>
+                <div class="meta-row">
+                  <div class="card-status" data-status={p.data.status}>
+                    <span class="status-dot"></span> {statusLabel[p.data.status]}
+                  </div>
+                  <span class="date-label">{fmt(p.data.startDate)}</span>
+                </div>
+              </div>
+              <div class="proj-arrow"></div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <footer style="text-align:center;padding-bottom:30px;font-size:14px;color:var(--muted);">
+    &copy; {new Date().getFullYear()} Ruiqian Zhang
+  </footer>
+
+  <Fragment slot="scripts">
+    <script is:inline>
+      // Populate card images from data-image attribute
+      document.querySelectorAll('.project-card').forEach((card) => {
+        const src = card.getAttribute('data-image');
+        const box = card.querySelector('.card-image');
+        if (src && src.trim()) {
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = card.querySelector('h2').textContent + ' preview';
+          box.appendChild(img);
+        } else {
+          box.innerHTML = `<div class="card-image-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>`;
+        }
+      });
+
+      RZ.splitFlipText();
+      RZ.observeReveal();
+      RZ.initScrollProgress();
+
+      window.addEventListener('load', () => {
+        document.querySelectorAll('.reveal-flip').forEach((el, i) =>
+          setTimeout(() => el.classList.add('visible'), 300 + i * 150),
+        );
+      });
+
+      // Filter
+      document.querySelectorAll('.filter-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const f = btn.getAttribute('data-filter');
+          document.querySelectorAll('.project-card').forEach((card) =>
+            card.classList.toggle('hidden', f !== 'all' && card.getAttribute('data-status') !== f),
+          );
+        });
+      });
+
+      // Sort
+      const sortToggle = document.getElementById('sort-toggle');
+      const sortMenu = document.getElementById('sort-menu');
+      const grid = document.getElementById('project-grid');
+
+      sortToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sortMenu.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!sortMenu.contains(e.target) && !sortToggle.contains(e.target)) sortMenu.classList.remove('open');
+      });
+      document.querySelectorAll('.sort-option').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          document.querySelectorAll('.sort-option').forEach((o) => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          sortMenu.classList.remove('open');
+          const type = opt.getAttribute('data-sort');
+          const cards = Array.from(grid.querySelectorAll('.project-card'));
+          cards.sort((a, b) => {
+            if (type === 'alphabetical')
+              return a.querySelector('h2').textContent.trim().localeCompare(b.querySelector('h2').textContent.trim());
+            const da = new Date(a.getAttribute('data-date')),
+              db = new Date(b.getAttribute('data-date'));
+            return type === 'newest' ? db - da : da - db;
+          });
+          cards.forEach((c) => grid.appendChild(c));
+        });
+      });
+    </script>
+  </Fragment>
+</Base>
+
+<style>
+  h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+  @media (max-width: 768px) { h1 { font-size: 32px; } }
+  p.intro { color: var(--muted); margin-bottom: 32px; line-height: 1.5; max-width: 600px; }
+
+  .content-wrap {
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+    padding: 120px 20px 40px; box-sizing: border-box;
+  }
+  .container { width: 100%; max-width: 920px; }
+
+  .controls-row {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 32px; gap: 12px; position: relative; z-index: 20;
+  }
+  .filter-group { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
+
+  .filter-btn {
+    font-family: 'Inter', sans-serif;
+    padding: 8px 16px; font-size: 13px; font-weight: 500;
+    border-radius: 999px; border: 1px solid var(--border);
+    background: var(--card-bg); color: var(--muted);
+    cursor: pointer; transition: all 0.2s ease;
+  }
+  .filter-btn:hover  { border-color: var(--accent); color: var(--accent); background: var(--hover-bg); }
+  .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+  body.dark .filter-btn.active { color: var(--bg); }
+
+  .sort-wrapper { position: relative; flex-shrink: 0; margin-top: 2px; }
+  .sort-menu {
+    position: absolute; top: 100%; right: 0; margin-top: 12px;
+    background: var(--menu-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border); border-radius: 16px; padding: 6px; min-width: 180px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    opacity: 0; visibility: hidden; transform: translateY(-10px) scale(0.98);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); z-index: 80;
+  }
+  .sort-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+
+  .sort-option {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; text-align: left; padding: 10px 14px;
+    background: transparent; border: 0; color: var(--muted);
+    font-size: 14px; font-family: 'Inter', sans-serif; font-weight: 500;
+    border-radius: 10px; cursor: pointer; transition: background 0.2s ease, color 0.2s ease;
+  }
+  .sort-option:hover   { background: var(--hover-bg); color: var(--text); }
+  .sort-option.selected{ color: var(--accent); background: var(--hover-bg); font-weight: 600; }
+  .sort-option.selected::after {
+    content: ''; display: block; width: 6px; height: 10px;
+    border: solid currentColor; border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translateY(-2px); margin-left: 8px;
+  }
+
+  .menu-icon {
+    width: 20px; height: 20px; background-color: currentColor;
+    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12H21M3 6H21M3 18H21" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>');
+    mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 12H21M3 6H21M3 18H21" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>');
+  }
+
+  .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; width: 100%; }
+
+  .project-card {
+    display: flex; flex-direction: column; width: 100%; box-sizing: border-box;
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px;
+    color: var(--text); position: relative; overflow: hidden;
+    text-decoration: none; cursor: pointer; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .project-card.hidden  { display: none; }
+  .project-card:active  { transform: scale(0.98); transition-duration: 0.1s; }
+
+  @media (hover: hover) {
+    .project-card:hover { transform: translateY(-5px) scale(1.01); border-color: var(--accent); box-shadow: 0 12px 32px var(--shadow-color); }
+    .project-card:hover h2 { color: var(--accent); }
+    .project-card:hover .proj-arrow { background-color: var(--accent); transform: rotate(90deg) translateY(-4px); }
+  }
+
+  .card-image {
+    width: 100%; height: 180px; overflow: hidden; border-radius: 24px 24px 0 0; flex-shrink: 0;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, var(--bg)), color-mix(in srgb, var(--accent) 3%, var(--bg)));
+  }
+  .card-image :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+  .card-image :global(.card-image-placeholder) { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .card-image :global(.card-image-placeholder svg) { width: 32px; height: 32px; color: var(--muted); opacity: 0.3; }
+
+  .card-body { display: flex; align-items: flex-start; justify-content: space-between; padding: 20px 24px; gap: 12px; }
+  .project-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+  .project-info h2 { font-size: 18px; font-weight: 700; margin: 0; transition: color 0.3s ease; }
+  .project-info p  { font-size: 14px; color: var(--muted); margin: 0 0 8px; line-height: 1.4; }
+
+  .meta-row { display: flex; align-items: center; gap: 12px; margin-top: 4px; flex-wrap: wrap; }
+  .date-label { font-size: 12px; color: var(--muted); font-weight: 500; opacity: 0.8; }
+
+  .card-status { display: inline-flex; align-items: center; font-size: 12px; font-weight: 500; color: var(--muted); gap: 6px; }
+  .status-dot  { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .card-status[data-status="in-progress"] .status-dot { background: #3b82f6; }
+  .card-status[data-status="on-hold"]     .status-dot { background: #eab308; }
+  .card-status[data-status="dropped"]     .status-dot { background: #ef4444; }
+  .card-status[data-status="completed"]   .status-dot { background: #22c55e; }
+
+  .proj-arrow {
+    width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;
+    background-color: var(--muted);
+    -webkit-mask: url('/icons/up_arrow.svg') no-repeat center / contain;
+    mask: url('/icons/up_arrow.svg') no-repeat center / contain;
+    transform: rotate(90deg);
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease;
+  }
+
+  .home-icon {
+    width: 20px; height: 20px; display: block; background-color: currentColor;
+    -webkit-mask: url('/icons/home.svg') no-repeat center / contain;
+    mask: url('/icons/home.svg') no-repeat center / contain;
+  }
+</style>
